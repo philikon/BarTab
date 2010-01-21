@@ -1,0 +1,8 @@
+<!ENTITY bartap.label "Your localized menuitem">
+<!ENTITY bartapContext.label "Your Menuitem">
+<!ENTITY bartapContext.accesskey "Y">
+<!ENTITY bartapToolbarButton.label "Your Toolbar Button">
+<!ENTITY bartapToolbarButton.tooltip "This is your toolbar button!">
+<!ENTITY bartapSidebar.label "Your Sidebar">
+<!ENTITY bartapToolbar.name  "example">
+<!ENTITY bartapToolbar.label "This is an example toolbar. You can hide it under View &gt; toolbars &gt; &bartapToolbar.name;">
