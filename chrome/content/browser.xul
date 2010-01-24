@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://bartap/content/browser.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://bartap/locale/overlay.dtd">
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+         id="bartap-overlay">
+
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="bartap-strings"
+                  src="chrome://bartap/locale/overlay.properties"/>
+  </stringbundleset>
+
+</overlay>

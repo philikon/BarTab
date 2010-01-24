@@ -1,0 +1,3 @@
+tabbrowser {
+  -moz-binding: url("chrome://bartap/content/tabbrowser.xml#tabbrowser");
+}

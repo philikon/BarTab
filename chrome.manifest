@@ -3,4 +3,4 @@ skin      bartap   classic/1.0   chrome/skin/
 locale    bartap   en-US         chrome/locale/en-US/
 
 
-overlay   chrome://browser/content/browser.xul   chrome://bartap/content/ff-overlay.xul
+overlay   chrome://browser/content/browser.xul chrome://bartap/content/browser.xul
