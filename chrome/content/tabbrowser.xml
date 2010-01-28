@@ -172,6 +172,28 @@
 
                 if (!this.mBlank) {
                   if (!(aStateFlags & nsIWebProgressListener.STATE_RESTORING)) {
+
+                    /* philiKON's changes here */
+                    if (this.mBrowser.getAttribute("putitonmytap") == "true") {
+                      var browser = this.mBrowser;
+                      browser.stop();
+
+                      browser.addEventListener("BarTapLoad", function() {
+                          browser.removeAttribute("putitonmytap");
+
+                          var history =  browser.webNavigation.sessionHistory;
+                          var gotoindex = history.requestedIndex;
+                          if (gotoindex == -1) {
+                            gotoindex = history.index;
+                          }
+                          if (gotoindex != -1) {
+                            browser.webNavigation.gotoIndex(gotoindex);
+                          } else {
+                            browser.loadURI(browser.currentURI.spec);
+                          }
+                        }, false);
+                    }
+
                     this.mTab.setAttribute("busy", "true");
                     this.mTabBrowser.updateIcon(this.mTab);
                     this.mTabBrowser.setTabTitleLoading(this.mTab);
@@ -423,6 +445,13 @@
                 (!oldBrowser.pageReport && newBrowser.pageReport))
               updatePageReport = true;
 
+            /* philiKON's changes here */
+            if (newBrowser.getAttribute("putitonmytap") == "true") {
+              var evt = document.createEvent("Event");
+              evt.initEvent("BarTapLoad", true, true);
+              newBrowser.dispatchEvent(evt);
+            }
+
             newBrowser.setAttribute("type", "content-primary");
             this.mCurrentBrowser = newBrowser;
             this.mCurrentTab = this.selectedTab;
@@ -668,6 +697,10 @@
               let flags = aAllowThirdPartyFixup ?
                           Ci.nsIWebNavigation.LOAD_FLAGS_ALLOW_THIRD_PARTY_FIXUP :
                           Ci.nsIWebNavigation.LOAD_FLAGS_NONE;
+
+              /* philiKON's changes here */
+              b.setAttribute("putitonmytap", "true");
+
               try {
                 b.loadURIWithFlags(aURI, flags, aReferrerURI, aCharset, aPostData);
               }
