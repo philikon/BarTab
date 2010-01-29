@@ -201,16 +201,25 @@
                       }
 
                       if (gotouri) {
-                        let hostPort = gotouri.hostPort;
-                        let path = gotouri.path;
-                        if (hostPort.substr(0, 4) == "www.") {
-                          hostPort = hostPort.substr(4);
+                        /* See if we have title, favicon in stock for it.
+                           This should definitely work for restored tabs
+                           as they're in the history database. */
+                        let info = this.mTabBrowser.getInfoFromHistory(gotouri);
+                        if (info) {
+                          this.mTab.setAttribute("image", info.icon);
+                          this.mTab.label = info.title;
+                        } else {
+                          /* Set a meaningful part of the URI as tab label */
+                          let hostPort = gotouri.hostPort;
+                          let path = gotouri.path;
+                          if (hostPort.substr(0, 4) == "www.") {
+                            hostPort = hostPort.substr(4);
+                          }
+                          if (path == "/") {
+                            path = "";
+                          }
+                          this.mTab.label = hostPort + path;
                         }
-                        if (path == "/") {
-                          path = "";
-                        }
-                        this.mTab.label = hostPort + path;
-                        //this.mTab.setAttribute("image", favicon.spec);
                       }
 
                       browser.addEventListener("BarTapLoad", function() {
@@ -771,6 +780,28 @@
             return t;
           ]]>
         </body>
+      </method>
+
+      <method name="getInfoFromHistory">
+        <parameter name="aURI" />
+        <body><![CDATA[
+          var history = Components.classes["@mozilla.org/browser/nav-history-service;1"].getService(Components.interfaces.nsINavHistoryService);
+
+          var options = history.getNewQueryOptions();
+          options.queryType = 0;   // search history
+          options.maxResults = 1;
+
+          var query = history.getNewQuery();
+          query.uri = aURI;
+
+          var result = history.executeQuery(query, options);
+          result.root.containerOpen = true;
+
+          if (!result.root.childCount) {
+            return null;
+          }
+          return result.root.getChild(0);
+        ]]></body>
       </method>
 
     </implementation>
