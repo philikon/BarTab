@@ -1,0 +1,17 @@
+* instead of "Loading...", show tab URL and possibly favicon
+
+* preferences:
+
+  - How to restore tabs after restart:
+
+     a) load them (Firefox default behaviour)
+
+     b) put them on tap
+
+  - How to load tabs opened in the background:
+
+     a) load them (Firefox default behaviour)
+
+     b) put them on tap  (TODO: have a context menu item for this, too)
+
+* get rid of as code duplication as possible
