@@ -181,15 +181,28 @@
                       browser.addEventListener("BarTapLoad", function() {
                           browser.removeAttribute("putitonmytap");
 
-                          var history =  browser.webNavigation.sessionHistory;
-                          var gotoindex = history.requestedIndex;
-                          if (gotoindex == -1) {
-                            gotoindex = history.index;
-                          }
-                          if (gotoindex != -1) {
+                          let history =  browser.webNavigation.sessionHistory;
+                          let bartap = browser.getAttribute("bartap");
+
+                          if (bartap) {
+                            /* The tab was likely opened by clicking on a link */
+                            browser.removeAttribute("bartap");
+                            bartap = JSON.parse(bartap);
+
+                            /* Gotta love the inconsistency of this API */
+                            browser.loadURIWithFlags(
+                              bartap.uri, bartap.flags, makeURI(bartap.referrer),
+                              bartap.charset, bartap.postdata);
+                          } else if (history.count) {
+                            /* Likely a restored tab, try loading from history. */
+                            let gotoindex = history.requestedIndex;
+                            if (gotoindex == -1) {
+                              gotoindex = history.index;
+                            }
                             browser.webNavigation.gotoIndex(gotoindex);
-                          } else {
-                            browser.loadURI(browser.currentURI.spec);
+                          } else if (browser.userTypedValue) {
+                            /* This might not make much sense here... */
+                            browser.loadURI(browser.userTypedValue);
                           }
                         }, false);
                     }
@@ -699,7 +712,18 @@
                           Ci.nsIWebNavigation.LOAD_FLAGS_NONE;
 
               /* philiKON's changes here */
+              let bartap = "";
+              if (aURI) {
+                bartap = JSON.stringify({
+                  uri:      (aURI instanceof Ci.nsIURI) ? aURI.spec : aURI,
+                  flags:    flags,
+                  referrer: (aReferrerURI instanceof Ci.nsIURI) ? aReferrerURI.spec : aReferrerURI,
+                  charset:  aCharset,
+                  postdata: aPostData
+                });
+              }
               b.setAttribute("putitonmytap", "true");
+              b.setAttribute("bartap", bartap);
 
               try {
                 b.loadURIWithFlags(aURI, flags, aReferrerURI, aCharset, aPostData);
