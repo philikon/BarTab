@@ -7,7 +7,6 @@
     <em:version>1.0</em:version>
     <em:creator>Philipp von Weitershausen</em:creator>
     <em:contributor></em:contributor>
-    <em:aboutURL>chrome://bartap/content/about.xul</em:aboutURL>
     <em:optionsURL>chrome://bartap/content/options.xul</em:optionsURL>
     <em:targetApplication>
       <Description>
