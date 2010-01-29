@@ -176,40 +176,64 @@
                     /* philiKON's changes here */
                     if (this.mBrowser.getAttribute("putitonmytap") == "true") {
                       var browser = this.mBrowser;
+                      var history =  browser.webNavigation.sessionHistory;
+                      var bartap = browser.getAttribute("bartap");
+                      var gotoindex;
+                      var gotouri;
+
                       browser.stop();
+
+                      if (bartap) {
+                        /* The tab was likely opened by clicking on a link */
+                        browser.removeAttribute("bartap");
+                        bartap = JSON.parse(bartap);
+                        gotouri = makeURI(bartap.uri);
+                      } else if (history.count) {
+                        /* Likely a restored tab, try loading from history. */
+                        gotoindex = history.requestedIndex;
+                        if (gotoindex == -1) {
+                          gotoindex = history.index;
+                        }
+                        gotouri = history.getEntryAtIndex(gotoindex, false).URI;
+                      } else if (browser.userTypedValue) {
+                        /* This might not make much sense here... */
+                        gotouri = makeURI(browser.userTypedValue);
+                      }
+
+                      if (gotouri) {
+                        let hostPort = gotouri.hostPort;
+                        let path = gotouri.path;
+                        if (hostPort.substr(0, 4) == "www.") {
+                          hostPort = hostPort.substr(4);
+                        }
+                        if (path == "/") {
+                          path = "";
+                        }
+                        this.mTab.label = hostPort + path;
+                        //this.mTab.setAttribute("image", favicon.spec);
+                      }
 
                       browser.addEventListener("BarTapLoad", function() {
                           browser.removeAttribute("putitonmytap");
 
-                          let history =  browser.webNavigation.sessionHistory;
-                          let bartap = browser.getAttribute("bartap");
-
                           if (bartap) {
-                            /* The tab was likely opened by clicking on a link */
-                            browser.removeAttribute("bartap");
-                            bartap = JSON.parse(bartap);
-
                             /* Gotta love the inconsistency of this API */
                             browser.loadURIWithFlags(
-                              bartap.uri, bartap.flags, makeURI(bartap.referrer),
+                              bartap.uri, bartap.flags,
+                              makeURI(bartap.referrer),
                               bartap.charset, bartap.postdata);
                           } else if (history.count) {
-                            /* Likely a restored tab, try loading from history. */
-                            let gotoindex = history.requestedIndex;
-                            if (gotoindex == -1) {
-                              gotoindex = history.index;
-                            }
                             browser.webNavigation.gotoIndex(gotoindex);
                           } else if (browser.userTypedValue) {
                             /* This might not make much sense here... */
                             browser.loadURI(browser.userTypedValue);
                           }
                         }, false);
+                    } else {
+                      this.mTab.setAttribute("busy", "true");
+                      this.mTabBrowser.updateIcon(this.mTab);
+                      this.mTabBrowser.setTabTitleLoading(this.mTab);
                     }
-
-                    this.mTab.setAttribute("busy", "true");
-                    this.mTabBrowser.updateIcon(this.mTab);
-                    this.mTabBrowser.setTabTitleLoading(this.mTab);
                   }
 
                   if (this.mTabBrowser.mCurrentTab == this.mTab)
