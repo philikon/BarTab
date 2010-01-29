@@ -1,3 +1,7 @@
 tabbrowser {
   -moz-binding: url("chrome://bartap/content/tabbrowser.xml#tabbrowser");
 }
+
+tabbrowser tab[ontap=true] {
+  opacity: .5;
+}
