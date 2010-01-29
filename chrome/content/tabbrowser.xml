@@ -174,7 +174,10 @@
                   if (!(aStateFlags & nsIWebProgressListener.STATE_RESTORING)) {
 
                     /* philiKON's changes here */
-                    if (this.mBrowser.getAttribute("putitonmytap") == "true") {
+                    if (this.mTab.getAttribute("ontap") == "true") {
+                      /* We need these here because they leak into the
+                         event listener below. */
+                      var tab = this.mTab;
                       var browser = this.mBrowser;
                       var history =  browser.webNavigation.sessionHistory;
                       var bartap = browser.getAttribute("bartap");
@@ -206,8 +209,8 @@
                            as they're in the history database. */
                         let info = this.mTabBrowser.getInfoFromHistory(gotouri);
                         if (info) {
-                          this.mTab.setAttribute("image", info.icon);
-                          this.mTab.label = info.title;
+                          tab.setAttribute("image", info.icon);
+                          tab.label = info.title;
                         } else {
                           /* Set a meaningful part of the URI as tab label */
                           let hostPort = gotouri.hostPort;
@@ -218,12 +221,12 @@
                           if (path == "/") {
                             path = "";
                           }
-                          this.mTab.label = hostPort + path;
+                          tab.label = hostPort + path;
                         }
                       }
 
                       browser.addEventListener("BarTapLoad", function() {
-                          browser.removeAttribute("putitonmytap");
+                          tab.removeAttribute("ontap");
 
                           if (bartap) {
                             /* Gotta love the inconsistency of this API */
@@ -492,7 +495,7 @@
               updatePageReport = true;
 
             /* philiKON's changes here */
-            if (newBrowser.getAttribute("putitonmytap") == "true") {
+            if (this.selectedTab.getAttribute("ontap") == "true") {
               var evt = document.createEvent("Event");
               evt.initEvent("BarTapLoad", true, true);
               newBrowser.dispatchEvent(evt);
@@ -755,7 +758,7 @@
                   postdata: aPostData
                 });
               }
-              b.setAttribute("putitonmytap", "true");
+              t.setAttribute("ontap", "true");
               b.setAttribute("bartap", bartap);
 
               try {

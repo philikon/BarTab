@@ -1,22 +1,4 @@
-/* This is just an example.  You shouldn't do this. */
-#bartap-hello
-{
-  color: red ! important;
-}
-#bartap-toolbar-button
-{
-  list-style-image: url("chrome://bartap/skin/toolbar-button.png");
-  -moz-image-region: rect(0px 24px 24px 0px);
-}
-#bartap-toolbar-button:hover
-{
-  -moz-image-region: rect(24px 24px 48px  0px);
-}
-[iconsize="small"] #bartap-toolbar-button
-{
-  -moz-image-region: rect( 0px 40px 16px 24px);
-}
-[iconsize="small"] #bartap-toolbar-button:hover
-{
-  -moz-image-region: rect(24px 40px 40px 24px);
+
+tabbrowser tab[ontap=true] {
+  background-color: red;
 }
