@@ -1,4 +1,4 @@
-* hook up preferences
+* the first tab is never tapped
 
 * pause icon for tapped tabs?
 

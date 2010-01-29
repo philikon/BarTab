@@ -748,18 +748,21 @@
                           Ci.nsIWebNavigation.LOAD_FLAGS_NONE;
 
               /* philiKON's changes here */
-              let bartap = "";
-              if (aURI) {
-                bartap = JSON.stringify({
-                  uri:      (aURI instanceof Ci.nsIURI) ? aURI.spec : aURI,
-                  flags:    flags,
-                  referrer: (aReferrerURI instanceof Ci.nsIURI) ? aReferrerURI.spec : aReferrerURI,
-                  charset:  aCharset,
-                  postdata: aPostData
-                });
+              if ((aURI && this.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) ||
+                  (!aURI && this.mPrefs.getBoolPref("extensions.bartap.tapRestoredTabs"))) {
+                let bartap = "";
+                if (aURI) {
+                  bartap = JSON.stringify({
+                    uri:      (aURI instanceof Ci.nsIURI) ? aURI.spec : aURI,
+                    flags:    flags,
+                    referrer: (aReferrerURI instanceof Ci.nsIURI) ? aReferrerURI.spec : aReferrerURI,
+                    charset:  aCharset,
+                    postdata: aPostData
+                  });
+                }
+                t.setAttribute("ontap", "true");
+                b.setAttribute("bartap", bartap);
               }
-              t.setAttribute("ontap", "true");
-              b.setAttribute("bartap", bartap);
 
               try {
                 b.loadURIWithFlags(aURI, flags, aReferrerURI, aCharset, aPostData);
