@@ -1,4 +1,5 @@
 content   bartap                 chrome/content/
 locale    bartap   en-US         chrome/locale/en-US/
+locale    bartap   ja            chrome/locale/ja/
 
 overlay   chrome://browser/content/browser.xul chrome://bartap/content/browser.xul
