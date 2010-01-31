@@ -6,7 +6,7 @@
     <em:name>BarTap</em:name>
     <em:version>1.0</em:version>
     <em:creator>Philipp von Weitershausen</em:creator>
-    <em:contributor></em:contributor>
+    <em:contributor>SHIMODA Hiroshi</em:contributor>
     <em:optionsURL>chrome://bartap/content/options.xul</em:optionsURL>
     <em:targetApplication>
       <Description>

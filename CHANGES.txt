@@ -1,0 +1,10 @@
+1.0.1 (XXX)
+-----------
+
+* Added Japanese translation.  Thanks to SHIMODA Hiroshi.
+
+
+1.0 (2010-01-29)
+----------------
+
+Initial release.
