@@ -1,0 +1,9 @@
+<!ENTITY prefwindow.title "BarTap Einstellungen">
+<!ENTITY prefpane.title "BarTap Einstellungen">
+<!ENTITY group.label "BarTap Einstellungen">
+<!ENTITY restoredTabs.label "Tabs, die aus vorherigen Sitzungen wiederhergestellt werden, ">
+<!ENTITY restoredTabs.accesskey "R">
+<!ENTITY backgroundTabs.label "Tabs, die im Hintergrund geöffnet werden, ">
+<!ENTITY backgroundTabs.accesskey "B">
+<!ENTITY loadTabs.label "direkt laden (Standardeinstellung)">
+<!ENTITY putOnTap.label "anschreiben lassen">

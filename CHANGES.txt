@@ -3,6 +3,8 @@
 
 * Added Japanese translation.  Thanks to SHIMODA Hiroshi.
 
+* Added German translation.
+
 
 1.0 (2010-01-29)
 ----------------
