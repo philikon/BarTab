@@ -49,7 +49,7 @@
    - ***** END LICENSE BLOCK ***** -->
 
 <!DOCTYPE bindings [
-<!ENTITY % tabBrowserDTD SYSTEM "chrome://browser/locale/tabbrowser.dtd" >
+<!ENTITY % tabBrowserDTD SYSTEM "chrome://browser/locale/tabbrowser.dtd">
 %tabBrowserDTD;
 ]>
 
@@ -179,7 +179,7 @@
                          event listener below. */
                       var tab = this.mTab;
                       var browser = this.mBrowser;
-                      var history =  browser.webNavigation.sessionHistory;
+                      var history = browser.webNavigation.sessionHistory;
                       var bartap = browser.getAttribute("bartap");
                       var gotoindex;
                       var gotouri;
@@ -659,7 +659,7 @@
             }
 
             // invalidate cache, because mTabContainer is about to change
-            this._browsers = null; 
+            this._browsers = null;
 
             // If this new tab is owned by another, assert that relationship
             if (aOwner)
@@ -789,7 +789,7 @@
       </method>
 
       <method name="getInfoFromHistory">
-        <parameter name="aURI" />
+        <parameter name="aURI"/>
         <body><![CDATA[
           var history = Components.classes["@mozilla.org/browser/nav-history-service;1"].getService(Components.interfaces.nsINavHistoryService);
 
