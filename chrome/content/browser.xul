@@ -4,6 +4,8 @@
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
          id="bartap-overlay">
 
+  <script type="application/javascript" src="browser.js"/>
+
   <stringbundleset id="stringbundleset">
     <stringbundle id="bartap-strings"
                   src="chrome://bartap/locale/overlay.properties"/>
