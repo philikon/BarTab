@@ -3,5 +3,3 @@
 * pause icon for tapped tabs?
 
 * context menu item on tapped tabs: load content
-
-* get rid of as much code duplication as possible

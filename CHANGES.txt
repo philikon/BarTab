@@ -1,3 +1,11 @@
+1.1 (XXX)
+---------
+
+* No longer install a custom tabbrowser binding.  This reduces code
+  duplication to zero and improves compatibility with other
+  extensions.  Much thanks to SHIMODA Hiroshi for the patch.
+
+
 1.0.1 (2010-01-31)
 ------------------
 
