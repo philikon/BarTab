@@ -1,13 +1,11 @@
 var BarTap = {
 
-  handleEvent : function(aEvent)
-  {
+  handleEvent: function(aEvent) {
     window.removeEventListener("DOMContentLoaded", this, false);
     this.initTabBrowser(document.getElementById("content"));
   },
 
-  initTabBrowser : function(aTabBrowser)
-  {
+  initTabBrowser: function(aTabBrowser) {
     eval('aTabBrowser.mTabProgressListener = '+aTabBrowser.mTabProgressListener.toSource().replace(
         /\{(this.mTab.setAttribute\("busy", "true"\);[^\}]+)\}/,
         'if (!BarTap.onTabStateChange(this.mTab)) { $1 }'
@@ -24,8 +22,7 @@ var BarTap = {
     ));
   },
 
-  onTabStateChange : function(aTab)
-  {
+  onTabStateChange: function(aTab) {
     if (aTab.getAttribute("ontap") != "true")
       return false;
 
@@ -100,8 +97,7 @@ var BarTap = {
     return true;
   },
 
-  onTabSelect : function(aTab)
-  {
+  onTabSelect: function(aTab) {
       if (aTab.getAttribute("ontap") == "true") {
         var evt = document.createEvent("Event");
         evt.initEvent("BarTapLoad", true, true);
@@ -109,12 +105,10 @@ var BarTap = {
       }
   },
 
-  mPrefs : Cc['@mozilla.org/preferences-service;1']
-              .getService(Ci.nsIPrefService)
-              .getBranch(null),
+  mPrefs: Cc['@mozilla.org/preferences-service;1']
+          .getService(Ci.nsIPrefService).getBranch(null),
 
-  backUpNewTabArgs : function(aTab, aBrowser, aURI, aFlags, aReferrerURI, aCharset, aPostData)
-  {
+  backUpNewTabArgs: function(aTab, aBrowser, aURI, aFlags, aReferrerURI, aCharset, aPostData) {
     if ((aURI && this.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) ||
         (!aURI && this.mPrefs.getBoolPref("extensions.bartap.tapRestoredTabs"))) {
       let bartap = "";
@@ -132,8 +126,7 @@ var BarTap = {
     }
   },
 
-  getInfoFromHistory : function(aURI)
-  {
+  getInfoFromHistory: function(aURI) {
     var history = Cc["@mozilla.org/browser/nav-history-service;1"]
                     .getService(Ci.nsINavHistoryService);
 
@@ -154,4 +147,5 @@ var BarTap = {
   }
 
 };
+
 window.addEventListener("DOMContentLoaded", BarTap, false);
