@@ -1,10 +1,15 @@
 var BarTap = {
 
+  mPrefs: Cc['@mozilla.org/preferences-service;1']
+          .getService(Ci.nsIPrefService).getBranch(null),
+
   handleEvent: function(aEvent) {
     window.removeEventListener("DOMContentLoaded", this, false);
     this.initTabBrowser();
   },
 
+  /* Monkey patch our way into the tab browser.  This is by far the most
+     efficient but also ugliest way :\ */
   initTabBrowser: function() {
     var tabbrowser = document.getElementById("content");
     eval('tabbrowser.mTabProgressListener = '+tabbrowser.mTabProgressListener.toSource().replace(
@@ -19,17 +24,17 @@ var BarTap = {
 
     eval('tabbrowser.addTab = '+tabbrowser.addTab.toSource().replace(
         'b.loadURIWithFlags(aURI, flags, aReferrerURI, aCharset, aPostData)',
-        'BarTap.backUpNewTabArgs(t, b, aURI, flags, aReferrerURI, aCharset, aPostData); $&'
+        'BarTap.writeBarTap(t, b, aURI, flags, aReferrerURI, aCharset, aPostData); $&'
     ));
   },
 
-  onTabStateChange: function(aTab) {
-    if (aTab.getAttribute("ontap") != "true")
-      return false;
+  /* Called when the browser wants to load stuff into a tab. */
+  onTabStateChange: function(tab) {
+    if (tab.getAttribute("ontap") != "true") {
+      return;
+    }
 
-    /* We need these here because they leak into the
-       event listener below. */
-    var tab = aTab;
+    /* We need these here because they leak into the event listener below. */
     var browser = aTab.linkedBrowser;
     var history = browser.webNavigation.sessionHistory;
     var bartap = browser.getAttribute("bartap");
@@ -56,9 +61,8 @@ var BarTap = {
     }
 
     if (gotouri) {
-      /* See if we have title, favicon in stock for it.
-         This should definitely work for restored tabs
-         as they're in the history database. */
+      /* See if we have title, favicon in stock for it. This should definitely
+         work for restored tabs as they're in the history database. */
       let info = this.getInfoFromHistory(gotouri);
       if (info) {
         tab.setAttribute("image", info.icon);
@@ -94,22 +98,18 @@ var BarTap = {
           browser.loadURI(browser.userTypedValue);
         }
       }, false);
-
-    return true;
   },
 
-  onTabSelect: function(aTab) {
-      if (aTab.getAttribute("ontap") == "true") {
-        var evt = document.createEvent("Event");
-        evt.initEvent("BarTapLoad", true, true);
-        aTab.linkedBrowser.dispatchEvent(evt);
-      }
+  onTabSelect: function(tab) {
+    if (tab.getAttribute("ontap") != "true") {
+      return;
+    }
+    var evt = document.createEvent("Event");
+    evt.initEvent("BarTapLoad", true, true);
+    tab.linkedBrowser.dispatchEvent(evt);
   },
 
-  mPrefs: Cc['@mozilla.org/preferences-service;1']
-          .getService(Ci.nsIPrefService).getBranch(null),
-
-  backUpNewTabArgs: function(aTab, aBrowser, aURI, aFlags, aReferrerURI, aCharset, aPostData) {
+  writeBarTap: function(aTab, aBrowser, aURI, aFlags, aReferrerURI, aCharset, aPostData) {
     if ((aURI && this.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) ||
         (!aURI && this.mPrefs.getBoolPref("extensions.bartap.tapRestoredTabs"))) {
       let bartap = "";
