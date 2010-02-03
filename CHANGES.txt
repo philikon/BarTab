@@ -5,6 +5,11 @@
   duplication to zero and improves compatibility with other
   extensions.  Much thanks to SHIMODA Hiroshi for the patch.
 
+* Use the 'SSTabRestoring' event from the nsISessionStore service to
+  hijack restored tabs.  This should improve compatibility with other
+  extensions that use tabbrowser.addTab().  Thanks to Masahal for the
+  suggestions.
+
 
 1.0.1 (2010-01-31)
 ------------------

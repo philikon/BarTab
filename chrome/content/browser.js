@@ -3,15 +3,25 @@ var BarTap = {
   mPrefs: Cc['@mozilla.org/preferences-service;1']
           .getService(Ci.nsIPrefService).getBranch(null),
 
-  handleEvent: function(aEvent) {
-    window.removeEventListener("DOMContentLoaded", this, false);
-    this.initTabBrowser();
+  handleEvent: function(event) {
+    switch (event.type) {
+    case 'DOMContentLoaded':
+      this.init();
+      return;
+    case 'SSTabRestoring':
+      this.onTabRestoring(event);
+      return;
+    }
   },
 
-  /* Monkey patch our way into the tab browser.  This is by far the most
-     efficient but also ugliest way :\ */
-  initTabBrowser: function() {
-    var tabbrowser = document.getElementById("content");
+  init: function() {
+    window.removeEventListener("DOMContentLoaded", this, false);
+    var tabbrowser = this.tabbrowser = document.getElementById("content");
+    this.tabbrowser.addEventListener("SSTabRestoring", this, false);
+
+    /* Monkey patch our way into the tab browser.  This is by far the most
+       efficient but also ugliest way :\ */
+
     eval('tabbrowser.mTabProgressListener = '+tabbrowser.mTabProgressListener.toSource().replace(
         /\{(this.mTab.setAttribute\("busy", "true"\);[^\}]+)\}/,
         'if (!BarTap.onTabStateChange(this.mTab)) { $1 }'
@@ -104,14 +114,16 @@ var BarTap = {
     if (tab.getAttribute("ontap") != "true") {
       return;
     }
-    var evt = document.createEvent("Event");
-    evt.initEvent("BarTapLoad", true, true);
-    tab.linkedBrowser.dispatchEvent(evt);
+    let event = document.createEvent("Event");
+    event.initEvent("BarTapLoad", true, true);
+    tab.linkedBrowser.dispatchEvent(event);
   },
 
+  /* Called when a tab is opened with a new URI (e.g. by opening a link in
+     a new tab.) Stores the parameters on the tab so that 'onTabStateChange'
+     can carry out the action later. */
   writeBarTap: function(aTab, aBrowser, aURI, aFlags, aReferrerURI, aCharset, aPostData) {
-    if ((aURI && this.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) ||
-        (!aURI && this.mPrefs.getBoolPref("extensions.bartap.tapRestoredTabs"))) {
+    if (aURI && this.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) {
       let bartap = "";
       if (aURI) {
         bartap = JSON.stringify({
@@ -125,6 +137,20 @@ var BarTap = {
       aTab.setAttribute("ontap", "true");
       aBrowser.setAttribute("bartap", bartap);
     }
+  },
+
+  /* Listens to the 'SSTabRestoring' event from the nsISessionStore service
+     and puts a marker on restored tabs. */
+  onTabRestoring: function(event) {
+    if (!this.mPrefs.getBoolPref("extensions.bartap.tapRestoredTabs")) {
+      return;
+    }
+    let tab = event.originalTarget;
+    if (tab === gBrowser.selectedTab) {
+      return;
+    }
+    tab.setAttribute("ontap", "true");
+    tab.linkedBrowser.setAttribute("bartap", "");
   },
 
   getInfoFromHistory: function(aURI) {
