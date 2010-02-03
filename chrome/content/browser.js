@@ -45,7 +45,7 @@ var BarTap = {
     }
 
     /* We need these here because they leak into the event listener below. */
-    var browser = aTab.linkedBrowser;
+    var browser = tab.linkedBrowser;
     var history = browser.webNavigation.sessionHistory;
     var bartap = browser.getAttribute("bartap");
     var gotoindex;
