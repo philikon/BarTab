@@ -2,21 +2,22 @@ var BarTap = {
 
   handleEvent: function(aEvent) {
     window.removeEventListener("DOMContentLoaded", this, false);
-    this.initTabBrowser(document.getElementById("content"));
+    this.initTabBrowser();
   },
 
-  initTabBrowser: function(aTabBrowser) {
-    eval('aTabBrowser.mTabProgressListener = '+aTabBrowser.mTabProgressListener.toSource().replace(
+  initTabBrowser: function() {
+    var tabbrowser = document.getElementById("content");
+    eval('tabbrowser.mTabProgressListener = '+tabbrowser.mTabProgressListener.toSource().replace(
         /\{(this.mTab.setAttribute\("busy", "true"\);[^\}]+)\}/,
         'if (!BarTap.onTabStateChange(this.mTab)) { $1 }'
     ));
 
-    eval('aTabBrowser.updateCurrentBrowser = '+aTabBrowser.updateCurrentBrowser.toSource().replace(
+    eval('tabbrowser.updateCurrentBrowser = '+tabbrowser.updateCurrentBrowser.toSource().replace(
         'newBrowser.setAttribute("type", "content-primary")',
         'BarTap.onTabSelect(this.selectedTab); $&'
     ));
 
-    eval('aTabBrowser.addTab = '+aTabBrowser.addTab.toSource().replace(
+    eval('tabbrowser.addTab = '+tabbrowser.addTab.toSource().replace(
         'b.loadURIWithFlags(aURI, flags, aReferrerURI, aCharset, aPostData)',
         'BarTap.backUpNewTabArgs(t, b, aURI, flags, aReferrerURI, aCharset, aPostData); $&'
     ));
