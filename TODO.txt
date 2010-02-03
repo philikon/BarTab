@@ -3,3 +3,12 @@
 * pause icon for tapped tabs?
 
 * context menu item on tapped tabs: load content
+
+* hook into SSTab* events from nsSessionStore.js rather than modifying
+  tabbrowser.addTab()?
+
+* suggestion from idrugoy@gmail.com: optionally allow tabs to load in
+  background one by one, 20 seconds or so after restart.
+
+* suggestion from masahal08@yahoo.co.jp: optino that will prevent your
+  favourite/most used/specific tabs to be put on tap.
