@@ -1,5 +1,5 @@
-1.1 (XXX)
----------
+1.1 (2010-02-04)
+----------------
 
 * No longer install a custom tabbrowser binding.  This reduces code
   duplication to zero and improves compatibility with other
@@ -9,6 +9,9 @@
   hijack restored tabs.  This should improve compatibility with other
   extensions that use tabbrowser.addTab().  Thanks to Masahal for the
   suggestions.
+
+* Moved preferences out of the horrible Add-on Manager UI and into
+  Firefox's Tab preference pane.
 
 
 1.0.1 (2010-01-31)
