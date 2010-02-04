@@ -154,7 +154,6 @@ var BarTap = {
       return;
     }
     tab.setAttribute("ontap", "true");
-    tab.linkedBrowser.setAttribute("bartap", "");
   },
 
   /* Get information about a URI from the history service,
