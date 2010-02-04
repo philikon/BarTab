@@ -4,9 +4,6 @@
 
 * context menu item on tapped tabs: load content
 
-* hook into SSTab* events from nsSessionStore.js rather than modifying
-  tabbrowser.addTab()?
-
 * suggestion from idrugoy@gmail.com: optionally allow tabs to load in
   background one by one, 20 seconds or so after restart.
 
