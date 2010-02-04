@@ -153,6 +153,8 @@ var BarTap = {
     tab.linkedBrowser.setAttribute("bartap", "");
   },
 
+  /* Get information about a URI from the history service,
+     e.g. title, favicon, ... */
   getInfoFromHistory: function(aURI) {
     var history = Cc["@mozilla.org/browser/nav-history-service;1"]
                     .getService(Ci.nsINavHistoryService);
