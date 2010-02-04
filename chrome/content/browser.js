@@ -16,11 +16,16 @@ var BarTap = {
 
   init: function() {
     window.removeEventListener("DOMContentLoaded", this, false);
-    var tabbrowser = this.tabbrowser = document.getElementById("content");
-    this.tabbrowser.addEventListener("SSTabRestoring", this, false);
+    window.addEventListener("SSTabRestoring", this, false);
+    let tabbrowser = document.getElementById("content");
+    this.initTabBrowser(tabbrowser);
+  },
 
-    /* Monkey patch our way into the tab browser.  This is by far the most
-       efficient but also ugliest way :\ */
+  /* Monkey patch our way into the tab browser.  This is by far the most
+     efficient but also ugliest way :\
+     This is deliberately its own method so that extensions that have other
+     tabbrowsers can call it. */
+  initTabBrowser: function(tabbrowser) {
 
     eval('tabbrowser.mTabProgressListener = '+tabbrowser.mTabProgressListener.toSource().replace(
         /\{(this.mTab.setAttribute\("busy", "true"\);[^\}]+)\}/,
@@ -150,7 +155,7 @@ var BarTap = {
       return;
     }
     let tab = event.originalTarget;
-    if (tab === this.tabbrowser.selectedTab) {
+    if (tab.selected) {
       return;
     }
     tab.setAttribute("ontap", "true");
