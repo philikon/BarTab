@@ -146,7 +146,7 @@ var BarTap = {
       return;
     }
     let tab = event.originalTarget;
-    if (tab === gBrowser.selectedTab) {
+    if (tab === this.tabbrowser.selectedTab) {
       return;
     }
     tab.setAttribute("ontap", "true");
