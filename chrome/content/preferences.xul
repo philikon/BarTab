@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://bartap/locale/options.dtd">
+<overlay id="bartap-preferences-overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <prefpane id="paneTabs">
+
+    <preferences>
+      <preference id="extensions.bartap.tapRestoredTabs"
+                  name="extensions.bartap.tapRestoredTabs"
+                  type="bool" />
+      <preference id="extensions.bartap.tapBackgroundTabs"
+                  name="extensions.bartap.tapBackgroundTabs"
+                  type="bool" />
+    </preferences>
+
+    <groupbox id="barTapGroup">
+      <caption label="&group.label;"/>
+
+    <hbox align="center">
+      <label value="&restoredTabs.label;"
+             accesskey="&restoredTabs.accesskey;"
+             control="menuRestoredTabs" />
+      <spacer flex="1" />
+      <menulist id="menuRestoredTabs"
+                preference="extensions.bartap.tapRestoredTabs">
+        <menupopup>
+          <menuitem label="&loadTabs.label;" value="false"/>
+          <menuitem label="&putOnTap.label;" value="true"/>
+        </menupopup>
+      </menulist>
+    </hbox>
+
+    <separator class="thin"/>
+
+    <hbox align="center">
+      <label value="&backgroundTabs.label;"
+             accesskey="&backgroundTabs.accesskey;"
+             control="menuBackgroundTabs" />
+      <spacer flex="1" />
+      <menulist id="menuBackgroundTabs"
+                preference="extensions.bartap.tapBackgroundTabs">
+        <menupopup>
+          <menuitem label="&loadTabs.label;" value="false"/>
+          <menuitem label="&putOnTap.label;" value="true"/>
+        </menupopup>
+      </menulist>
+    </hbox>
+
+    </groupbox>
+
+  </prefpane>
+</overlay>

@@ -2,7 +2,8 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <!DOCTYPE prefwindow SYSTEM "chrome://bartap/locale/options.dtd">
 <prefwindow id="bartap-preferences"
-            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" title="&prefwindow.title;">
+            title="&prefwindow.title;"
+            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <prefpane id="bartap-prefpane" label="&prefpane.title;">
     <preferences>
       <preference id="extensions.bartap.tapRestoredTabs"
@@ -13,7 +14,7 @@
                   type="bool" />
     </preferences>
 
-    <groupbox id="mainGroup">
+    <groupbox id="barTapGroup">
       <caption label="&group.label;"/>
 
     <hbox align="center">
