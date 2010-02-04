@@ -38,10 +38,12 @@ var BarTap = {
     ));
   },
 
-  /* Called when the browser wants to load stuff into a tab. */
+  /* Called when the browser wants to load stuff into a tab.  If the tab has
+     been placed on tap, stop the loading and defer to an event listener.
+     Returns true of the tab has been tapped. */
   onTabStateChange: function(tab) {
     if (tab.getAttribute("ontap") != "true") {
-      return;
+      return false;
     }
 
     /* We need these here because they leak into the event listener below. */
@@ -108,6 +110,8 @@ var BarTap = {
           browser.loadURI(browser.userTypedValue);
         }
       }, false);
+
+    return true;
   },
 
   onTabSelect: function(tab) {
