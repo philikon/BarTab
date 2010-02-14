@@ -59,7 +59,39 @@ var BarTap = {
         }
       }
     };
+  },
 
+  /* Listens to the 'SSTabRestoring' event from the nsISessionStore service
+     and puts a marker on restored tabs. */
+  onTabRestoring: function(event) {
+    if (!this.mPrefs.getBoolPref("extensions.bartap.tapRestoredTabs")) {
+      return;
+    }
+    let tab = event.originalTarget;
+    if (tab.selected) {
+      return;
+    }
+    tab.setAttribute("ontap", "true");
+  },
+
+  /* Called when a tab is opened with a new URI (e.g. by opening a link in
+     a new tab.) Stores the parameters on the tab so that 'onTabStateChange'
+     can carry out the action later. */
+  writeBarTap: function(aTab, aBrowser, aURI, aFlags, aReferrerURI, aCharset, aPostData) {
+    if (aURI && this.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) {
+      let bartap = "";
+      if (aURI) {
+        bartap = JSON.stringify({
+          uri:      (aURI instanceof Ci.nsIURI) ? aURI.spec : aURI,
+          flags:    aFlags,
+          referrer: (aReferrerURI instanceof Ci.nsIURI) ? aReferrerURI.spec : aReferrerURI,
+          charset:  aCharset,
+          postdata: aPostData
+        });
+      }
+      aTab.setAttribute("ontap", "true");
+      aBrowser.setAttribute("bartap", bartap);
+    }
   },
 
   /* Called when the browser wants to load stuff into a tab.  If the tab has
@@ -160,39 +192,6 @@ var BarTap = {
     let event = document.createEvent("Event");
     event.initEvent("BarTapLoad", true, true);
     tab.linkedBrowser.dispatchEvent(event);
-  },
-
-  /* Called when a tab is opened with a new URI (e.g. by opening a link in
-     a new tab.) Stores the parameters on the tab so that 'onTabStateChange'
-     can carry out the action later. */
-  writeBarTap: function(aTab, aBrowser, aURI, aFlags, aReferrerURI, aCharset, aPostData) {
-    if (aURI && this.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) {
-      let bartap = "";
-      if (aURI) {
-        bartap = JSON.stringify({
-          uri:      (aURI instanceof Ci.nsIURI) ? aURI.spec : aURI,
-          flags:    aFlags,
-          referrer: (aReferrerURI instanceof Ci.nsIURI) ? aReferrerURI.spec : aReferrerURI,
-          charset:  aCharset,
-          postdata: aPostData
-        });
-      }
-      aTab.setAttribute("ontap", "true");
-      aBrowser.setAttribute("bartap", bartap);
-    }
-  },
-
-  /* Listens to the 'SSTabRestoring' event from the nsISessionStore service
-     and puts a marker on restored tabs. */
-  onTabRestoring: function(event) {
-    if (!this.mPrefs.getBoolPref("extensions.bartap.tapRestoredTabs")) {
-      return;
-    }
-    let tab = event.originalTarget;
-    if (tab.selected) {
-      return;
-    }
-    tab.setAttribute("ontap", "true");
   },
 
   /* Get information about a URI from the history service,
