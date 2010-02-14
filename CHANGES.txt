@@ -1,5 +1,5 @@
-1.2 (XXX)
----------
+1.2 (2010-02-14)
+----------------
 
 * Rename BarTap to BarTab.  Due to an instance of spontaneous dyslexia
   on my part, I confused 'tab' with 'tap'.  Of course I meant 'bar tab',
