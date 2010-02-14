@@ -84,16 +84,23 @@ var BarTap = {
         tab.setAttribute("image", info.icon);
         tab.label = info.title;
       } else {
-        /* Set a meaningful part of the URI as tab label */
-        let hostPort = gotouri.hostPort;
-        let path = gotouri.path;
-        if (hostPort.substr(0, 4) == "www.") {
-          hostPort = hostPort.substr(4);
+        try {
+          /* Set a meaningful part of the URI as tab label */
+          let hostPort = gotouri.hostPort;
+          let path = gotouri.path;
+          if (hostPort.substr(0, 4) == "www.") {
+            hostPort = hostPort.substr(4);
+          }
+          if (path == "/") {
+            path = "";
+          }
+          tab.label = hostPort + path;
+        } catch (ex) {
+          /* Most likely gotouri.hostPort and gotouri.path failed.
+             Let's handle this gracefully. */
+          tab.label = gotouri.spec;          
+          Components.utils.reportError(ex);
         }
-        if (path == "/") {
-          path = "";
-        }
-        tab.label = hostPort + path;
       }
     }
 
