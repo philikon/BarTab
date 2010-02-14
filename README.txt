@@ -11,5 +11,5 @@ BarTab intercepts when a tab is loaded in the background (e.g. after a
 browser restart) and will only load the content when the tab is
 actually visited.
 
-This extension is based on Firefox code and therefore released under
-the same license, the Mozilla Public License Version 1.1.
+This extension is under the same license as Firefox itself, the
+Mozilla Public License Version 1.1.
