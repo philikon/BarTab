@@ -7,6 +7,11 @@
 
 * Fix faulty behaviour with about: and chrome:// URLs
 
+* The "Reload Tab" and "Reload All Tabs" context menu items now work
+  as expected.  For tabs that are on your bar tab, they will cause the
+  tab contents to be loaded.  For all other tabs they will perform a
+  reload as usual.
+
 * Improve compatibility with the Split Brower add-on.
 
 * Improve conformity with Mozilla add-on guidelines by reducing the

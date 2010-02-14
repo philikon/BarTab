@@ -40,6 +40,26 @@ var BarTap = {
         'b.loadURIWithFlags(aURI, flags, aReferrerURI, aCharset, aPostData)',
         'BarTap.writeBarTap(t, b, aURI, flags, aReferrerURI, aCharset, aPostData); $&'
     ));
+
+    /* When the user wants one or all tabs to reload, do the right thing
+       in case it's tapped. */
+    tabbrowser.reloadTab = function(aTab) {
+      if (aTab.getAttribute("ontap") == "true") {
+        BarTap.loadTabContents(aTab);
+        return;
+      }
+      aTab.linkedBrowser.reload();
+    };
+    tabbrowser.reloadAllTabs = function() {
+      for (var i = 0; i < this.mTabs.length; i++) {
+        try {
+          this.reloadTab(this.mTabs[i]);
+        } catch (e) {
+          // ignore failure to reload so others will be reloaded
+        }
+      }
+    };
+
   },
 
   /* Called when the browser wants to load stuff into a tab.  If the tab has
@@ -128,6 +148,10 @@ var BarTap = {
     if (tab.getAttribute("ontap") != "true") {
       return;
     }
+    this.loadTabContents(tab);
+  },
+
+  loadTabContents: function(tab) {
     /* Remove marker so that we can proceed loading the browser contents or,
        in case of about:blank where there's no event handler, continue to
        function normally. */
