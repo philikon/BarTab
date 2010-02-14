@@ -1,9 +1,9 @@
-<!ENTITY prefwindow.title "BarTap preferences">
-<!ENTITY prefpane.title "BarTap preferences">
-<!ENTITY group.label "BarTap preferences">
+<!ENTITY prefwindow.title "BarTab preferences">
+<!ENTITY prefpane.title "BarTab preferences">
+<!ENTITY group.label "BarTab preferences">
 <!ENTITY restoredTabs.label "When restoring tabs from a previous session: ">
 <!ENTITY restoredTabs.accesskey "R">
 <!ENTITY backgroundTabs.label "When opening tabs in the background: ">
 <!ENTITY backgroundTabs.accesskey "B">
 <!ENTITY loadTabs.label "load them (Firefox default)">
-<!ENTITY putOnTap.label "put them on my tap">
+<!ENTITY putOnBarTab.label "put them on my bar tab">

@@ -1,9 +1,9 @@
-<!ENTITY prefwindow.title "BarTap 設定">
-<!ENTITY prefpane.title "BarTap 設定">
-<!ENTITY group.label "BarTap 設定">
+<!ENTITY prefwindow.title "BarTab 設定">
+<!ENTITY prefpane.title "BarTab 設定">
+<!ENTITY group.label "BarTab 設定">
 <!ENTITY restoredTabs.label "前回終了時のタブを表示する際: ">
 <!ENTITY restoredTabs.accesskey "R">
 <!ENTITY backgroundTabs.label "リンクから開かれて、まだ読んでいない新しいタブ: ">
 <!ENTITY backgroundTabs.accesskey "B">
 <!ENTITY loadTabs.label "読み込む (Firefox 既定)">
-<!ENTITY putOnTap.label "準備状態にしておく">
+<!ENTITY putOnBarTab.label "準備状態にしておく">

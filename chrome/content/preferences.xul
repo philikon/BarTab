@@ -26,7 +26,7 @@
                 preference="extensions.bartap.tapRestoredTabs">
         <menupopup>
           <menuitem label="&loadTabs.label;" value="false"/>
-          <menuitem label="&putOnTap.label;" value="true"/>
+          <menuitem label="&putOnBarTab.label;" value="true"/>
         </menupopup>
       </menulist>
     </hbox>
@@ -42,7 +42,7 @@
                 preference="extensions.bartap.tapBackgroundTabs">
         <menupopup>
           <menuitem label="&loadTabs.label;" value="false"/>
-          <menuitem label="&putOnTap.label;" value="true"/>
+          <menuitem label="&putOnBarTab.label;" value="true"/>
         </menupopup>
       </menulist>
     </hbox>

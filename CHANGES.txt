@@ -1,6 +1,10 @@
 1.2 (XXX)
 ---------
 
+* Rename BarTap to BarTab.  Due to an instance of spontaneous dyslexia
+  on my part, I confused 'tab' with 'tap'.  Of course I meant 'bar tab',
+  not the 'tap' that beer comes out of.
+
 * Improve compatibility with the Split Brower add-on.
 
 
