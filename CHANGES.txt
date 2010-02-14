@@ -7,6 +7,8 @@
 
 * Improve compatibility with the Split Brower add-on.
 
+* Added coaster logo.
+
 
 1.1 (2010-02-04)
 ----------------
