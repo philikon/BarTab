@@ -12,6 +12,9 @@
   tab contents to be loaded.  For all other tabs they will perform a
   reload as usual.
 
+* Fix faulty behaviour when tabs are opened in the background don't
+  have a referrer, e.g. when you open bookmarks in the background.
+
 * Improve compatibility with the Split Brower add-on.
 
 * Improve conformity with Mozilla add-on guidelines by reducing the

@@ -159,11 +159,14 @@ var BarTap = {
         browser.removeEventListener("BarTapLoad", arguments.callee, false);
 
         if (bartap) {
+          /* The referrer might be undefined. */
+          let referrer = bartap.referrer;
+          if (referrer) {
+            referrer = makeURI(referrer);
+          }
           /* Gotta love the inconsistency of this API */
-          browser.loadURIWithFlags(
-            bartap.uri, bartap.flags,
-            makeURI(bartap.referrer),
-            bartap.charset, bartap.postdata);
+          browser.loadURIWithFlags(bartap.uri, bartap.flags, referrer,
+                                   bartap.charset, bartap.postdata);
         } else if (history.count) {
           browser.webNavigation.gotoIndex(gotoindex);
         } else if (browser.userTypedValue) {
