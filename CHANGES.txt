@@ -5,6 +5,8 @@
   on my part, I confused 'tab' with 'tap'.  Of course I meant 'bar tab',
   not the 'tap' that beer comes out of.
 
+* Fix faulty behaviour with about: and chrome:// URLs
+
 * Improve compatibility with the Split Brower add-on.
 
 * Improve conformity with Mozilla add-on guidelines by reducing the

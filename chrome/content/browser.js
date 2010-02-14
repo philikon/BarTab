@@ -98,15 +98,13 @@ var BarTap = {
         } catch (ex) {
           /* Most likely gotouri.hostPort and gotouri.path failed.
              Let's handle this gracefully. */
-          tab.label = gotouri.spec;          
-          Components.utils.reportError(ex);
+          tab.label = gotouri.spec;
         }
       }
     }
 
     browser.addEventListener("BarTapLoad", function() {
         browser.removeEventListener("BarTapLoad", arguments.callee, false);
-        tab.removeAttribute("ontap");
 
         if (bartap) {
           /* Gotta love the inconsistency of this API */
@@ -130,6 +128,11 @@ var BarTap = {
     if (tab.getAttribute("ontap") != "true") {
       return;
     }
+    /* Remove marker so that we can proceed loading the browser contents or,
+       in case of about:blank where there's no event handler, continue to
+       function normally. */
+    tab.removeAttribute("ontap");
+
     let event = document.createEvent("Event");
     event.initEvent("BarTapLoad", true, true);
     tab.linkedBrowser.dispatchEvent(event);
