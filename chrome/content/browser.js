@@ -11,6 +11,9 @@ var BarTap = {
     case 'SSTabRestoring':
       this.onTabRestoring(event);
       return;
+    case 'TabSelect':
+      this.onTabSelect(event);
+      return;
     }
   },
 
@@ -21,20 +24,16 @@ var BarTap = {
     this.initTabBrowser(tabbrowser);
   },
 
-  /* Monkey patch our way into the tab browser.  This is by far the most
-     efficient but also ugliest way :\
-     This is deliberately its own method so that extensions that have other
-     tabbrowsers can call it. */
+  /* This is deliberately its own method so that extensions that have
+     other tabbrowsers can call it. */
   initTabBrowser: function(tabbrowser) {
+    tabbrowser.addEventListener('TabSelect', this, false);
 
+    /* Monkey patch our way into the tab browser.  This is by far the most
+       efficient but also ugliest way :\ */
     eval('tabbrowser.mTabProgressListener = '+tabbrowser.mTabProgressListener.toSource().replace(
         /\{(this.mTab.setAttribute\("busy", "true"\);[^\}]+)\}/,
         'if (!BarTap.onTabStateChange(this.mTab)) { $1 }'
-    ));
-
-    eval('tabbrowser.updateCurrentBrowser = '+tabbrowser.updateCurrentBrowser.toSource().replace(
-        'newBrowser.setAttribute("type", "content-primary")',
-        'BarTap.onTabSelect(this.selectedTab); $&'
     ));
 
     eval('tabbrowser.addTab = '+tabbrowser.addTab.toSource().replace(
@@ -119,7 +118,8 @@ var BarTap = {
     return true;
   },
 
-  onTabSelect: function(tab) {
+  onTabSelect: function(event) {
+    var tab = event.originalTarget;
     if (tab.getAttribute("ontap") != "true") {
       return;
     }

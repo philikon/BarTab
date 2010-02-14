@@ -7,6 +7,9 @@
 
 * Improve compatibility with the Split Brower add-on.
 
+* Improve conformity with Mozilla add-on guidelines by reducing the
+  usage of eval().
+
 * Added coaster logo.
 
 
