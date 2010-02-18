@@ -5,6 +5,8 @@
   no longer available from the Firefox preference dialog.  You'll now
   find them in the extension manager.
 
+* Added Polish translation.  Thanks to Grzglo Tech Blog.
+
 
 1.2 (2010-02-14)
 ----------------

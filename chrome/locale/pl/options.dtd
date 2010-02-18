@@ -1,0 +1,9 @@
+<!ENTITY prefwindow.title "Ustawienia BarTab">
+<!ENTITY prefpane.title "Ustawienia BarTab">
+<!ENTITY group.label "Ustawienia BarTab">
+<!ENTITY restoredTabs.label "Przywracając karty z poprzedniej sesji: ">
+<!ENTITY restoredTabs.accesskey "S">
+<!ENTITY backgroundTabs.label "Otwierając karty w tle: ">
+<!ENTITY backgroundTabs.accesskey "T">
+<!ENTITY loadTabs.label "ładuj zawartość (domyślnie)">
+<!ENTITY putOnBarTab.label "wstrzymaj ładowanie zawartości do otwarcia karty">
