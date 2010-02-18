@@ -1,6 +1,9 @@
 1.3 (XXX)
 ---------
 
+* To comply with Mozilla's Add-on guidelines, BarTab preferences are
+  no longer available from the Firefox preference dialog.  You'll now
+  find them in the extension manager.
 
 
 1.2 (2010-02-14)

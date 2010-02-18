@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE overlay SYSTEM "chrome://bartap/locale/options.dtd">
-<overlay id="bartap-preferences-overlay"
-         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <prefpane id="paneTabs">
+<!DOCTYPE prefwindow SYSTEM "chrome://bartap/locale/options.dtd">
+<prefwindow id="bartap-preferences"
+            title="&prefwindow.title;"
+            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <prefpane id="bartap-prefpane" label="&prefpane.title;">
 
     <preferences>
       <preference id="extensions.bartap.tapRestoredTabs"
@@ -50,4 +51,5 @@
     </groupbox>
 
   </prefpane>
-</overlay>
+
+</prefwindow>
