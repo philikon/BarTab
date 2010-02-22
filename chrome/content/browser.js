@@ -68,7 +68,7 @@ var BarTap = {
     putontap.setAttribute('id', 'context_putOnTap');
     putontap.setAttribute('label', 'Put on Bar Tab'); //XXX TODO l10n
     putontap.setAttribute('tbattr', 'tabbrowser-multiple');
-    putontap.setAttribute('oncommand', "var tabbrowser = this.parentNode.parentNode.parentNode.parentNode; BarTap.putOnTap(tabbrowser.mContextTab);");
+    putontap.setAttribute('oncommand', "var tabbrowser = this.parentNode.parentNode.parentNode.parentNode; BarTap.putOnTap(tabbrowser.mContextTab, tabbrowser);");
     popup.insertBefore(putontap, closetab);
 
     /* Insert context menu item for putting all tabs but the current on
@@ -77,7 +77,7 @@ var BarTap = {
     putallontap.setAttribute('id', 'context_putAllOnTapBut');
     putallontap.setAttribute('label', 'Put Other Tabs on Bar Tab'); //XXX TODO l10n
     putallontap.setAttribute('tbattr', 'tabbrowser-multiple');
-    putallontap.setAttribute('oncommand', "var tabbrowser = this.parentNode.parentNode.parentNode.parentNode; BarTap.putAllOnTapBut(tabbrowser.mContextTab);");
+    putallontap.setAttribute('oncommand', "var tabbrowser = this.parentNode.parentNode.parentNode.parentNode; BarTap.putAllOnTapBut(tabbrowser.mContextTab, tabbrowser);");
     popup.insertBefore(putallontap, closetab);
 
   },
@@ -218,14 +218,17 @@ var BarTap = {
     tab.linkedBrowser.dispatchEvent(event);
   },
 
-  putOnTap: function(aTab) {
+  putOnTap: function(aTab, aTabBrowser) {
     if (aTab.getAttribute("ontap") == "true") {
       return;
     }
+    if (!aTabBrowser) {
+      aTabBrowser = this.getTabBrowserForTab(aTab);
+    }
+
     /* If you're putting the current tab on your bar tab, you'll invariably
        be switched to another tab.  We have to live with this for now. */
-    var tabbrowser = this.getTabBrowserForTab(aTab);
-    var selected = tabbrowser.selectedTab;
+    var selected = aTabBrowser.selectedTab;
     if (selected == aTab) {
       selected = null;
     }
@@ -233,24 +236,26 @@ var BarTap = {
     var sessionstore = Components.classes["@mozilla.org/browser/sessionstore;1"]
                        .getService(Components.interfaces.nsISessionStore);
     var state = sessionstore.getTabState(aTab);
-    var newtab = tabbrowser.addTab();
-    tabbrowser.moveTabTo(newtab, aTab._tPos);
+    var newtab = aTabBrowser.addTab();
+    aTabBrowser.moveTabTo(newtab, aTab._tPos);
     sessionstore.setTabState(newtab, state);
     /* Close the original tab.  We're taking the long way round to ensure the
        nsISessionStore service won't save this in the recently closed tabs. */
-    tabbrowser._endRemoveTab(tabbrowser._beginRemoveTab(aTab, true, null, false));
+    aTabBrowser._endRemoveTab(aTabBrowser._beginRemoveTab(aTab, true, null, false));
 
     if (selected) {
-      tabbrowser.selectedTab = selected;
+      aTabBrowser.selectedTab = selected;
     }
   },
 
-  putAllOnTapBut: function(aTab) {
-    var tabbrowser = this.getTabBrowserForTab(aTab);
-    for (var i=0; i < tabbrowser.mTabs.length; i++) {
-      let tab = tabbrowser.mTabs[i];
+  putAllOnTapBut: function(aTab, aTabBrowser) {
+    if (!aTabBrowser) {
+      aTabBrowser = this.getTabBrowserForTab(aTab);
+    }
+    for (var i=0; i < aTabBrowser.mTabs.length; i++) {
+      let tab = aTabBrowser.mTabs[i];
       if (tab != aTab) {
-        this.putOnTap(tab);
+        this.putOnTap(tab, aTabBrowser);
       }
     }
   },
