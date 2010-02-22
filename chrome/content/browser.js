@@ -228,7 +228,6 @@ var BarTap = {
     /* Close the original tab.  We're taking the long way round to ensure the
        nsISessionStore service won't save this in the recently closed tabs. */
     tabbrowser._endRemoveTab(tabbrowser._beginRemoveTab(tab, true, null, false));
-    tabbrowser.removeTab(tab);
 
     if (selected) {
       tabbrowser.selectedTab = selected;
