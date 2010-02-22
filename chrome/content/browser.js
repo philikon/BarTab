@@ -59,6 +59,16 @@ var BarTap = {
         }
       }
     };
+
+    /* Insert context menu item for putting tabs on your bar tab */
+    let popup = document.getAnonymousElementByAttribute(tabbrowser, "anonid", "tabContextMenu");
+    let menuitem = document.createElement('menuitem');
+    menuitem.setAttribute('id', 'context_putOnTap');
+    menuitem.setAttribute('label', 'Put on bar tab'); //XXX TODO l10n
+    menuitem.setAttribute('tbattr', 'tabbrowser-multiple');
+    menuitem.setAttribute('oncommand', "var tabbrowser = this.parentNode.parentNode.parentNode.parentNode; BarTap.putOnTap(tabbrowser.mContextTab);");
+    let closetab = document.getAnonymousElementByAttribute(tabbrowser, "id", "context_closeTab");
+    popup.insertBefore(menuitem, closetab);
   },
 
   /* Listens to the 'SSTabRestoring' event from the nsISessionStore service
@@ -197,6 +207,24 @@ var BarTap = {
     tab.linkedBrowser.dispatchEvent(event);
   },
 
+  putOnTap: function(tab) {
+    if (tab.getAttribute("ontap") == "true") {
+      return;
+    }
+    var sessionstore = Components.classes["@mozilla.org/browser/sessionstore;1"]
+                       .getService(Components.interfaces.nsISessionStore);
+    var state = sessionstore.getTabState(tab);
+    var tabbrowser = this.getTabBrowserForTab(tab);
+    var newtab = tabbrowser.addTab();
+    tabbrowser.moveTabTo(newtab, tab._tPos);
+    sessionstore.setTabState(newtab, state);
+    /* TODO: The tab shouldn't appear in the session store's tab history
+       a.k.a. list of recently closed tabs. */
+    tabbrowser.removeTab(tab);
+    /* TODO: The tab that was selected before that should be selected again.
+       What if it is the tab we just put on tab? */
+  },
+
   /* Get information about a URI from the history service,
      e.g. title, favicon, ... */
   getInfoFromHistory: function(aURI) {
@@ -217,6 +245,13 @@ var BarTap = {
       return null;
     }
     return result.root.getChild(0);
+  },
+
+  getTabBrowserForTab: function(tab) {
+    while (tab.localName != 'tabbrowser') {
+      tab = tab.parentNode;
+    }
+    return tab;
   }
 
 };
