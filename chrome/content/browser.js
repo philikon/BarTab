@@ -218,8 +218,9 @@ var BarTap = {
     var newtab = tabbrowser.addTab();
     tabbrowser.moveTabTo(newtab, tab._tPos);
     sessionstore.setTabState(newtab, state);
-    /* TODO: The tab shouldn't appear in the session store's tab history
-       a.k.a. list of recently closed tabs. */
+    /* Close the original tab.  We're taking the long way round to ensure the
+       nsISessionStore service won't save this in the recently closed tabs. */
+    tabbrowser._endRemoveTab(tabbrowser._beginRemoveTab(tab, true, null, false));
     tabbrowser.removeTab(tab);
     /* TODO: The tab that was selected before that should be selected again.
        What if it is the tab we just put on tab? */
