@@ -211,10 +211,17 @@ var BarTap = {
     if (tab.getAttribute("ontap") == "true") {
       return;
     }
+    /* If you're putting the current tab on your bar tab, you'll invariably
+       be switched to another tab.  We have to live with this for now. */
+    var tabbrowser = this.getTabBrowserForTab(tab);
+    var selected = tabbrowser.selectedTab;
+    if (selected == tab) {
+      selected = null;
+    }
+
     var sessionstore = Components.classes["@mozilla.org/browser/sessionstore;1"]
                        .getService(Components.interfaces.nsISessionStore);
     var state = sessionstore.getTabState(tab);
-    var tabbrowser = this.getTabBrowserForTab(tab);
     var newtab = tabbrowser.addTab();
     tabbrowser.moveTabTo(newtab, tab._tPos);
     sessionstore.setTabState(newtab, state);
@@ -222,8 +229,10 @@ var BarTap = {
        nsISessionStore service won't save this in the recently closed tabs. */
     tabbrowser._endRemoveTab(tabbrowser._beginRemoveTab(tab, true, null, false));
     tabbrowser.removeTab(tab);
-    /* TODO: The tab that was selected before that should be selected again.
-       What if it is the tab we just put on tab? */
+
+    if (selected) {
+      tabbrowser.selectedTab = selected;
+    }
   },
 
   /* Get information about a URI from the history service,
