@@ -63,7 +63,7 @@
 1.0.1 (2010-01-31)
 ------------------
 
-* Added Japanese translation.  Thanks to ddry.
+* Added Japanese translation.  Thanks to drry.
 
 * Added German translation.
 
