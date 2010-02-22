@@ -60,15 +60,26 @@ var BarTap = {
       }
     };
 
-    /* Insert context menu item for putting tabs on your bar tab */
     let popup = document.getAnonymousElementByAttribute(tabbrowser, "anonid", "tabContextMenu");
-    let menuitem = document.createElement('menuitem');
-    menuitem.setAttribute('id', 'context_putOnTap');
-    menuitem.setAttribute('label', 'Put on bar tab'); //XXX TODO l10n
-    menuitem.setAttribute('tbattr', 'tabbrowser-multiple');
-    menuitem.setAttribute('oncommand', "var tabbrowser = this.parentNode.parentNode.parentNode.parentNode; BarTap.putOnTap(tabbrowser.mContextTab);");
     let closetab = document.getAnonymousElementByAttribute(tabbrowser, "id", "context_closeTab");
-    popup.insertBefore(menuitem, closetab);
+
+    /* Insert context menu item for putting tabs on your bar tab */
+    let putontap = document.createElement('menuitem');
+    putontap.setAttribute('id', 'context_putOnTap');
+    putontap.setAttribute('label', 'Put on Bar Tab'); //XXX TODO l10n
+    putontap.setAttribute('tbattr', 'tabbrowser-multiple');
+    putontap.setAttribute('oncommand', "var tabbrowser = this.parentNode.parentNode.parentNode.parentNode; BarTap.putOnTap(tabbrowser.mContextTab);");
+    popup.insertBefore(putontap, closetab);
+
+    /* Insert context menu item for putting all tabs but the current on
+       on your bar tab */
+    let putallontap = document.createElement('menuitem');
+    putallontap.setAttribute('id', 'context_putAllOnTapBut');
+    putallontap.setAttribute('label', 'Put Other Tabs on Bar Tab'); //XXX TODO l10n
+    putallontap.setAttribute('tbattr', 'tabbrowser-multiple');
+    putallontap.setAttribute('oncommand', "var tabbrowser = this.parentNode.parentNode.parentNode.parentNode; BarTap.putAllOnTapBut(tabbrowser.mContextTab);");
+    popup.insertBefore(putallontap, closetab);
+
   },
 
   /* Listens to the 'SSTabRestoring' event from the nsISessionStore service
@@ -231,6 +242,16 @@ var BarTap = {
 
     if (selected) {
       tabbrowser.selectedTab = selected;
+    }
+  },
+
+  putAllOnTapBut: function(aTab) {
+    var tabbrowser = this.getTabBrowserForTab(aTab);
+    for (var i=0; i < tabbrowser.mTabs.length; i++) {
+      let tab = tabbrowser.mTabs[i];
+      if (tab != aTab) {
+        this.putOnTap(tab);
+      }
     }
   },
 
