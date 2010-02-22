@@ -218,7 +218,7 @@ var BarTap = {
     tab.linkedBrowser.dispatchEvent(event);
   },
 
-  putOnTap: function(aTab, aTabBrowser) {
+  putOnTap: function(aTab, aTabBrowser, aDontSelect) {
     if (aTab.getAttribute("ontap") == "true") {
       return;
     }
@@ -230,6 +230,9 @@ var BarTap = {
        be switched to another tab.  We have to live with this for now. */
     var selected = aTabBrowser.selectedTab;
     if (selected == aTab) {
+      selected = null;
+    }
+    if (aDontSelect) {
       selected = null;
     }
 
@@ -252,12 +255,14 @@ var BarTap = {
     if (!aTabBrowser) {
       aTabBrowser = this.getTabBrowserForTab(aTab);
     }
+    var selected = aTabBrowser.selectedTab;
     for (var i=0; i < aTabBrowser.mTabs.length; i++) {
       let tab = aTabBrowser.mTabs[i];
       if (tab != aTab) {
-        this.putOnTap(tab, aTabBrowser);
+        this.putOnTap(tab, aTabBrowser, true);
       }
     }
+    aTabBrowser.selectedTab = aTab;
   },
 
   /* Get information about a URI from the history service,
