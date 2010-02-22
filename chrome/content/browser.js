@@ -1,7 +1,7 @@
 var BarTap = {
 
   mPrefs: Components.classes['@mozilla.org/preferences-service;1']
-          .getService(Ci.nsIPrefService).getBranch(null),
+          .getService(Components.interfaces.nsIPrefService).getBranch(null),
 
   handleEvent: function(event) {
     switch (event.type) {
