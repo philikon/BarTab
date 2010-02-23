@@ -6,4 +6,4 @@
 <!ENTITY backgroundTabs.label "リンクから開かれて、まだ読んでいない新しいタブ: ">
 <!ENTITY backgroundTabs.accesskey "B">
 <!ENTITY loadTabs.label "読み込む (Firefox 既定)">
-<!ENTITY putOnBarTab.label "準備状態にしておく">
+<!ENTITY putOnBarTab.label "用意しておく">
