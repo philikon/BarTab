@@ -7,3 +7,11 @@
 <!ENTITY backgroundTabs.accesskey "B">
 <!ENTITY loadTabs.label "direkt laden (Standardeinstellung)">
 <!ENTITY putOnBarTab.label "anschreiben lassen">
+<!ENTITY tapAfterTimeout.label "Wenn ein Tab nicht benutzt wird, ">
+<!ENTITY tapAfterTimeout.accesskey "T">
+<!ENTITY doNothing.label "nichts machen">
+<!ENTITY putOnBarTapAfter.label "anschreiben lassen nach">
+<!ENTITY timeoutSecs.label "Sek.">
+<!ENTITY timeoutMins.label "Min.">
+<!ENTITY timeoutHours.label "Std.">
+<!ENTITY timeoutDays.label "Tagen">

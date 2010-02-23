@@ -7,7 +7,7 @@
 <!ENTITY backgroundTabs.accesskey "B">
 <!ENTITY loadTabs.label "load them (Firefox default)">
 <!ENTITY putOnBarTab.label "put them on my bar tab">
-<!ENTITY tapAfterTimeout.label "When a tab becomes inactive: ">
+<!ENTITY tapAfterTimeout.label "When I don't visit a tab: ">
 <!ENTITY tapAfterTimeout.accesskey "T">
 <!ENTITY doNothing.label "do nothing">
 <!ENTITY putOnBarTapAfter.label "put it on my bar tap after">
