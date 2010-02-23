@@ -46,6 +46,9 @@ var BarTap = {
     tabbrowser.reloadTab = function(aTab) {
       if (aTab.getAttribute("ontap") == "true") {
         BarTap.loadTabContents(aTab);
+        if (!aTab.selected) {
+          tabbrowser.BarTapTimer.startTimer(aTab);
+        }
         return;
       }
       aTab.linkedBrowser.reload();
