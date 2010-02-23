@@ -11,8 +11,8 @@
     }
 
     function onTimeoutChange(menuitem) {
-      Components.utils.reportError(menuitem.value);
       var timerWidgets = document.getElementById('timerWidgets');
+      //XXX TODO use collapse so that space is reserved
       timerWidgets.hidden = (menuitem.value != "true");
     }
   </script>
