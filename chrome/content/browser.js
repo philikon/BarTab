@@ -364,7 +364,7 @@ BarTapTimer.prototype = {
         /* The timer will be removed automatically since BarTap.putOnTab
            will close and replace the original tab. */
         BarTap.putOnTap(aTab, self.tabbrowser);
-        }, secs*1000);
+      }, secs*1000);
   },
 
   clearTimer: function(aTab) {
