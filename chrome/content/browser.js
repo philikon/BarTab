@@ -60,6 +60,9 @@ var BarTap = {
       }
     };
 
+    /* Initialize timer */
+    tabbrowser.BarTapTimer = new BarTapTimer(tabbrowser);
+
     /* Insert context menu items for putting tabs back on your bar tab */
 
     let popup = document.getAnonymousElementByAttribute(tabbrowser, "anonid", "tabContextMenu");
@@ -298,3 +301,54 @@ var BarTap = {
 };
 
 window.addEventListener("DOMContentLoaded", BarTap, false);
+
+
+function BarTapTimer(tabbrowser) {
+  this.tabbrowser = tabbrowser;
+  tabbrowser.addEventListener('TabSelect', this, false);
+
+  this.previousTab = null;
+  this.selectedTab = tabbrowser.selectedTab;
+}
+
+BarTapTimer.prototype = {
+
+  handleEvent: function(event) {
+    switch (event.type) {
+    case 'TabSelect':
+      this.onTabSelect(event);
+      return;
+    }
+  },
+
+  onTabSelect: function(event) {
+    this.previousTab = this.selectedTab;
+    this.selectedTab = event.originalTarget;
+
+    this.startTimer(this.previousTab);
+    this.clearTimer(this.selectedTab);
+  },
+
+  startTimer: function(aTab) {
+    if (!BarTap.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
+      return;
+    }
+
+    if (aTab._barTapTimer) {
+      this.clearTimer(aTab);
+    }
+    let secs = BarTap.mPrefs.getIntPref("extensions.bartap.timeoutHours")*3600
+             + BarTap.mPrefs.getIntPref("extensions.bartap.timeoutMins")*60;
+    /* Allow 'this' to leak into the inline function */
+    var self = this;
+    aTab._barTapTimer = window.setTimeout(function() {
+        BarTap.putOnTap(aTab, self.tabbrowser);
+        self.clearTimer(aTab);
+        }, secs*1000);
+  },
+
+  clearTimer: function(aTab) {
+    window.clearTimeout(aTab._barTapTimer);
+    aTab._barTapTimer = null;
+  }
+}

@@ -3,7 +3,20 @@
 <!DOCTYPE prefwindow SYSTEM "chrome://bartap/locale/options.dtd">
 <prefwindow id="bartap-preferences"
             title="&prefwindow.title;"
-            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+            onload="onLoad();">
+  <script type="application/javascript">
+    function onLoad() {
+      onTimeoutChange(document.getElementById('tapAfterTimeout').selectedItem);
+    }
+
+    function onTimeoutChange(menuitem) {
+      Components.utils.reportError(menuitem.value);
+      var timerWidgets = document.getElementById('timerWidgets');
+      timerWidgets.hidden = (menuitem.value != "true");
+    }
+  </script>
+
   <prefpane id="bartap-prefpane" label="&prefpane.title;">
 
     <preferences>
@@ -13,6 +26,15 @@
       <preference id="extensions.bartap.tapBackgroundTabs"
                   name="extensions.bartap.tapBackgroundTabs"
                   type="bool" />
+      <preference id="extensions.bartap.tapAfterTimeout"
+                  name="extensions.bartap.tapAfterTimeout"
+                  type="bool" />
+      <preference id="extensions.bartap.timeoutHours"
+                  name="extensions.bartap.timeoutHours"
+                  type="int" />
+      <preference id="extensions.bartap.timeoutMins"
+                  name="extensions.bartap.timeoutMins"
+                  type="int" />
     </preferences>
 
     <groupbox id="barTapGroup">
@@ -46,6 +68,42 @@
           <menuitem label="&putOnBarTab.label;" value="true"/>
         </menupopup>
       </menulist>
+    </hbox>
+
+    <separator class="thin"/>
+
+    <!-- XXX TODO l10n -->
+    <hbox align="center">
+      <label value="When a tab becomes inactive:"
+             accesskey="T"
+             control="tapAfterTimeout" />
+      <spacer flex="1" />
+      <menulist id="tapAfterTimeout"
+                preference="extensions.bartap.tapAfterTimeout"
+                oncommand="onTimeoutChange(event.target);">
+        <menupopup>
+          <menuitem label="do nothing" value="false"/>
+          <menuitem label="put it on my bar tap after" value="true"/>
+        </menupopup>
+      </menulist>
+      <hbox id="timerWidgets" align="center">
+        <textbox id="timeoutHours"
+                 type="number"
+                 size="2"
+                 preference="extensions.bartap.timeoutHours"
+                 aria-labelledby="labelTimeoutHours"/>
+        <label id="labelTimeoutHours"
+               control="timeoutHours"
+               value="h" />
+        <textbox id="timeoutMins"
+                 type="number"
+                 size="2"
+                 preference="extensions.bartap.timeoutMins"
+                 aria-labelledby="labelTimeoutMins"/>
+        <label id="labelTimeoutMins"
+               control="timeoutMins"
+               value="min" />
+      </hbox>
     </hbox>
 
     </groupbox>
