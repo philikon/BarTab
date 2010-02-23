@@ -11,5 +11,7 @@
 <!ENTITY tapAfterTimeout.accesskey "T">
 <!ENTITY doNothing.label "do nothing">
 <!ENTITY putOnBarTapAfter.label "put it on my bar tap after">
-<!ENTITY timeoutHours.label "h">
-<!ENTITY timeoutMins.label "min">
+<!ENTITY timeoutSecs.label "secs">
+<!ENTITY timeoutMins.label "mins">
+<!ENTITY timeoutHours.label "hours">
+<!ENTITY timeoutDays.label "days">

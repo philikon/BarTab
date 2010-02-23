@@ -337,8 +337,8 @@ BarTapTimer.prototype = {
     if (aTab._barTapTimer) {
       this.clearTimer(aTab);
     }
-    let secs = BarTap.mPrefs.getIntPref("extensions.bartap.timeoutHours")*3600
-             + BarTap.mPrefs.getIntPref("extensions.bartap.timeoutMins")*60;
+    let secs = BarTap.mPrefs.getIntPref("extensions.bartap.timeoutValue")
+             * BarTap.mPrefs.getIntPref("extensions.bartap.timeoutUnit");
     /* Allow 'this' to leak into the inline function */
     var self = this;
     aTab._barTapTimer = window.setTimeout(function() {
