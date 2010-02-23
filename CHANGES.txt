@@ -6,6 +6,8 @@
   an optional automatic timer that will trigger after a certain amount
   of time specified by the user.
 
+* New coaster logo, thanks to Róman Joost.
+
 
 1.2.2 (2010-02-18)
 ------------------
