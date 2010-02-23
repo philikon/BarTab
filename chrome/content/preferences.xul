@@ -12,8 +12,8 @@
 
     function onTimeoutChange(menuitem) {
       var timerWidgets = document.getElementById('timerWidgets');
-      //XXX TODO use collapse so that space is reserved
-      timerWidgets.hidden = (menuitem.value != "true");
+      var visibility = (menuitem.value == "true") ? 'visible' : 'hidden';
+      timerWidgets.style.visibility = visibility;
     }
   </script>
 
@@ -40,11 +40,18 @@
     <groupbox id="barTapGroup">
       <caption label="&group.label;"/>
 
-    <hbox align="center">
+      <grid>
+        <columns>
+          <column />
+          <column />
+          <column />
+        </columns>
+        <rows>
+
+    <row>
       <label value="&restoredTabs.label;"
              accesskey="&restoredTabs.accesskey;"
              control="menuRestoredTabs" />
-      <spacer flex="1" />
       <menulist id="menuRestoredTabs"
                 preference="extensions.bartap.tapRestoredTabs">
         <menupopup>
@@ -52,15 +59,14 @@
           <menuitem label="&putOnBarTab.label;" value="true"/>
         </menupopup>
       </menulist>
-    </hbox>
+    </row>
 
     <separator class="thin"/>
 
-    <hbox align="center">
+    <row>
       <label value="&backgroundTabs.label;"
              accesskey="&backgroundTabs.accesskey;"
              control="menuBackgroundTabs" />
-      <spacer flex="1" />
       <menulist id="menuBackgroundTabs"
                 preference="extensions.bartap.tapBackgroundTabs">
         <menupopup>
@@ -68,15 +74,14 @@
           <menuitem label="&putOnBarTab.label;" value="true"/>
         </menupopup>
       </menulist>
-    </hbox>
+    </row>
 
     <separator class="thin"/>
 
-    <hbox align="center">
+    <row>
       <label value="&tapAfterTimeout.label;"
              accesskey="&tapAfterTimeout.accesskey;"
              control="tapAfterTimeout" />
-      <spacer flex="1" />
       <menulist id="tapAfterTimeout"
                 preference="extensions.bartap.tapAfterTimeout"
                 oncommand="onTimeoutChange(event.target);">
@@ -103,8 +108,10 @@
                control="timeoutMins"
                value="&timeoutMins.label;" />
       </hbox>
-    </hbox>
+    </row>
 
+        </rows>
+      </grid>
     </groupbox>
 
   </prefpane>
