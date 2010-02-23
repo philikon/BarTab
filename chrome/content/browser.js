@@ -60,27 +60,27 @@ var BarTap = {
       }
     };
 
+    /* Insert context menu items for putting tabs back on your bar tab */
+
     let popup = document.getAnonymousElementByAttribute(tabbrowser, "anonid", "tabContextMenu");
-    let closetab = document.getAnonymousElementByAttribute(tabbrowser, "id", "context_closeTab");
+    let before = document.getAnonymousElementByAttribute(tabbrowser, "id", "context_openTabInWindow");
     let l10n = document.getElementById('bartap-strings');
 
-    /* Insert context menu item for putting tabs on your bar tab */
     let putontap = document.createElement('menuitem');
     putontap.setAttribute('id', 'context_putOnTap');
     putontap.setAttribute('label', l10n.getString('putOnTap'));
     putontap.setAttribute('tbattr', 'tabbrowser-multiple');
     putontap.setAttribute('oncommand', "var tabbrowser = this.parentNode.parentNode.parentNode.parentNode; BarTap.putOnTap(tabbrowser.mContextTab, tabbrowser);");
-    popup.insertBefore(putontap, closetab);
+    popup.insertBefore(putontap, before);
 
-    /* Insert context menu item for putting all tabs but the current on
-       on your bar tab */
     let putallontap = document.createElement('menuitem');
     putallontap.setAttribute('id', 'context_putAllOnTapBut');
     putallontap.setAttribute('label', l10n.getString('putAllOnTapBut'));
     putallontap.setAttribute('tbattr', 'tabbrowser-multiple');
     putallontap.setAttribute('oncommand', "var tabbrowser = this.parentNode.parentNode.parentNode.parentNode; BarTap.putAllOnTapBut(tabbrowser.mContextTab, tabbrowser);");
-    popup.insertBefore(putallontap, closetab);
+    popup.insertBefore(putallontap, before);
 
+    popup.insertBefore(document.createElement('menuseparator'), before);
   },
 
   /* Listens to the 'SSTabRestoring' event from the nsISessionStore service
