@@ -1,6 +1,8 @@
 1.3 (XXX)
 ---------
 
+* Fully loaded tabs now can be put on the bar tab using a context menu
+  command.
 
 
 1.2.2 (2010-12-18)
