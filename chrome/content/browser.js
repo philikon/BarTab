@@ -62,11 +62,12 @@ var BarTap = {
 
     let popup = document.getAnonymousElementByAttribute(tabbrowser, "anonid", "tabContextMenu");
     let closetab = document.getAnonymousElementByAttribute(tabbrowser, "id", "context_closeTab");
+    let l10n = document.getElementById('bartap-strings');
 
     /* Insert context menu item for putting tabs on your bar tab */
     let putontap = document.createElement('menuitem');
     putontap.setAttribute('id', 'context_putOnTap');
-    putontap.setAttribute('label', 'Put on Bar Tab'); //XXX TODO l10n
+    putontap.setAttribute('label', l10n.getString('putOnTap'));
     putontap.setAttribute('tbattr', 'tabbrowser-multiple');
     putontap.setAttribute('oncommand', "var tabbrowser = this.parentNode.parentNode.parentNode.parentNode; BarTap.putOnTap(tabbrowser.mContextTab, tabbrowser);");
     popup.insertBefore(putontap, closetab);
@@ -75,7 +76,7 @@ var BarTap = {
        on your bar tab */
     let putallontap = document.createElement('menuitem');
     putallontap.setAttribute('id', 'context_putAllOnTapBut');
-    putallontap.setAttribute('label', 'Put Other Tabs on Bar Tab'); //XXX TODO l10n
+    putallontap.setAttribute('label', l10n.getString('putAllOnTapBut'));
     putallontap.setAttribute('tbattr', 'tabbrowser-multiple');
     putallontap.setAttribute('oncommand', "var tabbrowser = this.parentNode.parentNode.parentNode.parentNode; BarTap.putAllOnTapBut(tabbrowser.mContextTab, tabbrowser);");
     popup.insertBefore(putallontap, closetab);
