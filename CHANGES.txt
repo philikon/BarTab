@@ -5,13 +5,13 @@
   command.
 
 
-1.2.2 (2010-12-18)
+1.2.2 (2010-02-18)
 ------------------
 
 * Completed and enabled Polish translation.
 
 
-1.2.1 (2010-12-18)
+1.2.1 (2010-02-18)
 ------------------
 
 * To comply with Mozilla's Add-on guidelines, BarTab preferences are
