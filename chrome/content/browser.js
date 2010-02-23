@@ -350,8 +350,9 @@ BarTapTimer.prototype = {
     /* Allow 'this' to leak into the inline function */
     var self = this;
     aTab._barTapTimer = window.setTimeout(function() {
+        /* The timer will be removed automatically since BarTap.putOnTab
+           will close and replace the original tab. */
         BarTap.putOnTap(aTab, self.tabbrowser);
-        self.clearTimer(aTab);
         }, secs*1000);
   },
 
