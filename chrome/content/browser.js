@@ -234,8 +234,14 @@ var BarTap = {
                        .getService(Components.interfaces.nsISessionStore);
     var state = sessionstore.getTabState(aTab);
     var newtab = aTabBrowser.addTab();
+
+    /* The user might not have the 'extensions.bartap.tapRestoredTabs'
+       preference enabled but still wants to put tabs on the bar tab. */
+    newtab.setAttribute("ontap", "true");
+
     aTabBrowser.moveTabTo(newtab, aTab._tPos);
     sessionstore.setTabState(newtab, state);
+
     /* Close the original tab.  We're taking the long way round to ensure the
        nsISessionStore service won't save this in the recently closed tabs. */
     aTabBrowser._endRemoveTab(aTabBrowser._beginRemoveTab(aTab, true, null, false));
