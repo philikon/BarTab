@@ -103,7 +103,10 @@ var BarTap = {
      a new tab.) Stores the parameters on the tab so that 'onTabStateChange'
      can carry out the action later. */
   writeBarTap: function(aTab, aBrowser, aURI, aFlags, aReferrerURI, aCharset, aPostData) {
-    if (aURI && this.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) {
+    if (!aURI) {
+      return;
+    }
+    if (this.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) {
       let bartap = "";
       if (aURI) {
         bartap = JSON.stringify({
@@ -116,6 +119,8 @@ var BarTap = {
       }
       aTab.setAttribute("ontap", "true");
       aBrowser.setAttribute("bartap", bartap);
+    } else if (this.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
+      this.getTabBrowserForTab(aTab).BarTapTimer.startTimer(aTab);
     }
   },
 
