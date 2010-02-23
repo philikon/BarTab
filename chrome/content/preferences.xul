@@ -48,7 +48,7 @@
         </columns>
         <rows>
 
-    <row>
+    <row align="center">
       <label value="&restoredTabs.label;"
              accesskey="&restoredTabs.accesskey;"
              control="menuRestoredTabs" />
@@ -63,7 +63,7 @@
 
     <separator class="thin"/>
 
-    <row>
+    <row align="center">
       <label value="&backgroundTabs.label;"
              accesskey="&backgroundTabs.accesskey;"
              control="menuBackgroundTabs" />
@@ -78,7 +78,7 @@
 
     <separator class="thin"/>
 
-    <row>
+    <row align="center">
       <label value="&tapAfterTimeout.label;"
              accesskey="&tapAfterTimeout.accesskey;"
              control="tapAfterTimeout" />
