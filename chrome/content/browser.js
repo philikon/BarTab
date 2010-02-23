@@ -294,6 +294,7 @@ window.addEventListener("DOMContentLoaded", BarTap, false);
 function BarTapTimer(tabbrowser) {
   this.tabbrowser = tabbrowser;
   tabbrowser.addEventListener('TabSelect', this, false);
+  tabbrowser.addEventListener('TabClose', this, false);
 
   this.previousTab = null;
   this.selectedTab = tabbrowser.selectedTab;
@@ -306,19 +307,38 @@ BarTapTimer.prototype = {
     case 'TabSelect':
       this.onTabSelect(event);
       return;
+    case 'TabClose':
+      this.onTabClose(event);
+      return;
     }
+  },
+
+  onTabClose: function(event) {
+    this.clearTimer(event.originalTarget);
+    if (event.originalTarget == this.selectedTab) {
+      this.selectedTab = null;
+    };
+    if (event.originalTarget == this.previousTab) {
+      this.previousTab = null;
+    };
   },
 
   onTabSelect: function(event) {
     this.previousTab = this.selectedTab;
     this.selectedTab = event.originalTarget;
 
-    this.startTimer(this.previousTab);
+    if (this.previousTab) {
+      /* The previous tab may not be available because it has been closed */
+      this.startTimer(this.previousTab);
+    }
     this.clearTimer(this.selectedTab);
   },
 
   startTimer: function(aTab) {
     if (!BarTap.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
+      return;
+    }
+    if (aTab.getAttribute("ontap") == "true") {
       return;
     }
 
