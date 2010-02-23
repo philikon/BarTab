@@ -222,22 +222,12 @@ var BarTap = {
     tab.linkedBrowser.dispatchEvent(event);
   },
 
-  putOnTap: function(aTab, aTabBrowser, aDontSelect) {
+  putOnTap: function(aTab, aTabBrowser) {
     if (aTab.getAttribute("ontap") == "true") {
       return;
     }
     if (!aTabBrowser) {
       aTabBrowser = this.getTabBrowserForTab(aTab);
-    }
-
-    /* If you're putting the current tab on your bar tab, you'll invariably
-       be switched to another tab.  We have to live with this for now. */
-    var selected = aTabBrowser.selectedTab;
-    if (selected == aTab) {
-      selected = null;
-    }
-    if (aDontSelect) {
-      selected = null;
     }
 
     var sessionstore = Components.classes["@mozilla.org/browser/sessionstore;1"]
@@ -250,23 +240,21 @@ var BarTap = {
        nsISessionStore service won't save this in the recently closed tabs. */
     aTabBrowser._endRemoveTab(aTabBrowser._beginRemoveTab(aTab, true, null, false));
 
-    if (selected) {
-      aTabBrowser.selectedTab = selected;
-    }
   },
 
   putAllOnTapBut: function(aTab, aTabBrowser) {
     if (!aTabBrowser) {
       aTabBrowser = this.getTabBrowserForTab(aTab);
     }
-    var selected = aTabBrowser.selectedTab;
     for (var i=0; i < aTabBrowser.mTabs.length; i++) {
       let tab = aTabBrowser.mTabs[i];
       if (tab != aTab) {
-        this.putOnTap(tab, aTabBrowser, true);
+        this.putOnTap(tab, aTabBrowser);
       }
     }
-    aTabBrowser.selectedTab = aTab;
+    if (aTabBrowser.selectedTab != aTab) {
+      aTabBrowser.selectedTab = aTab;
+    }
   },
 
   /* Get information about a URI from the history service,
