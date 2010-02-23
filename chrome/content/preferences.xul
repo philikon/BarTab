@@ -72,18 +72,17 @@
 
     <separator class="thin"/>
 
-    <!-- XXX TODO l10n -->
     <hbox align="center">
-      <label value="When a tab becomes inactive:"
-             accesskey="T"
+      <label value="&tapAfterTimeout.label;"
+             accesskey="&tapAfterTimeout.accesskey;"
              control="tapAfterTimeout" />
       <spacer flex="1" />
       <menulist id="tapAfterTimeout"
                 preference="extensions.bartap.tapAfterTimeout"
                 oncommand="onTimeoutChange(event.target);">
         <menupopup>
-          <menuitem label="do nothing" value="false"/>
-          <menuitem label="put it on my bar tap after" value="true"/>
+          <menuitem label="&doNothing.label;" value="false"/>
+          <menuitem label="&putOnBarTapAfter.label;" value="true"/>
         </menupopup>
       </menulist>
       <hbox id="timerWidgets" align="center">
@@ -94,7 +93,7 @@
                  aria-labelledby="labelTimeoutHours"/>
         <label id="labelTimeoutHours"
                control="timeoutHours"
-               value="h" />
+               value="&timeoutHours.label;" />
         <textbox id="timeoutMins"
                  type="number"
                  size="2"
@@ -102,7 +101,7 @@
                  aria-labelledby="labelTimeoutMins"/>
         <label id="labelTimeoutMins"
                control="timeoutMins"
-               value="min" />
+               value="&timeoutMins.label;" />
       </hbox>
     </hbox>
 
