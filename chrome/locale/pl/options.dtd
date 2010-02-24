@@ -7,3 +7,11 @@
 <!ENTITY backgroundTabs.accesskey "T">
 <!ENTITY loadTabs.label "ładuj zawartość (domyślnie)">
 <!ENTITY putOnBarTab.label "wstrzymaj ładowanie zawartości do otwarcia karty">
+<!ENTITY tapAfterTimeout.label "Jeśli karta pozostaje nieaktywne przez dłuższy czas: ">
+<!ENTITY tapAfterTimeout.accesskey "C">
+<!ENTITY doNothing.label "nie rób nic (domyślnie)">
+<!ENTITY putOnBarTapAfter.label "zwolnij pamięć i wstrzymaj ładowanie zawartości po">
+<!ENTITY timeoutSecs.label "sek.">
+<!ENTITY timeoutMins.label "min.">
+<!ENTITY timeoutHours.label "godz.">
+<!ENTITY timeoutDays.label "dniach">
