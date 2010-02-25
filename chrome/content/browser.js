@@ -252,7 +252,9 @@ var BarTap = {
     var newtab = aTabBrowser.addTab();
 
     /* The user might not have the 'extensions.bartap.tapRestoredTabs'
-       preference enabled but still wants to put tabs on the bar tab. */
+       preference enabled but still wants to put this tab on the bar tab.
+       That's why we need to make sure this attribute exists before
+       restoring the tab state. */
     newtab.setAttribute("ontap", "true");
 
     sessionstore.setTabState(newtab, state);
