@@ -248,11 +248,24 @@ var BarTap = {
     aTab.setAttribute("ontap", "true");
 
     sessionstore.setTabState(aTab, state);
+
+    /* Make sure that we're not on this tab.  If we are, find the closest
+       tab that isn't on the bar tab. */
+    if (aTab.selected) {
+      let activeTab = this.findClosestUntappedTab(aTab, aTabBrowser);
+      if (activeTab) {
+        aTabBrowser.selectedTab = activeTab;
+      }
+    }
   },
 
   putAllOnTapBut: function(aTab, aTabBrowser) {
     if (!aTabBrowser) {
       aTabBrowser = this.getTabBrowserForTab(aTab);
+    }
+    /* Make sure we're sitting on the tab that isn't going to be unloaded */
+    if (aTabBrowser.selectedTab != aTab) {
+      aTabBrowser.selectedTab = aTab;
     }
     for (var i=0; i < aTabBrowser.mTabs.length; i++) {
       let tab = aTabBrowser.mTabs[i];
@@ -260,9 +273,45 @@ var BarTap = {
         this.putOnTap(tab, aTabBrowser);
       }
     }
-    if (aTabBrowser.selectedTab != aTab) {
-      aTabBrowser.selectedTab = aTab;
+  },
+
+  /* In relation to a given tab, find the closest tab that isn't on the
+     bar tab.  Note: if there's no such tab available, this will return
+     tabs on the bar tab as a last resort. */
+  findClosestUntappedTab: function(aTab, aTabBrowser) {
+    /* Shortcut: if this is the only tab available, we're not going to
+       find another active one, are we... */
+    if (aTabBrowser.mTabs.length == 1) {
+      return null;
     }
+
+    /* The most obvious choice would be the owner tab, if it's active */
+    if (aTab.owner && aTab.owner.getAttribute("ontap") != "true") {
+      return aTab.owner;
+    }
+
+    /* Otherwise walk the tab list and see if we can find an active one */
+    let i;
+    for (i = aTab._tPos; i < aTabBrowser.mTabs.length; i++) {
+      if (aTabBrowser.mTabs[i].getAttribute("ontap") != "true") {
+        return aTabBrowser.mTabs[i];
+      }
+    }
+    for (i = aTab._tPos; i >= 0; i--) {
+      if (aTabBrowser.mTabs[i].getAttribute("ontap") != "true") {
+        return aTabBrowser.mTabs[i];
+      }
+    }
+
+    /* Fallback: there isn't an active tab available, so we're going to have
+       to nominate a non-active one. */
+    if (aTab.owner) {
+      return aTab.owner;
+    }
+    if (aTab.nextSibling) {
+      return aTab.nextSibling;
+    }
+    return aTab.previousSibling;
   },
 
   /* Get information about a URI from the history service,
