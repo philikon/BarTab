@@ -256,9 +256,20 @@ var BarTap = {
        That's why we need to make sure this attribute exists before
        restoring the tab state. */
     newtab.setAttribute("ontap", "true");
-
     sessionstore.setTabState(newtab, state);
-    aTabBrowser.moveTabTo(newtab, aTab._tPos);
+
+    /* Move the new tab next to the one we're removing, but not in front
+       of it as that confuses Tree Style Tab. */
+    aTabBrowser.moveTabTo(newtab, aTab._tPos + 1);
+
+    /* Restore tree when using Tree Style Tab */
+    if (aTabBrowser.treeStyleTab) {
+      let children = aTabBrowser.treeStyleTab.getChildTabs(aTab);
+      children.forEach(function(aChild) {
+          aTabBrowser.treeStyleTab.attachTabTo(
+              aChild, newtab, {dontAnimate: true});
+        });
+    }
 
     /* Close the original tab.  We're taking the long way round to ensure the
        nsISessionStore service won't save this in the recently closed tabs. */
