@@ -273,12 +273,19 @@ var BarTap = {
     if (aTabBrowser.selectedTab != aTab) {
       aTabBrowser.selectedTab = aTab;
     }
-    for (var i=0; i < aTabBrowser.mTabs.length; i++) {
-      let tab = aTabBrowser.mTabs[i];
-      if (tab != aTab) {
-        this.putOnTap(tab, aTabBrowser);
-      }
+
+    /* putOnTap() mutates the tabs so the only sane thing to do is to copy
+       the list of tabs now and then work off that list. */
+    var tabs = [];
+    for (let i = 0; i < aTabBrowser.mTabs.length; i++) {
+      tabs.push(aTabBrowser.mTabs[i]);
     }
+    var self = this;
+    tabs.forEach(function(tab) {
+        if (tab != aTab) {
+          self.putOnTap(tab, aTabBrowser);
+        }
+      });
   },
 
   /* In relation to a given tab, find the closest tab that isn't on the
