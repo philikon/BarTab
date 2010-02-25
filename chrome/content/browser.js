@@ -327,9 +327,6 @@ var BarTap = {
     // XBL implementation of nsIObserver still works.
     browser.destroy();
 
-    if (browser == aTabBrowser.mCurrentBrowser)
-      aTabBrowser.mCurrentBrowser = null;
-
     /*** Custom code ***/
 
     let notificationbox = browser.parentNode;
@@ -366,6 +363,9 @@ var BarTap = {
     b._fastFind = aTabBrowser.fastFind;
 
     /*** Custom code ***/
+
+    if (browser == aTabBrowser.mCurrentBrowser)
+      aTabBrowser.mCurrentBrowser = b;
 
     aTab.linkedBrowser = b;
     return b;
