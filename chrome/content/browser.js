@@ -241,19 +241,13 @@ var BarTap = {
     var sessionstore = Components.classes["@mozilla.org/browser/sessionstore;1"]
                        .getService(Components.interfaces.nsISessionStore);
     var state = sessionstore.getTabState(aTab);
-    var newtab = aTabBrowser.addTab();
+    this.newBrowserForTab(aTab, aTabBrowser);
 
     /* The user might not have the 'extensions.bartap.tapRestoredTabs'
        preference enabled but still wants to put tabs on the bar tab. */
-    newtab.setAttribute("ontap", "true");
+    aTab.setAttribute("ontap", "true");
 
-    aTabBrowser.moveTabTo(newtab, aTab._tPos);
-    sessionstore.setTabState(newtab, state);
-
-    /* Close the original tab.  We're taking the long way round to ensure the
-       nsISessionStore service won't save this in the recently closed tabs. */
-    aTabBrowser._endRemoveTab(aTabBrowser._beginRemoveTab(aTab, true, null, false));
-
+    sessionstore.setTabState(aTab, state);
   },
 
   putAllOnTapBut: function(aTab, aTabBrowser) {
@@ -298,6 +292,83 @@ var BarTap = {
       tab = tab.parentNode;
     }
     return tab;
+  },
+
+  /* Throw away a tab's browser object (and most importantly, its docshell)
+     and create a shiny new and blank one. */
+  newBrowserForTab: function(aTab, aTabBrowser) {
+    /*** This function borrows several lines from Mozilla's tabbrowser binding.
+         Their origin has been marked. ***/
+
+    let browser = aTab.linkedBrowser;
+
+    /*** from _beginRemoveTab ***/
+
+    // Remove the tab's filter and progress listener.
+    let filter = aTabBrowser.mTabFilters[aTab._tPos];
+    browser.webProgress.removeProgressListener(filter);
+    filter.removeProgressListener(aTabBrowser.mTabListeners[aTab._tPos]);
+
+    // Remove our title change and blocking listeners
+    browser.removeEventListener("DOMTitleChanged", aTabBrowser.onTitleChanged, true);
+
+    // We are no longer the primary content area.
+    browser.setAttribute("type", "content-targetable");
+
+    /*** from _endRemoveTab ***/
+
+    // Because of the way XBL works (fields just set JS
+    // properties on the element) and the code we have in place
+    // to preserve the JS objects for any elements that have
+    // JS properties set on them, the browser element won't be
+    // destroyed until the document goes away.  So we force a
+    // cleanup ourselves.
+    // This has to happen before we remove the child so that the
+    // XBL implementation of nsIObserver still works.
+    browser.destroy();
+
+    if (browser == aTabBrowser.mCurrentBrowser)
+      aTabBrowser.mCurrentBrowser = null;
+
+    /*** Custom code ***/
+
+    let notificationbox = browser.parentNode;
+    notificationbox.removeChild(browser);
+
+    /* Invalidate browsers cache */
+    aTabBrowser._browsers = null;    
+
+    /*** from addTab ***/
+
+    var b = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "browser");
+    b.setAttribute("type", "content-targetable");
+    b.setAttribute("message", "true");
+    b.setAttribute("contextmenu", aTabBrowser.getAttribute("contentcontextmenu"));
+    b.setAttribute("tooltip", aTabBrowser.getAttribute("contenttooltip"));
+    if (aTabBrowser.hasAttribute("autocompletepopup"))
+      b.setAttribute("autocompletepopup", aTabBrowser.getAttribute("autocompletepopup"));
+    b.setAttribute("autoscrollpopup", aTabBrowser._autoScrollPopup.id);
+
+    notificationbox.appendChild(b);
+    b.setAttribute("flex", "1");
+
+    b.addEventListener("DOMTitleChanged", aTabBrowser.onTitleChanged, true);
+
+    // wire up a progress listener for the new browser object.
+    var tabListener = aTabBrowser.mTabProgressListener(aTab, b, true);
+    filter = Components.classes["@mozilla.org/appshell/component/browser-status-filter;1"]
+             .createInstance(Components.interfaces.nsIWebProgress);
+    filter.addProgressListener(tabListener, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+    b.webProgress.addProgressListener(filter, Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+    aTabBrowser.mTabListeners[aTab._tPos] = tabListener;
+    aTabBrowser.mTabFilters[aTab._tPos] = filter;
+
+    b._fastFind = aTabBrowser.fastFind;
+
+    /*** Custom code ***/
+
+    aTab.linkedBrowser = b;
+    return b;
   }
 
 };
@@ -364,8 +435,7 @@ BarTapTimer.prototype = {
     /* Allow 'this' to leak into the inline function */
     var self = this;
     aTab._barTapTimer = window.setTimeout(function() {
-        /* The timer will be removed automatically since BarTap.putOnTab
-           will close and replace the original tab. */
+        self.clearTimer(aTab);
         BarTap.putOnTap(aTab, self.tabbrowser);
       }, secs*1000);
   },
