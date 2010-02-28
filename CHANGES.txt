@@ -6,6 +6,11 @@
   an optional automatic timer that will trigger after a certain amount
   of time specified by the user.
 
+* Improved compatibility with the Tab Mix Plus extension.  Tab Mix
+  Plus reuses blank tabs when opening tabs from e.g. bookmarks, and it
+  confuses tabs on the bar tab with blank ones.  BarTab now makes sure
+  that this no longer happens.
+
 * New coaster logo, thanks to Róman Joost.
 
 

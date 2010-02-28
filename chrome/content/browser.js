@@ -41,6 +41,18 @@ var BarTap = {
         'BarTap.writeBarTap(t, b, aURI, flags, aReferrerURI, aCharset, aPostData); $&'
     ));
 
+    /* Tab Mix Plus compatibility: It likes reusing blank tabs.  In doing
+       so it confuses tabs on the bar tab with blank ones.  Fix that. */
+    if (tabbrowser.isBlankBrowser) {
+      tabbrowser.TMPisBlankBrowser = tabbrowser.isBlankBrowser;
+      tabbrowser.isBlankBrowser = function (aBrowser) {
+        if (aBrowser.getAttribute("ontap") == "true") {
+          return false;
+        }
+        return this.TMPisBlankBrowser(aBrowser);
+      };
+    }
+
     /* When the user wants one or all tabs to reload, do the right thing
        in case it's tapped. */
     tabbrowser.reloadTab = function(aTab) {
@@ -100,6 +112,7 @@ var BarTap = {
       return;
     }
     tab.setAttribute("ontap", "true");
+    tab.linkedBrowser.setAttribute("ontap", "true");
   },
 
   /* Called when a tab is opened with a new URI (e.g. by opening a link in
@@ -121,6 +134,7 @@ var BarTap = {
         });
       }
       aTab.setAttribute("ontap", "true");
+      aBrowser.setAttribute("ontap", "true");
       aBrowser.setAttribute("bartap", bartap);
     } else if (this.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
       this.getTabBrowserForTab(aTab).BarTapTimer.startTimer(aTab);
@@ -224,6 +238,7 @@ var BarTap = {
        in case of about:blank where there's no event handler, continue to
        function normally. */
     tab.removeAttribute("ontap");
+    tab.linkedBrowser.removeAttribute("ontap");
 
     let event = document.createEvent("Event");
     event.initEvent("BarTapLoad", true, true);
@@ -256,6 +271,7 @@ var BarTap = {
        That's why we need to make sure this attribute exists before
        restoring the tab state. */
     newtab.setAttribute("ontap", "true");
+    newtab.linkedBrowser.setAttribute("ontap", "true");
     sessionstore.setTabState(newtab, state);
 
     /* Move the new tab next to the one we're removing, but not in front
