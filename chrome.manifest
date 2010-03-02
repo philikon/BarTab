@@ -4,5 +4,6 @@ locale    bartap   ja            chrome/locale/ja/
 locale    bartap   de            chrome/locale/de/
 locale    bartap   pl            chrome/locale/pl/
 locale    bartap   pl-PL         chrome/locale/pl/
+locale    bartap   fr            chrome/locale/fr/
 
 overlay   chrome://browser/content/browser.xul chrome://bartap/content/browser.xul

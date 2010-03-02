@@ -1,0 +1,17 @@
+<!ENTITY prefwindow.title "Préférences de BarTab">
+<!ENTITY prefpane.title "Préférences de BarTab">
+<!ENTITY group.label "Préférences de BarTab">
+<!ENTITY restoredTabs.label "Lors de la restauration d'une session précédente : ">
+<!ENTITY restoredTabs.accesskey "R">
+<!ENTITY backgroundTabs.label "Lors de l'ouverture d'onglets en arrière plan : ">
+<!ENTITY backgroundTabs.accesskey "B">
+<!ENTITY loadTabs.label "les charger (Par défaut dans Firefox)">
+<!ENTITY putOnBarTab.label "les mettre sur mon ardoise">
+<!ENTITY tapAfterTimeout.label "Lorsque un onglet est inutilisé depuis un moment : ">
+<!ENTITY tapAfterTimeout.accesskey "T">
+<!ENTITY doNothing.label "ne rien faire">
+<!ENTITY putOnBarTapAfter.label "le mettre sur mon ardoise après">
+<!ENTITY timeoutSecs.label "secs">
+<!ENTITY timeoutMins.label "mins">
+<!ENTITY timeoutHours.label "heures">
+<!ENTITY timeoutDays.label "jours">
