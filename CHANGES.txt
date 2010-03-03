@@ -1,6 +1,9 @@
 1.4 (unreleased)
 ----------------
 
+* Firefox doesn't always store favicons for URIs containing anchor
+  references.  BarTab now works around that and tries to find the
+  correct favicon.
 
 
 1.3.1 (2010-03-02)
