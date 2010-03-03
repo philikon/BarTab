@@ -180,9 +180,9 @@ var BarTap = {
          work for restored tabs as they're in the history database. */
       let info = this.getInfoFromHistory(gotouri);
       if (info) {
-        /* Firefox cripples nsINavHistoryService entries for in-page links
-           (anchors).  They contain no favicon.  Try to work around that by
-           stripping the anchor from the URI. */
+        /* Firefox cripples nsINavHistoryService entries for fragment links.
+           See https://bugzilla.mozilla.org/show_bug.cgi?id=420605
+           Try to work around that by stripping the fragment from the URI. */
         let anchor = gotouri.path.indexOf('#');
         if (!info.icon && (anchor != -1)) {
           let uri = gotouri.clone();
