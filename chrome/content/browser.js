@@ -373,7 +373,7 @@ var BarTap = {
                     .getService(Ci.nsINavHistoryService);
 
     var options = history.getNewQueryOptions();
-    options.queryType = 0;   // search history
+    options.queryType = Ci.nsINavHistoryQueryOptions.QUERY_TYPE_HISTORY;
     options.maxResults = 1;
 
     var query = history.getNewQuery();
