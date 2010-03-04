@@ -6,11 +6,11 @@
 <!ENTITY backgroundTabs.label "リンクから開かれて、まだ読んでいない新しいタブ: ">
 <!ENTITY backgroundTabs.accesskey "B">
 <!ENTITY loadTabs.label "読み込む (Firefox 既定)">
-<!ENTITY putOnBarTab.label "用意しておく">
-<!ENTITY tapAfterTimeout.label "タブをしばらく見なかった場合: ">
+<!ENTITY putOnBarTab.label "準備状態にする">
+<!ENTITY tapAfterTimeout.label "しばらくタブを見なかった場合: ">
 <!ENTITY tapAfterTimeout.accesskey "T">
 <!ENTITY doNothing.label "なにもしない">
-<!ENTITY putOnBarTapAfter.label "時間が経ったら用意する">
+<!ENTITY putOnBarTapAfter.label "時間が経ったら準備状態にする">
 <!ENTITY timeoutSecs.label "秒">
 <!ENTITY timeoutMins.label "分">
 <!ENTITY timeoutHours.label "時間">
