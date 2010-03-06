@@ -10,7 +10,7 @@
 <!ENTITY tapAfterTimeout.label "When I don't visit a tab for a while: ">
 <!ENTITY tapAfterTimeout.accesskey "T">
 <!ENTITY doNothing.label "do nothing">
-<!ENTITY putOnBarTapAfter.label "put it on my bar tap after">
+<!ENTITY putOnBarTapAfter.label "put it on my bar tab after">
 <!ENTITY timeoutSecs.label "secs">
 <!ENTITY timeoutMins.label "mins">
 <!ENTITY timeoutHours.label "hours">
