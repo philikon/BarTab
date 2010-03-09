@@ -1,0 +1,17 @@
+<!ENTITY prefwindow.title "Preferencias de BarTab">
+<!ENTITY prefpane.title "Preferencias de BarTab">
+<!ENTITY group.label "Preferencias de BarTab">
+<!ENTITY restoredTabs.label "Cuando restaure las pestañas de una sesión previa: ">
+<!ENTITY restoredTabs.accesskey "R">
+<!ENTITY backgroundTabs.label "Cuando abra pestañas en en fondo: ">
+<!ENTITY backgroundTabs.accesskey "B">
+<!ENTITY loadTabs.label "Cargarlas (default de Firefox)">
+<!ENTITY putOnBarTab.label "ponerlas en my barra de pestañas">
+<!ENTITY tapAfterTimeout.label "Cuando no visito una pestaña por un tiempo: ">
+<!ENTITY tapAfterTimeout.accesskey "T">
+<!ENTITY doNothing.label "No hacer nada">
+<!ENTITY putOnBarTapAfter.label "Ponerla en mi barra de pestañas después de: ">
+<!ENTITY timeoutSecs.label "segs">
+<!ENTITY timeoutMins.label "mins">
+<!ENTITY timeoutHours.label "horas">
+<!ENTITY timeoutDays.label "días">
