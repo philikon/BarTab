@@ -156,8 +156,6 @@ var BarTap = {
     var gotoindex;
     var gotouri;
 
-    browser.stop();
-
     if (bartap) {
       /* The tab was likely opened by clicking on a link */
       browser.removeAttribute("bartap");
@@ -174,6 +172,21 @@ var BarTap = {
       /* This might not make much sense here... */
       gotouri = makeURI(browser.userTypedValue);
     }
+
+    /* Check whether we should put this URI on the bar tab or not. */
+    if (gotouri) {
+      try {
+        if (this.getHostWhitelist().indexOf(gotouri.host) != -1) {
+          tab.removeAttribute("ontap");
+          browser.removeAttribute("ontap");
+          return false;          
+        }
+      } catch(ex) {
+        /* Most likely gotouri.host failed.  No matter, just carry on. */
+      }
+    }
+
+    browser.stop();
 
     if (gotouri) {
       /* See if we have title, favicon in stock for it. This should definitely
@@ -393,6 +406,10 @@ var BarTap = {
       tab = tab.parentNode;
     }
     return tab;
+  },
+
+  getHostWhitelist: function() {
+    return this.mPrefs.getCharPref("extensions.bartap.hostWhitelist").split(";");
   }
 
 };
