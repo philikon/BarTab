@@ -6,11 +6,11 @@
 <!ENTITY backgroundTabs.label "When opening tabs in the background: ">
 <!ENTITY backgroundTabs.accesskey "B">
 <!ENTITY loadTabs.label "load them (Firefox default)">
-<!ENTITY putOnBarTab.label "put them on my bar tab">
+<!ENTITY putOnBarTab.label "don't load them">
 <!ENTITY tapAfterTimeout.label "When I don't visit a tab for a while: ">
 <!ENTITY tapAfterTimeout.accesskey "T">
 <!ENTITY doNothing.label "do nothing">
-<!ENTITY putOnBarTapAfter.label "put it on my bar tap after">
+<!ENTITY putOnBarTapAfter.label "unload it after">
 <!ENTITY timeoutSecs.label "secs">
 <!ENTITY timeoutMins.label "mins">
 <!ENTITY timeoutHours.label "hours">
