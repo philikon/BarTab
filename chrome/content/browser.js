@@ -14,12 +14,18 @@ var BarTap = {
     case 'TabSelect':
       this.onTabSelect(event);
       return;
+    case 'popupshowing':
+      this.onPopupShowing(event);
+      return;
     }
   },
 
   init: function() {
     window.removeEventListener("DOMContentLoaded", this, false);
     window.addEventListener("SSTabRestoring", this, false);
+
+    this.l10n = document.getElementById('bartap-strings');
+
     let tabbrowser = document.getElementById("content");
     this.initTabBrowser(tabbrowser);
   },
@@ -82,23 +88,78 @@ var BarTap = {
 
     let popup = document.getAnonymousElementByAttribute(tabbrowser, "anonid", "tabContextMenu");
     let before = document.getAnonymousElementByAttribute(tabbrowser, "id", "context_openTabInWindow");
-    let l10n = document.getElementById('bartap-strings');
 
     let putontap = document.createElement('menuitem');
     putontap.setAttribute('id', 'context_putOnTap');
-    putontap.setAttribute('label', l10n.getString('putOnTap'));
+    putontap.setAttribute('label', this.l10n.getString('putOnTap'));
     putontap.setAttribute('tbattr', 'tabbrowser-multiple');
     putontap.setAttribute('oncommand', "var tabbrowser = this.parentNode.parentNode.parentNode.parentNode; BarTap.putOnTap(tabbrowser.mContextTab, tabbrowser);");
     popup.insertBefore(putontap, before);
 
     let putallontap = document.createElement('menuitem');
     putallontap.setAttribute('id', 'context_putAllOnTapBut');
-    putallontap.setAttribute('label', l10n.getString('putAllOnTapBut'));
+    putallontap.setAttribute('label', this.l10n.getString('putAllOnTapBut'));
     putallontap.setAttribute('tbattr', 'tabbrowser-multiple');
     putallontap.setAttribute('oncommand', "var tabbrowser = this.parentNode.parentNode.parentNode.parentNode; BarTap.putAllOnTapBut(tabbrowser.mContextTab, tabbrowser);");
     popup.insertBefore(putallontap, before);
 
+    let neverputontap = document.createElement('menuitem');
+    neverputontap.setAttribute('id', 'context_neverPutOnTap');
+    neverputontap.setAttribute('tbattr', 'tabbrowser-multiple');
+    neverputontap.setAttribute('type', 'checkbox');
+    neverputontap.setAttribute('autocheck', 'false');
+    neverputontap.setAttribute('oncommand', "var tabbrowser = this.parentNode.parentNode.parentNode.parentNode; BarTap.toggleHostWhitelist(tabbrowser.mContextTab, tabbrowser);");
+    popup.insertBefore(neverputontap, before);
+
     popup.insertBefore(document.createElement('menuseparator'), before);
+    popup.addEventListener('popupshowing', this, false);
+  },
+
+  onPopupShowing: function(event) {
+    if (event.target != event.currentTarget) {
+      return;
+    }
+
+    // TODO The following line will fail when there are multiple tabbrowsers.
+    let menuitem = document.getElementById("context_neverPutOnTap");
+
+    // TODO the tab could also be tapped (so uri is about:blank)
+    let uri = document.popupNode.linkedBrowser.currentURI;
+    try {
+      let label = this.l10n.getFormattedString('neverPutOnTap', [uri.host]);
+      menuitem.setAttribute("label", label);
+      if (this.getHostWhitelist().indexOf(uri.host) == -1) {
+        menuitem.removeAttribute("checked");
+      } else {
+        menuitem.setAttribute("checked", "true");
+      }
+      menuitem.removeAttribute("hidden");
+    } catch (ex) {
+      /* Most likely uri.host doesn't exist which probably means the
+         menu item doesn't make sense on this tab.  Don't show it. */
+      menuitem.setAttribute("hidden", "true");
+    }
+  },
+
+  toggleHostWhitelist: function(tab, tabbrowser) {
+    // TODO the tab could also be tapped (so uri is about:blank)
+    var uri = tab.linkedBrowser.currentURI;
+    try {
+      var host = uri.host;
+    } catch(ex) {
+      /* Most likely uri.host doesn't exist.  Ignore then. */
+      return;
+    }
+
+    let whitelist = this.getHostWhitelist();
+    let index = whitelist.indexOf(host);
+    if (index == -1) {
+      whitelist.push(host);
+    } else {
+      whitelist.splice(index, 1);
+    }
+
+    this.setHostWhitelist(whitelist);
   },
 
   /* Listens to the 'SSTabRestoring' event from the nsISessionStore service
@@ -410,6 +471,11 @@ var BarTap = {
 
   getHostWhitelist: function() {
     return this.mPrefs.getCharPref("extensions.bartap.hostWhitelist").split(";");
+  },
+
+  setHostWhitelist: function(whitelist) {
+    this.mPrefs.setCharPref("extensions.bartap.hostWhitelist",
+                            whitelist.join(";"));
   }
 
 };
