@@ -3,8 +3,6 @@
 
 * Added Russian translation.  Thanks to Style Thing.
 
-* Added Spanish translation.  Thanks to Felipe Barousse Boué.
-
 
 1.3.2 (2010-03-04)
 ------------------
