@@ -1,11 +1,21 @@
 1.4 (unreleased)
 ----------------
 
+* One may now specify sites that should always be loaded and never be
+  unloaded using a context menu command.
+
 * Firefox doesn't always store the correct history information for
   URIs containing anchor references (Bug 420605).  BarTab now works
   around that and tries to find the correct favicon.
 
+* The user interface for BarTab no longer mentions putting things on
+  the bar tab.  It's a confusing metaphor, especially when it comes to
+  translations.  Instead it talks about loading and unloading tabs.
+
 * Added Russian translation.  Thanks to Style Thing.
+
+* Added Spanish translation.  Thanks to Felipe Barousse Boué and Danny
+  Navarro.
 
 
 1.3.2 (2010-03-04)
