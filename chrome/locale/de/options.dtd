@@ -5,12 +5,12 @@
 <!ENTITY restoredTabs.accesskey "R">
 <!ENTITY backgroundTabs.label "Tabs, die im Hintergrund geöffnet werden, ">
 <!ENTITY backgroundTabs.accesskey "B">
-<!ENTITY loadTabs.label "direkt laden (Standardeinstellung)">
-<!ENTITY putOnBarTab.label "anschreiben lassen">
+<!ENTITY loadTabs.label "laden (Standardeinstellung)">
+<!ENTITY putOnBarTab.label "nicht laden">
 <!ENTITY tapAfterTimeout.label "Wenn ein Tab nicht benutzt wird, ">
 <!ENTITY tapAfterTimeout.accesskey "T">
 <!ENTITY doNothing.label "nichts machen">
-<!ENTITY putOnBarTapAfter.label "anschreiben lassen nach">
+<!ENTITY putOnBarTapAfter.label "entladen nach">
 <!ENTITY timeoutSecs.label "Sek.">
 <!ENTITY timeoutMins.label "Min.">
 <!ENTITY timeoutHours.label "Std.">
