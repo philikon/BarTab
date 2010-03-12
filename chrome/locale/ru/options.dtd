@@ -1,0 +1,17 @@
+<!ENTITY prefwindow.title "Настройки BarTab">
+<!ENTITY prefpane.title "Настройки BarTab">
+<!ENTITY group.label "Настройки BarTab">
+<!ENTITY restoredTabs.label "При восстановлении вкладок из предыдущей сессии: ">
+<!ENTITY restoredTabs.accesskey "В">
+<!ENTITY backgroundTabs.label "При открытии вкладок в фоне: ">
+<!ENTITY backgroundTabs.accesskey "Ф">
+<!ENTITY loadTabs.label "загружать их (по умолчанию в Firefox)">
+<!ENTITY putOnBarTab.label "выгружать их">
+<!ENTITY tapAfterTimeout.label "Когда я не посещаю вкладку некоторое время: ">
+<!ENTITY tapAfterTimeout.accesskey "Н">
+<!ENTITY doNothing.label "ничего не делать">
+<!ENTITY putOnBarTapAfter.label "выгружать ее после">
+<!ENTITY timeoutSecs.label "сек.">
+<!ENTITY timeoutMins.label "мин.">
+<!ENTITY timeoutHours.label "часов">
+<!ENTITY timeoutDays.label "дней">

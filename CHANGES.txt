@@ -5,6 +5,14 @@
   URIs containing anchor references (Bug 420605).  BarTab now works
   around that and tries to find the correct favicon.
 
+* Added Russian translation.  Thanks to Style Thing.
+
+
+1.3.2 (2010-03-04)
+------------------
+
+* Updated Japanese translation.  Thanks to drry.
+
 
 1.3.1 (2010-03-02)
 ------------------
