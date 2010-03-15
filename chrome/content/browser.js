@@ -484,6 +484,11 @@ var BarTap = {
     return tab;
   },
 
+  /* It might seem more elegant to use a getter & setter here so you could
+     just use this.hostWhiteList or similar.  However, that would suggest
+     this.hostWhiteList would always return the same array and that
+     mutations to it would be persisted.  Both are not the case. */
+
   getHostWhitelist: function() {
     return this.mPrefs.getCharPref("extensions.bartap.hostWhitelist").split(";");
   },
