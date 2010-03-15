@@ -123,7 +123,8 @@ var BarTap = {
     // TODO The following line will fail when there are multiple tabbrowsers.
     let menuitem = document.getElementById("context_neverPutOnTap");
 
-    // TODO the tab could also be tapped (so uri is about:blank)
+    // TODO the tab could also be unloaded (so uri is about:blank),
+    // but one still might want to put the host on the whitelist.
     let uri = document.popupNode.linkedBrowser.currentURI;
     try {
       let label = this.l10n.getFormattedString('neverPutOnTap', [uri.host]);
