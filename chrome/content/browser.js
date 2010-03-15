@@ -332,9 +332,19 @@ var BarTap = {
   },
 
   putOnTap: function(aTab, aTabBrowser) {
+    /* Ignore tabs that are already unloaded or are on the host whitelist. */
     if (aTab.getAttribute("ontap") == "true") {
       return;
     }
+    try {
+      let uri = aTab.linkedBrowser.currentURI;
+      if (this.getHostWhitelist().indexOf(uri.host) != -1) {
+        return;
+      }
+    } catch(ex) {
+      /* Most likely uri.host failed.  No matter, just carry on. */
+    }
+
     if (!aTabBrowser) {
       aTabBrowser = this.getTabBrowserForTab(aTab);
     }
