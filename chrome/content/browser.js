@@ -120,25 +120,29 @@ var BarTap = {
       return;
     }
 
-    // TODO The following line will fail when there are multiple tabbrowsers.
-    let menuitem = document.getElementById("context_neverPutOnTap");
+    // TODO The following two lines don't work for multiple tabbrowsers.
+    let neverputontap = document.getElementById("context_neverPutOnTap");
+    let putontap = document.getElementById("context_putOnTap");
 
     // TODO the tab could also be unloaded (so uri is about:blank),
     // but one still might want to put the host on the whitelist.
     let uri = document.popupNode.linkedBrowser.currentURI;
     try {
       let label = this.l10n.getFormattedString('neverPutOnTap', [uri.host]);
-      menuitem.setAttribute("label", label);
+      neverputontap.setAttribute("label", label);
       if (this.getHostWhitelist().indexOf(uri.host) == -1) {
-        menuitem.removeAttribute("checked");
+        neverputontap.removeAttribute("checked");
+        putontap.removeAttribute("disabled");
       } else {
-        menuitem.setAttribute("checked", "true");
+        neverputontap.setAttribute("checked", "true");
+        putontap.setAttribute("disabled", "true");
       }
-      menuitem.removeAttribute("hidden");
+      neverputontap.removeAttribute("hidden");
     } catch (ex) {
-      /* Most likely uri.host doesn't exist which probably means the
-         menu item doesn't make sense on this tab.  Don't show it. */
-      menuitem.setAttribute("hidden", "true");
+      /* Most likely uri.host doesn't exist which probably means whitelisting
+         doesn't make sense on this tab.  Don't show the menu item */
+      neverputontap.setAttribute("hidden", "true");
+      putontap.removeAttribute("disabled");
     }
   },
 
