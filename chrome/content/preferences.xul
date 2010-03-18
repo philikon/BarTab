@@ -98,6 +98,27 @@
       </hbox>
     </row>
 
+    <separator class="thin"/>
+
+    <row>
+      <!-- XXX TODO l10n -->
+      <label value="Always keep pages from these sites loaded:"
+             accesskey="H"
+             control="hostWhitelist" />
+      <listbox id="hostWhitelist"
+               flex="1"
+               style="height: 8em;"
+               onselect="BarTapPreferences.hostSelected(event);">
+      </listbox>
+      <vbox>
+        <button id="hostWhitelistRemove"
+                disabled="true"
+                label="Remove"
+                accesskey="R"
+                oncommand="BarTapPreferences.removeHost();"/>
+      </vbox>
+    </row>
+
         </rows>
       </grid>
     </groupbox>
