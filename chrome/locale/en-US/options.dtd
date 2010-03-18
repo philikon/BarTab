@@ -15,3 +15,7 @@
 <!ENTITY timeoutMins.label "mins">
 <!ENTITY timeoutHours.label "hours">
 <!ENTITY timeoutDays.label "days">
+<!ENTITY hostWhitelist.label "Always keep pages from these sites loaded:">
+<!ENTITY hostWhitelist.accesskey "H">
+<!ENTITY hostWhitelistRemove.label "Remove">
+<!ENTITY hostWhitelistRemove.accesskey "-">

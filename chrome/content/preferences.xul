@@ -101,9 +101,8 @@
     <separator class="thin"/>
 
     <row>
-      <!-- XXX TODO l10n -->
-      <label value="Always keep pages from these sites loaded:"
-             accesskey="H"
+      <label value="&hostWhitelist.label;"
+             accesskey="&hostWhitelist.accesskey;"
              control="hostWhitelist" />
       <listbox id="hostWhitelist"
                flex="1"
@@ -113,8 +112,8 @@
       <vbox>
         <button id="hostWhitelistRemove"
                 disabled="true"
-                label="Remove"
-                accesskey="R"
+                label="&hostWhitelistRemove.label;"
+                accesskey="&hostWhitelistRemove.accesskey;"
                 oncommand="BarTapPreferences.removeHost();"/>
       </vbox>
     </row>
