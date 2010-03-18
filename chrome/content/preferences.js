@@ -5,13 +5,12 @@ var BarTapPreferences = {
          .QueryInterface(Components.interfaces.nsIPrefBranch2),
 
   onLoad: function() {
-    var menuitem = document.getElementById('tapAfterTimeout').selectedItem;
-    this.onTimeoutChange(menuitem);
-
+    this.onTimeoutChange();
     this.updateHostWhitelist();
   },
 
-  onTimeoutChange: function(menuitem) {
+  onTimeoutChange: function() {
+    var menuitem = document.getElementById('tapAfterTimeout').selectedItem;
     var timerWidgets = document.getElementById('timerWidgets');
     var visibility = (menuitem.value == "true") ? 'visible' : 'hidden';
     timerWidgets.style.visibility = visibility;

@@ -74,7 +74,7 @@
              control="tapAfterTimeout" />
       <menulist id="tapAfterTimeout"
                 preference="extensions.bartap.tapAfterTimeout"
-                oncommand="BarTapPreferences.onTimeoutChange(event.target);">
+                oncommand="BarTapPreferences.onTimeoutChange();">
         <menupopup>
           <menuitem label="&doNothing.label;" value="false"/>
           <menuitem label="&putOnBarTapAfter.label;" value="true"/>
