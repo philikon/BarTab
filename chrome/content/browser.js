@@ -490,7 +490,11 @@ var BarTap = {
      mutations to it would be persisted.  Both are not the case. */
 
   getHostWhitelist: function() {
-    return this.mPrefs.getCharPref("extensions.bartap.hostWhitelist").split(";");
+    var whitelist = this.mPrefs.getCharPref("extensions.bartap.hostWhitelist");
+    if (!whitelist) {
+      return [];
+    }
+    return whitelist.split(";");
   },
 
   setHostWhitelist: function(whitelist) {
