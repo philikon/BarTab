@@ -4,18 +4,8 @@
 <prefwindow id="bartap-preferences"
             title="&prefwindow.title;"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-            onload="onLoad();">
-  <script type="application/javascript">
-    function onLoad() {
-      onTimeoutChange(document.getElementById('tapAfterTimeout').selectedItem);
-    }
-
-    function onTimeoutChange(menuitem) {
-      var timerWidgets = document.getElementById('timerWidgets');
-      var visibility = (menuitem.value == "true") ? 'visible' : 'hidden';
-      timerWidgets.style.visibility = visibility;
-    }
-  </script>
+            onload="BarTapPreferences.onLoad();">
+  <script type="application/javascript" src="preferences.js" />
 
   <prefpane id="bartap-prefpane" label="&prefpane.title;">
 
@@ -84,7 +74,7 @@
              control="tapAfterTimeout" />
       <menulist id="tapAfterTimeout"
                 preference="extensions.bartap.tapAfterTimeout"
-                oncommand="onTimeoutChange(event.target);">
+                oncommand="BarTapPreferences.onTimeoutChange(event.target);">
         <menupopup>
           <menuitem label="&doNothing.label;" value="false"/>
           <menuitem label="&putOnBarTapAfter.label;" value="true"/>
