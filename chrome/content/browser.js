@@ -33,7 +33,7 @@ var BarTap = {
   /* This is deliberately its own method so that extensions that have
      other tabbrowsers can call it. */
   initTabBrowser: function(tabbrowser) {
-    tabbrowser.addEventListener('TabSelect', this, false);
+    tabbrowser.tabContainer.addEventListener('TabSelect', this, false);
 
     /* Monkey patch our way into the tab browser.  This is by far the most
        efficient but also ugliest way :\ */
@@ -509,8 +509,8 @@ window.addEventListener("DOMContentLoaded", BarTap, false);
 
 function BarTapTimer(tabbrowser) {
   this.tabbrowser = tabbrowser;
-  tabbrowser.addEventListener('TabSelect', this, false);
-  tabbrowser.addEventListener('TabClose', this, false);
+  tabbrowser.tabContainer.addEventListener('TabSelect', this, false);
+  tabbrowser.tabContainer.addEventListener('TabClose', this, false);
 
   this.previousTab = null;
   this.selectedTab = tabbrowser.selectedTab;
