@@ -86,8 +86,13 @@ var BarTap = {
 
     /* Insert context menu items for putting tabs back on your bar tab */
 
-    let popup = document.getAnonymousElementByAttribute(tabbrowser, "anonid", "tabContextMenu");
-    let before = document.getAnonymousElementByAttribute(tabbrowser, "id", "context_openTabInWindow");
+    var node = tabbrowser;
+    /* Fuzzy test for FFX 3.7 where the tabbar lives outside the tabbrowser. */
+    if (tabbrowser.tabContainer.tabbrowser) {
+      node = tabbrowser.tabContainer;
+    }
+    let popup = document.getAnonymousElementByAttribute(node, "anonid", "tabContextMenu");
+    let before = document.getAnonymousElementByAttribute(node, "id", "context_openTabInWindow");
 
     let putontap = document.createElement('menuitem');
     putontap.setAttribute('id', 'context_putOnTap');
