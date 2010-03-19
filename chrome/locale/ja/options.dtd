@@ -15,3 +15,9 @@
 <!ENTITY timeoutMins.label "分">
 <!ENTITY timeoutHours.label "時間">
 <!ENTITY timeoutDays.label "日">
+<!ENTITY hostWhitelist.label "常に読み込んだままにしておくサイト:">
+<!ENTITY hostWhitelist.accesskey "H">
+<!ENTITY hostWhitelistRemove.label "削除">
+<!ENTITY hostWhitelistRemove.accesskey "-">
+<!ENTITY hostWhitelistAdd.label "追加">
+<!ENTITY hostWhitelistAdd.accesskey "+">
