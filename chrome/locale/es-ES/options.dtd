@@ -15,3 +15,10 @@
 <!ENTITY timeoutMins.label "mins">
 <!ENTITY timeoutHours.label "horas">
 <!ENTITY timeoutDays.label "días">
+<!ENTITY hostWhitelist.label "Mantener las páginas de estos sitios siempre cargados: ">
+<!ENTITY hostWhitelist.accesskey "H">
+<!ENTITY hostWhitelistRemove.label "Borrar">
+<!ENTITY hostWhitelistRemove.accesskey "-">
+<!ENTITY hostWhitelistAdd.label "Añadir">
+<!ENTITY hostWhitelistAdd.accesskey "+">
+
