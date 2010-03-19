@@ -483,6 +483,10 @@ var BarTap = {
   },
 
   getTabBrowserForTab: function(tab) {
+    /* Fuzzy test for FFX 3.7 where the tabbar lives outside the tabbrowser. */
+    if (tab.parentNode.tabbrowser) {
+      return tab.parentNode.tabbrowser;
+    }
     while (tab.localName != 'tabbrowser') {
       tab = tab.parentNode;
     }
