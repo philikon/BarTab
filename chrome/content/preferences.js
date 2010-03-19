@@ -64,6 +64,7 @@ var BarTapPreferences = {
       return;
     }
 
+    // TODO What happens if textbox.value contains a semicolon?
     whitelist.push(textbox.value);
     this.setHostWhitelist(whitelist);
     this.updateHostWhitelist();
@@ -78,7 +79,7 @@ var BarTapPreferences = {
     }
   },
 
-  //XXX TODO need to observe preference service for changes to
+  // TODO need to observe preference service for changes to
   // 'extensions.bartap.hostWhitelist' and then call updateHostWhitelist()
 
 
