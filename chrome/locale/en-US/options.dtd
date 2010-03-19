@@ -19,3 +19,5 @@
 <!ENTITY hostWhitelist.accesskey "H">
 <!ENTITY hostWhitelistRemove.label "Remove">
 <!ENTITY hostWhitelistRemove.accesskey "-">
+<!ENTITY hostWhitelistAdd.label "Add">
+<!ENTITY hostWhitelistAdd.accesskey "+">

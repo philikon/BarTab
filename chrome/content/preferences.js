@@ -55,6 +55,29 @@ var BarTapPreferences = {
     this.updateHostWhitelist();
   },
 
+  addHost: function() {
+    var textbox = document.getElementById("hostWhitelistNewHost");
+    var whitelist = this.getHostWhitelist();
+
+    /* We don't want duplicates. */
+    if (whitelist.indexOf(textbox.value) != -1) {
+      return;
+    }
+
+    whitelist.push(textbox.value);
+    this.setHostWhitelist(whitelist);
+    this.updateHostWhitelist();
+    textbox.value = "";
+  },
+
+  onNewHostKeyPress: function(event) {
+    switch (event.keyCode) {
+    case event.DOM_VK_ENTER:
+    case event.DOM_VK_RETURN:
+      this.addHost();
+    }
+  },
+
   //XXX TODO need to observe preference service for changes to
   // 'extensions.bartap.hostWhitelist' and then call updateHostWhitelist()
 
