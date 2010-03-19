@@ -111,29 +111,21 @@
       </listbox>
       <vbox>
         <spacer flex="1" />
-        <hbox>
-          <button id="hostWhitelistRemove"
-                  disabled="true"
-                  label="&hostWhitelistRemove.label;"
-                  style="width: 6em;"
-                  accesskey="&hostWhitelistRemove.accesskey;"
-                  oncommand="BarTapPreferences.removeHost();" />
-          <spacer flex="1" />
-        </hbox>
+        <button id="hostWhitelistRemove"
+                disabled="true"
+                label="&hostWhitelistRemove.label;"
+                accesskey="&hostWhitelistRemove.accesskey;"
+                oncommand="BarTapPreferences.removeHost();" />
       </vbox>
     </row>
     <row>
       <spacer flex="1" />
       <textbox id="hostWhitelistNewHost"
                onkeypress="BarTapPreferences.onNewHostKeyPress(event);" />
-        <hbox>
-          <button id="hostWhitelistAdd"
-                  label="&hostWhitelistAdd.label;"
-                  accesskey="&hostWhitelistAdd.accesskey;"
-                  style="width: 6em;"
-                  oncommand="BarTapPreferences.addHost();" />      
-          <spacer flex="1" />
-        </hbox>
+      <button id="hostWhitelistAdd"
+              label="&hostWhitelistAdd.label;"
+              accesskey="&hostWhitelistAdd.accesskey;"
+              oncommand="BarTapPreferences.addHost();" />      
     </row>
 
         </rows>
