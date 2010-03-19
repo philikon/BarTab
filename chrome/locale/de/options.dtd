@@ -15,3 +15,8 @@
 <!ENTITY timeoutMins.label "Min.">
 <!ENTITY timeoutHours.label "Std.">
 <!ENTITY timeoutDays.label "Tagen">
+<!ENTITY hostWhitelist.label "Seiten mit folgenden Hostnamen immer laden:">
+<!ENTITY hostWhitelistRemove.label "Entfernen">
+<!ENTITY hostWhitelistRemove.accesskey "-">
+<!ENTITY hostWhitelistAdd.label "Hinzufügen">
+<!ENTITY hostWhitelistAdd.accesskey "+">
