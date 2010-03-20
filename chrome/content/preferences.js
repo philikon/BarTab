@@ -4,10 +4,26 @@ var BarTapPreferences = {
          .getService(Components.interfaces.nsIPrefBranch)
          .QueryInterface(Components.interfaces.nsIPrefBranch2),
 
-  onLoad: function() {
+  init: function() {
+    this.prefs.addObserver("extensions.bartap.hostWhitelist", this, false);
     this.onTimeoutChange();
     this.updateHostWhitelist();
   },
+
+  destroy: function() {
+    this.prefs.removeObserver("extensions.bartap.hostWhitelist", this);
+  },
+
+  QueryInterface: function(aIID) {
+    if (aIID.equals(Components.interfaces.nsIObserver) ||
+        aIID.equals(Components.interfaces.nsISupports)) {
+      return this;
+    }
+    throw Components.results.NS_ERROR_NO_INTERFACE;
+  },
+
+
+  /* Toggle visibility for timeout settings. */
 
   onTimeoutChange: function() {
     var menuitem = document.getElementById('tapAfterTimeout').selectedItem;
@@ -15,6 +31,8 @@ var BarTapPreferences = {
     var visibility = (menuitem.value == "true") ? 'visible' : 'hidden';
     timerWidgets.style.visibility = visibility;
   },
+
+  /* Add to and remove hosts from whitelist */
 
   updateHostWhitelist: function() {
     var list = document.getElementById("hostWhitelist");
@@ -52,7 +70,6 @@ var BarTapPreferences = {
 
     whitelist.splice(index, 1);
     this.setHostWhitelist(whitelist);
-    this.updateHostWhitelist();
   },
 
   addHost: function() {
@@ -68,7 +85,6 @@ var BarTapPreferences = {
     // TODO What happens if 'host' contains a semicolon?
     whitelist.push(host);
     this.setHostWhitelist(whitelist);
-    this.updateHostWhitelist();
     textbox.value = "";
   },
 
@@ -80,8 +96,12 @@ var BarTapPreferences = {
     }
   },
 
-  // TODO need to observe preference service for changes to
-  // 'extensions.bartap.hostWhitelist' and then call updateHostWhitelist()
+  observe: function(aSubject, aTopic, aData) {
+    if (aTopic != "nsPref:changed") {
+      return;
+    }
+    this.updateHostWhitelist();
+  },
 
 
   /* For now these methods are duplicated from browser.js :\ */
