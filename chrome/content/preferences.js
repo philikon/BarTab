@@ -58,14 +58,15 @@ var BarTapPreferences = {
   addHost: function() {
     var textbox = document.getElementById("hostWhitelistNewHost");
     var whitelist = this.getHostWhitelist();
+    var host = textbox.value.trim();
 
-    /* We don't want duplicates. */
-    if (whitelist.indexOf(textbox.value) != -1) {
+    /* We don't want empty entries or duplicates. */
+    if (!host || (whitelist.indexOf(host) != -1)) {
       return;
     }
 
-    // TODO What happens if textbox.value contains a semicolon?
-    whitelist.push(textbox.value);
+    // TODO What happens if 'host' contains a semicolon?
+    whitelist.push(host);
     this.setHostWhitelist(whitelist);
     this.updateHostWhitelist();
     textbox.value = "";
