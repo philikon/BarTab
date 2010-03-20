@@ -6,7 +6,7 @@
 <!ENTITY backgroundTabs.label "При открытии вкладок в фоне: ">
 <!ENTITY backgroundTabs.accesskey "Ф">
 <!ENTITY loadTabs.label "загружать их (по умолчанию в Firefox)">
-<!ENTITY putOnBarTab.label "выгружать их">
+<!ENTITY putOnBarTab.label "не загружать их">
 <!ENTITY tapAfterTimeout.label "Когда я не посещаю вкладку некоторое время: ">
 <!ENTITY tapAfterTimeout.accesskey "Н">
 <!ENTITY doNothing.label "ничего не делать">
@@ -15,3 +15,9 @@
 <!ENTITY timeoutMins.label "мин.">
 <!ENTITY timeoutHours.label "часов">
 <!ENTITY timeoutDays.label "дней">
+<!ENTITY hostWhitelist.label "Не выгружать владки с этих сайтов:">
+<!ENTITY hostWhitelist.accesskey "С">
+<!ENTITY hostWhitelistRemove.label "Удалить">
+<!ENTITY hostWhitelistRemove.accesskey "-">
+<!ENTITY hostWhitelistAdd.label "Добавить">
+<!ENTITY hostWhitelistAdd.accesskey "+">
