@@ -14,6 +14,9 @@ var BarTap = {
     case 'TabSelect':
       this.onTabSelect(event);
       return;
+    case 'TabClose':
+      this.onTabClose(event);
+      return;
     case 'popupshowing':
       this.onPopupShowing(event);
       return;
@@ -34,6 +37,7 @@ var BarTap = {
      other tabbrowsers can call it. */
   initTabBrowser: function(tabbrowser) {
     tabbrowser.tabContainer.addEventListener('TabSelect', this, false);
+    tabbrowser.tabContainer.addEventListener('TabClose', this, false);
 
     /* Monkey patch our way into the tab browser.  This is by far the most
        efficient but also ugliest way :\ */
@@ -339,6 +343,15 @@ var BarTap = {
     let event = document.createEvent("Event");
     event.initEvent("BarTapLoad", true, true);
     tab.linkedBrowser.dispatchEvent(event);
+  },
+
+  onTabClose: function(event) {
+    let tab = event.originalTarget;
+    let tabbrowser = this.getTabBrowserForTab(tab);
+    let activeTab = this.findClosestUntappedTab(tab, tabbrowser);
+    if (activeTab) {
+      tabbrowser.selectedTab = activeTab;
+    }    
   },
 
   putOnTap: function(aTab, aTabBrowser) {
