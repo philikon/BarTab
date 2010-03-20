@@ -351,7 +351,7 @@ var BarTap = {
     let activeTab = this.findClosestUntappedTab(tab, tabbrowser);
     if (activeTab) {
       tabbrowser.selectedTab = activeTab;
-    }    
+    }
   },
 
   putOnTap: function(aTab, aTabBrowser) {
