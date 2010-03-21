@@ -1,4 +1,4 @@
-1.4.2 (unreleased)
+1.4.2 (2010-03-21)
 ------------------
 
 * Bugfix: When closing a tab, BarTab will now only jump to the nearest
