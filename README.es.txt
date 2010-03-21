@@ -11,8 +11,8 @@ necesitas a deber, y sólo pagar por las que cargas cuando de verdad las
 visitas.
 
 BarTab puede intervenir cuando las pestañas se cargan sin cambiar a ellas
-o cuando son restauradas después de reiniciar el navegador. BarTap
-sólo cargará las pestaña cuando de verdad las visites. BarTap también
+o cuando son restauradas después de reiniciar el navegador. BarTab
+sólo cargará las pestaña cuando de verdad las visites. BarTab también
 permite liberar memoria descargando pestañas que ya están cargadas, puede
 ser manualmente o automáticamente.
 
