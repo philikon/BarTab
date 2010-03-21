@@ -6,7 +6,7 @@
 <!ENTITY backgroundTabs.label "Cuando abra las pestañas sin cambiar a ésta">
 <!ENTITY backgroundTabs.accesskey "B">
 <!ENTITY loadTabs.label "cargarlas (por defecto en Firefox)">
-<!ENTITY putOnBarTab.label "apuntarlas">
+<!ENTITY putOnBarTab.label "no cargarlas">
 <!ENTITY tapAfterTimeout.label "Cuando no visite una pestaña por un tiempo">
 <!ENTITY tapAfterTimeout.accesskey "T">
 <!ENTITY doNothing.label "No hacer nada">
@@ -15,7 +15,7 @@
 <!ENTITY timeoutMins.label "mins">
 <!ENTITY timeoutHours.label "horas">
 <!ENTITY timeoutDays.label "días">
-<!ENTITY hostWhitelist.label "Mantener las páginas de estos sitios siempre cargados: ">
+<!ENTITY hostWhitelist.label "Mantener las páginas de estos sitios siempre cargadas: ">
 <!ENTITY hostWhitelist.accesskey "H">
 <!ENTITY hostWhitelistRemove.label "Borrar">
 <!ENTITY hostWhitelistRemove.accesskey "-">
