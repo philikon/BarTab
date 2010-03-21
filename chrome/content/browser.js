@@ -347,6 +347,9 @@ var BarTap = {
 
   onTabClose: function(event) {
     let tab = event.originalTarget;
+    if (!tab.selected) {
+      return;
+    }
     let tabbrowser = this.getTabBrowserForTab(tab);
     let activeTab = this.findClosestUntappedTab(tab, tabbrowser);
     if (activeTab) {

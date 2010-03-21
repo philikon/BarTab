@@ -1,7 +1,8 @@
 1.4.2 (unreleased)
 ------------------
 
-* ...
+* Bugfix: When closing a tab, BarTab will now only jump to the nearest
+  loaded tab when the tab that's being closed is the active one.
 
 
 1.4.1 (2010-03-21)
