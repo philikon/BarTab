@@ -454,12 +454,12 @@ var BarTap = {
 
     /* Otherwise walk the tab list and see if we can find an active one */
     let i;
-    for (i = aTab._tPos + 1; i < aTabBrowser.mTabs.length; i++) {
+    for (i = aTab._tPos - 1; i >= 0; i--) {
       if (aTabBrowser.mTabs[i].getAttribute("ontap") != "true") {
         return aTabBrowser.mTabs[i];
       }
     }
-    for (i = aTab._tPos - 1; i >= 0; i--) {
+    for (i = aTab._tPos + 1; i < aTabBrowser.mTabs.length; i++) {
       if (aTabBrowser.mTabs[i].getAttribute("ontap") != "true") {
         return aTabBrowser.mTabs[i];
       }
