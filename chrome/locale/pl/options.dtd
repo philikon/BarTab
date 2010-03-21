@@ -10,8 +10,14 @@
 <!ENTITY tapAfterTimeout.label "Jeśli karta pozostaje nieaktywne przez dłuższy czas: ">
 <!ENTITY tapAfterTimeout.accesskey "C">
 <!ENTITY doNothing.label "nie rób nic (domyślnie)">
-<!ENTITY putOnBarTapAfter.label "zwolnij pamięć i wstrzymaj ładowanie zawartości po">
+<!ENTITY putOnBarTapAfter.label "zwolnij kartę po">
 <!ENTITY timeoutSecs.label "sek.">
 <!ENTITY timeoutMins.label "min.">
 <!ENTITY timeoutHours.label "godz.">
 <!ENTITY timeoutDays.label "dniach">
+<!ENTITY hostWhitelist.label "Zawsze ładuj karty z następującymi adresami:">
+<!ENTITY hostWhitelist.accesskey "A">
+<!ENTITY hostWhitelistRemove.label "Usuń">
+<!ENTITY hostWhitelistRemove.accesskey "-">
+<!ENTITY hostWhitelistAdd.label "Dodaj">
+<!ENTITY hostWhitelistAdd.accesskey "+">
