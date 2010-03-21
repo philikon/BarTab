@@ -16,5 +16,5 @@ sólo cargará las pestaña cuando de verdad las visites. BarTab también
 permite liberar memoria descargando pestañas que ya están cargadas, puede
 ser manualmente o automáticamente.
 
-Está extensión posee la misma licencia que Firefox, la Mozilla Public
+Este complemento posee la misma licencia que Firefox, la Mozilla Public
 License Version 1.1.
