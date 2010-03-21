@@ -1,4 +1,4 @@
-1.4 (unreleased)
+1.4 (2010-03-21)
 ----------------
 
 * One may now specify sites that should always be loaded and never be
@@ -16,7 +16,7 @@
   to activate, instead of forcing one of the neighbouring tabs to
   load.
 
-* Improve compatibility with Firefox 3.7a4 (Bug 347930).  Thanks to
+* Improved compatibility with Firefox 3.7a4 (Bug 347930).  Thanks to
   Paul O'Shannessy for pointing out the source of the problem.  Note:
   this doesn't mean that 3.7a4 is officially supported.
 
