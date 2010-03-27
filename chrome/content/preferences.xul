@@ -78,21 +78,6 @@
     <separator class="thin"/>
 
     <row align="center">
-      <label value="&closingTabs.label;"
-             accesskey="&closingTabs.accesskey;"
-             control="menuClosingTabs" />
-      <menulist id="menuClosingTabs"
-                preference="extensions.bartap.findClosestUntappedTab">
-        <menupopup>
-          <menuitem label="&doNothing.label;" value="false"/>
-          <menuitem label="&findClosestUntappedTab.label;" value="true"/>
-        </menupopup>
-      </menulist>
-    </row>
-
-    <separator class="thin"/>
-
-    <row align="center">
       <label value="&tapAfterTimeout.label;"
              accesskey="&tapAfterTimeout.accesskey;"
              control="tapAfterTimeout" />
@@ -183,6 +168,21 @@
                value="&delayMilliseconds.label;"
                control="loadOnSelectDelay" />
       </hbox>
+    </row>
+
+    <separator class="thin"/>
+
+    <row align="center">
+      <label value="&closingTabs.label;"
+             accesskey="&closingTabs.accesskey;"
+             control="menuClosingTabs" />
+      <menulist id="menuClosingTabs"
+                preference="extensions.bartap.findClosestUntappedTab">
+        <menupopup>
+          <menuitem label="&doNothing.label;" value="false"/>
+          <menuitem label="&findClosestUntappedTab.label;" value="true"/>
+        </menupopup>
+      </menulist>
     </row>
 
         </rows>
