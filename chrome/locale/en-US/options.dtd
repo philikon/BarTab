@@ -21,6 +21,7 @@
 <!ENTITY hostWhitelistRemove.accesskey "-">
 <!ENTITY hostWhitelistAdd.label "Add">
 <!ENTITY hostWhitelistAdd.accesskey "+">
+<!ENTITY hostWhitelist.description "This is a list of host names.  You may add and remove entries using this list or the context menu on tabs.">
 <!ENTITY closingTabs.label "When closing a tab:">
 <!ENTITY closingTabs.accesskey "C">
 <!ENTITY findClosestUntappedTab.label "select the nearest loaded tab">

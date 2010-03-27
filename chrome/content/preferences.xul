@@ -119,9 +119,15 @@
     <separator class="thin"/>
 
     <row>
-      <label value="&hostWhitelist.label;"
-             accesskey="&hostWhitelist.accesskey;"
-             control="hostWhitelist" />
+      <vbox>
+        <label value="&hostWhitelist.label;"
+               accesskey="&hostWhitelist.accesskey;"
+               control="hostWhitelist" />
+        <description style="font: small-caption;
+                            font-weight: normal;
+                            width: 0; /* trigger word wrapping */
+                            margin: 0.5em 1em 0em 1em;">&hostWhitelist.description;</description>
+      </vbox>
       <listbox id="hostWhitelist"
                flex="1"
                style="height: 5em;"
