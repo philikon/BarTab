@@ -21,3 +21,6 @@
 <!ENTITY hostWhitelistRemove.accesskey "-">
 <!ENTITY hostWhitelistAdd.label "Add">
 <!ENTITY hostWhitelistAdd.accesskey "+">
+<!ENTITY closingTabs.label "When closing a tab:">
+<!ENTITY closingTabs.accesskey "C">
+<!ENTITY findClosestUntappedTab.label "select the nearest loaded tab">

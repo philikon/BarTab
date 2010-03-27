@@ -346,6 +346,9 @@ var BarTap = {
   },
 
   onTabClose: function(event) {
+    if (!this.mPrefs.getBoolPref("extensions.bartap.findClosestUntappedTab")) {
+      return;
+    }
     let tab = event.originalTarget;
     if (!tab.selected) {
       return;
