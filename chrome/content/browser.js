@@ -330,10 +330,22 @@ var BarTap = {
     if (tab.getAttribute("ontap") != "true") {
       return;
     }
-    let load = this.mPrefs.getIntPref("extensions.bartap.loadOnSelect");
-    if (load == 1) {
+    switch (this.mPrefs.getIntPref("extensions.bartap.loadOnSelect")) {
+    case 1:
+      // Load immediately
       this.loadTabContents(tab);
-    } else if (load == 0) {
+      return;
+    case 2:
+      // Load after delay
+      let delay = this.mPrefs.getIntPref("extensions.bartap.loadOnSelectDelay");
+      window.setTimeout(function() {
+          if (tab.selected) {
+            BarTap.loadTabContents(tab);
+          }
+        }, delay);
+      return;
+    case 0:
+      // Ask whether to load
       let tabbrowser = this.getTabBrowserForTab(tab);
       let box = tabbrowser.getNotificationBox(tab.linkedBrowser);
       let label = this.l10n.getString("loadNotification");
@@ -342,6 +354,7 @@ var BarTap = {
                       callback: function() {BarTap.loadTabContents(tab);}}];
       let bar = box.appendNotification(label, 'bartap-load', "",
                                        box.PRIORITY_INFO_MEDIUM, buttons);
+      return;
     }
   },
 
