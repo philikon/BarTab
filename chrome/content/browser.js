@@ -330,7 +330,19 @@ var BarTap = {
     if (tab.getAttribute("ontap") != "true") {
       return;
     }
-    this.loadTabContents(tab);
+    let load = this.mPrefs.getIntPref("extensions.bartap.loadOnSelect");
+    if (load == 1) {
+      this.loadTabContents(tab);
+    } else if (load == 0) {
+      let tabbrowser = this.getTabBrowserForTab(tab);
+      let box = tabbrowser.getNotificationBox(tab.linkedBrowser);
+      let label = this.l10n.getString("loadNotification");
+      let buttons = [{label: this.l10n.getString("load"),
+                      accessKey: this.l10n.getString("load.accesskey"),
+                      callback: function() {BarTap.loadTabContents(tab);}}];
+      let bar = box.appendNotification(label, 'bartap-load', "",
+                                       box.PRIORITY_INFO_MEDIUM, buttons);
+    }
   },
 
   loadTabContents: function(tab) {
