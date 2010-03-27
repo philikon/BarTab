@@ -349,8 +349,8 @@ var BarTap = {
       let tabbrowser = this.getTabBrowserForTab(tab);
       let box = tabbrowser.getNotificationBox(tab.linkedBrowser);
       let label = this.l10n.getString("loadNotification");
-      let buttons = [{label: this.l10n.getString("load"),
-                      accessKey: this.l10n.getString("load.accesskey"),
+      let buttons = [{label: this.l10n.getString("loadButton"),
+                      accessKey: this.l10n.getString("loadButton.accesskey"),
                       callback: function() {BarTap.loadTabContents(tab);}}];
       let bar = box.appendNotification(label, 'bartap-load', "",
                                        box.PRIORITY_INFO_MEDIUM, buttons);
