@@ -456,16 +456,20 @@ var BarTap = {
     }
 
     /* Otherwise walk the tab list and see if we can find an active one */
-    let i;
-    for (i = aTab._tPos - 1; i >= 0; i--) {
-      if (aTabBrowser.mTabs[i].getAttribute("ontap") != "true") {
-        return aTabBrowser.mTabs[i];
+    let i = 1;
+    while ((aTab._tPos - i >= 0) ||
+           (aTab._tPos + i < aTabBrowser.mTabs.length)) {
+      if (aTab._tPos - i >= 0) {
+        if (aTabBrowser.mTabs[aTab._tPos-i].getAttribute("ontap") != "true") {
+          return aTabBrowser.mTabs[aTab._tPos-i];
+        }
       }
-    }
-    for (i = aTab._tPos + 1; i < aTabBrowser.mTabs.length; i++) {
-      if (aTabBrowser.mTabs[i].getAttribute("ontap") != "true") {
-        return aTabBrowser.mTabs[i];
+      if (aTab._tPos + i < aTabBrowser.mTabs.length) {
+        if (aTabBrowser.mTabs[aTab._tPos+i].getAttribute("ontap") != "true") {
+          return aTabBrowser.mTabs[aTab._tPos+i];
+        }
       }
+      i++;
     }
 
     /* Fallback: there isn't an active tab available, so we're going to have
