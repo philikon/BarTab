@@ -22,6 +22,12 @@
 <!ENTITY hostWhitelistAdd.label "Add">
 <!ENTITY hostWhitelistAdd.accesskey "+">
 <!ENTITY hostWhitelist.description "This is a list of host names.  You may add and remove entries using this list or the context menu on tabs.">
+<!ENTITY loadOnSelect.label "When switching to a tab:">
+<!ENTITY loadOnSelect.accesskey "S">
+<!ENTITY loadAfterAskingMe.label "ask me whether to load it">
+<!ENTITY loadImmediately.label "load it immediately">
+<!ENTITY loadAfterDelay.label "load it after a delay of">
+<!ENTITY delayMilliseconds.label "ms">
 <!ENTITY closingTabs.label "When closing a tab:">
 <!ENTITY closingTabs.accesskey "C">
 <!ENTITY findClosestUntappedTab.label "select the nearest loaded tab">

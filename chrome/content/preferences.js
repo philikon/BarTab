@@ -7,6 +7,7 @@ var BarTapPreferences = {
   init: function() {
     this.prefs.addObserver("extensions.bartap.hostWhitelist", this, false);
     this.onTimeoutChange();
+    this.onLoadChange();
     this.updateHostWhitelist();
   },
 
@@ -23,13 +24,20 @@ var BarTapPreferences = {
   },
 
 
-  /* Toggle visibility for timeout settings. */
+  /* Toggle visibility for timeout and load delay settings. */
 
   onTimeoutChange: function() {
     var menuitem = document.getElementById('tapAfterTimeout').selectedItem;
     var timerWidgets = document.getElementById('timerWidgets');
     var visibility = (menuitem.value == "true") ? 'visible' : 'hidden';
     timerWidgets.style.visibility = visibility;
+  },
+
+  onLoadChange: function() {
+    var menuitem = document.getElementById('loadOnSelect').selectedItem;
+    var delayWidgets = document.getElementById('delayWidgets');
+    var visibility = (menuitem.value == "2") ? 'visible' : 'hidden';
+    delayWidgets.style.visibility = visibility;
   },
 
   /* Add to and remove hosts from whitelist */

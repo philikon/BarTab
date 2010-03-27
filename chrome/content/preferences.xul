@@ -28,6 +28,12 @@
       <preference id="extensions.bartap.findClosestUntappedTab"
                   name="extensions.bartap.findClosestUntappedTab"
                   type="bool" />
+      <preference id="extensions.bartap.loadOnSelect"
+                  name="extensions.bartap.loadOnSelect"
+                  type="int" />
+      <preference id="extensions.bartap.loadOnSelectDelay"
+                  name="extensions.bartap.loadOnSelectDelay"
+                  type="int" />
     </preferences>
 
     <groupbox id="barTapGroup">
@@ -150,6 +156,33 @@
               label="&hostWhitelistAdd.label;"
               accesskey="&hostWhitelistAdd.accesskey;"
               oncommand="BarTapPreferences.addHost();" />      
+    </row>
+
+    <separator class="thin"/>
+
+    <row align="center">
+      <label value="&loadOnSelect.label;"
+             accesskey="&loadOnSelect.accesskey;"
+             control="loadOnSelect" />
+      <menulist id="loadOnSelect"
+                preference="extensions.bartap.loadOnSelect"
+                oncommand="BarTapPreferences.onLoadChange();">
+        <menupopup>
+          <menuitem label="&loadAfterAskingMe.label;" value="0"/>
+          <menuitem label="&loadImmediately.label;" value="1"/>
+          <menuitem label="&loadAfterDelay.label;" value="2"/>
+        </menupopup>
+      </menulist>
+      <hbox id="delayWidgets" align="center">
+        <textbox id="loadOnSelectDelay"
+                 type="number"
+                 size="4"
+                 preference="extensions.bartap.loadOnSelectDelay"
+                 aria-labelledby="delayMilliseconds"/>
+        <label id="delayMilliseconds"
+               value="&delayMilliseconds.label;"
+               control="loadOnSelectDelay" />
+      </hbox>
     </row>
 
         </rows>
