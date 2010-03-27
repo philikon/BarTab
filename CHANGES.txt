@@ -1,7 +1,14 @@
 1.5 (unreleased)
 ----------------
 
-* ...
+* One may now specify whether BarTab should load an unloaded tab upon
+  switching to it immediately or after a given delay, or whether to
+  ask the user if the tab should be loaded.
+
+* Jumping to the nearest loaded tab when closing a tab can now be
+  turned off.
+
+* Improved the way BarTab finds the loaded tab nearest to a given tab.
 
 
 1.4.2 (2010-03-21)
