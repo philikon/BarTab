@@ -9,14 +9,24 @@
 <!ENTITY putOnBarTab.label "nicht laden">
 <!ENTITY tapAfterTimeout.label "Wenn ein Tab nicht benutzt wird, ">
 <!ENTITY tapAfterTimeout.accesskey "T">
-<!ENTITY doNothing.label "nichts machen">
+<!ENTITY doNothing.label "nichts machen (Standardeinstellung)">
 <!ENTITY putOnBarTapAfter.label "entladen nach">
 <!ENTITY timeoutSecs.label "Sek.">
 <!ENTITY timeoutMins.label "Min.">
 <!ENTITY timeoutHours.label "Std.">
 <!ENTITY timeoutDays.label "Tagen">
-<!ENTITY hostWhitelist.label "Seiten mit folgenden Hostnamen immer laden:">
+<!ENTITY hostWhitelist.label "Seiten von folgenden Hosts immer laden:">
 <!ENTITY hostWhitelistRemove.label "Entfernen">
 <!ENTITY hostWhitelistRemove.accesskey "-">
 <!ENTITY hostWhitelistAdd.label "Hinzufügen">
 <!ENTITY hostWhitelistAdd.accesskey "+">
+<!ENTITY hostWhitelist.description "Dies ist eine Liste von Hostnamen. Einträge können mittels dieser Liste oder dem Tab-Kontextmenü hinzugefügt und entfernt werden.">
+<!ENTITY loadOnSelect.label "Wenn ein ungeladenes Tab ausgewählt wird, ">
+<!ENTITY loadOnSelect.accesskey "S">
+<!ENTITY loadAfterAskingMe.label "frage, ob es geladen werden soll">
+<!ENTITY loadImmediately.label "sofort laden">
+<!ENTITY loadAfterDelay.label "laden nach einer Verzögerung von">
+<!ENTITY delayMilliseconds.label "ms">
+<!ENTITY closingTabs.label "Wenn ein Tab geschlossen wird:">
+<!ENTITY closingTabs.accesskey "C">
+<!ENTITY findClosestUntappedTab.label "das nächste geladene Tab auswählen">
