@@ -7,17 +7,27 @@
 <!ENTITY backgroundTabs.accesskey "B">
 <!ENTITY loadTabs.label "les charger (par défaut dans Firefox)">
 <!ENTITY putOnBarTab.label "ne pas les charger">
-<!ENTITY tapAfterTimeout.label "Lorsqu'un onglet est inutilisé depuis un moment:">
+<!ENTITY tapAfterTimeout.label "Lorsqu'un onglet est inutilisé:">
 <!ENTITY tapAfterTimeout.accesskey "T">
-<!ENTITY doNothing.label "ne rien faire">
+<!ENTITY doNothing.label "ne rien faire (par défaut dans Firefox)">
 <!ENTITY putOnBarTapAfter.label "le décharger après">
-<!ENTITY timeoutSecs.label "secs">
-<!ENTITY timeoutMins.label "mins">
+<!ENTITY timeoutSecs.label "s">
+<!ENTITY timeoutMins.label "min">
 <!ENTITY timeoutHours.label "heures">
 <!ENTITY timeoutDays.label "jours">
-<!ENTITY hostWhitelist.label "Les pages des sites suivant seront toujours chargées:">
+<!ENTITY hostWhitelist.label "Toujours charger les pages des sites suivant:">
 <!ENTITY hostWhitelist.accesskey "H">
 <!ENTITY hostWhitelistRemove.label "Supprimer">
 <!ENTITY hostWhitelistRemove.accesskey "-">
 <!ENTITY hostWhitelistAdd.label "Ajouter">
 <!ENTITY hostWhitelistAdd.accesskey "+">
+<!ENTITY hostWhitelist.description "Une liste de noms d'hôtes.  Vous pouvez ajouter ou supprimer des entrées à partir de cette liste ou du menu contextuel des onglets.">
+<!ENTITY loadOnSelect.label "Lors de la sélection d'un onglet déchargé:">
+<!ENTITY loadOnSelect.accesskey "S">
+<!ENTITY loadAfterAskingMe.label "me demander s'il faut le charger">
+<!ENTITY loadImmediately.label "le charger immédiatement">
+<!ENTITY loadAfterDelay.label "le charger après un délai de">
+<!ENTITY delayMilliseconds.label "ms">
+<!ENTITY closingTabs.label "Lors de la fermeture d'un onglet :">
+<!ENTITY closingTabs.accesskey "C">
+<!ENTITY findClosestUntappedTab.label "sélectionner l'onglet chargé le plus proche">
