@@ -21,4 +21,13 @@
 <!ENTITY hostWhitelistRemove.accesskey "-">
 <!ENTITY hostWhitelistAdd.label "Añadir">
 <!ENTITY hostWhitelistAdd.accesskey "+">
-
+<!ENTITY hostWhitelist.description "Ésto es una lista de nombres de servidores.  Puedes añadir o borrar entradas usando esta lista o el menú contextual de las pestañas.">
+<!ENTITY loadOnSelect.label "Cuando cambie a una pestaña descargada: ">
+<!ENTITY loadOnSelect.accesskey "S">
+<!ENTITY loadAfterAskingMe.label "prenguntarme si quiero cargarla">
+<!ENTITY loadImmediately.label "cargarla inmediatamente">
+<!ENTITY loadAfterDelay.label "cargarla después de">
+<!ENTITY delayMilliseconds.label "ms">
+<!ENTITY closingTabs.label "Cuando cierre una pestaña:">
+<!ENTITY closingTabs.accesskey "C">
+<!ENTITY findClosestUntappedTab.label "seleccionar la pestaña cargada más cercana">
