@@ -9,7 +9,7 @@
 <!ENTITY putOnBarTab.label "не загружать их">
 <!ENTITY tapAfterTimeout.label "Когда я не посещаю вкладку некоторое время: ">
 <!ENTITY tapAfterTimeout.accesskey "Н">
-<!ENTITY doNothing.label "ничего не делать">
+<!ENTITY doNothing.label "ничего не делать (по умолчанию в Firefox)">
 <!ENTITY putOnBarTapAfter.label "выгружать ее после">
 <!ENTITY timeoutSecs.label "сек.">
 <!ENTITY timeoutMins.label "мин.">
@@ -21,3 +21,13 @@
 <!ENTITY hostWhitelistRemove.accesskey "-">
 <!ENTITY hostWhitelistAdd.label "Добавить">
 <!ENTITY hostWhitelistAdd.accesskey "+">
+<!ENTITY hostWhitelist.description "Это белый список сайтов.  Вы можете добавлять и удалять сайты используя кнопки справа или через меню на вкладках.">
+<!ENTITY loadOnSelect.label "При переключении на выгруженную вкладку:">
+<!ENTITY loadOnSelect.accesskey "П">
+<!ENTITY loadAfterAskingMe.label "напоминать о необходимости загрузки">
+<!ENTITY loadImmediately.label "сразу загружать">
+<!ENTITY loadAfterDelay.label "загружать после задержки">
+<!ENTITY delayMilliseconds.label "мс">
+<!ENTITY closingTabs.label "При закрытии вкладки:">
+<!ENTITY closingTabs.accesskey "З">
+<!ENTITY findClosestUntappedTab.label "выбирать ближайшую загруженную вкладку">
