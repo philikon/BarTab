@@ -5,11 +5,11 @@
 <!ENTITY restoredTabs.accesskey "R">
 <!ENTITY backgroundTabs.label "リンクから開かれて、まだ読んでいない新しいタブ: ">
 <!ENTITY backgroundTabs.accesskey "B">
-<!ENTITY loadTabs.label "読み込む (Firefox 既定)">
+<!ENTITY loadTabs.label "読み込む (Firefox 初期状態)">
 <!ENTITY putOnBarTab.label "待機させておく">
 <!ENTITY tapAfterTimeout.label "しばらくタブを見なかった場合: ">
 <!ENTITY tapAfterTimeout.accesskey "T">
-<!ENTITY doNothing.label "なにもしない">
+<!ENTITY doNothing.label "なにもしない (Firefox 初期状態)">
 <!ENTITY putOnBarTapAfter.label "時間が経ったら待機させる">
 <!ENTITY timeoutSecs.label "秒">
 <!ENTITY timeoutMins.label "分">
@@ -21,3 +21,13 @@
 <!ENTITY hostWhitelistRemove.accesskey "-">
 <!ENTITY hostWhitelistAdd.label "追加">
 <!ENTITY hostWhitelistAdd.accesskey "+">
+<!ENTITY hostWhitelist.description "これはホスト名の一覧です。この一覧かタブのコンテキストメニューを利用して項目の追加と削除をしてください。">
+<!ENTITY loadOnSelect.label "待機中のタブに切り替えた場合:">
+<!ENTITY loadOnSelect.accesskey "S">
+<!ENTITY loadAfterAskingMe.label "読み込むかどうか尋ねる">
+<!ENTITY loadImmediately.label "直ちに読み込む">
+<!ENTITY loadAfterDelay.label "遅延させて読み込む">
+<!ENTITY delayMilliseconds.label "ミリ秒">
+<!ENTITY closingTabs.label "タブを閉じた場合:">
+<!ENTITY closingTabs.accesskey "C">
+<!ENTITY findClosestUntappedTab.label "最寄りの読み込まれているタブを選択する">
