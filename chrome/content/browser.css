@@ -1,3 +1,3 @@
-.tabbrowser-tabs tab[ontap=true] {
+.tabbrowser-tab[ontap=true] {
   opacity: .5;
 }
