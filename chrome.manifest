@@ -2,6 +2,7 @@ content   bartap                 chrome/content/
 locale    bartap   en-US         chrome/locale/en-US/
 locale    bartap   ja            chrome/locale/ja/
 locale    bartap   de            chrome/locale/de/
+locale    bartap   de-DE         chrome/locale/de/
 locale    bartap   pl            chrome/locale/pl/
 locale    bartap   pl-PL         chrome/locale/pl/
 locale    bartap   fr            chrome/locale/fr/
