@@ -15,9 +15,19 @@
 <!ENTITY timeoutMins.label "min.">
 <!ENTITY timeoutHours.label "godz.">
 <!ENTITY timeoutDays.label "dniach">
-<!ENTITY hostWhitelist.label "Zawsze ładuj karty z następującymi adresami:">
+<!ENTITY hostWhitelist.label "Zawsze ładuj karty z następujących adresów:">
 <!ENTITY hostWhitelist.accesskey "A">
 <!ENTITY hostWhitelistRemove.label "Usuń">
 <!ENTITY hostWhitelistRemove.accesskey "-">
 <!ENTITY hostWhitelistAdd.label "Dodaj">
 <!ENTITY hostWhitelistAdd.accesskey "+">
+<!ENTITY hostWhitelist.description "Możesz dodać adres do listy serwerów zawsze ładowanych adresów za pomocą przycisku Dodaj lub menu kontekstowego kart.">
+<!ENTITY loadOnSelect.label "Przechodząc na niezaładowaną kartę:">
+<!ENTITY loadOnSelect.accesskey "D">
+<!ENTITY loadAfterAskingMe.label "pytaj czy załadować zawartość">
+<!ENTITY loadImmediately.label "ładuj zawartość natychmiast">
+<!ENTITY loadAfterDelay.label "ładuj zawartość z opóźnieniem:">
+<!ENTITY delayMilliseconds.label "ms">
+<!ENTITY closingTabs.label "Zamykając kartę:">
+<!ENTITY closingTabs.accesskey "C">
+<!ENTITY findClosestUntappedTab.label "przechodź do najbliższej załadowanej karty">
