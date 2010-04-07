@@ -1,7 +1,7 @@
-1.6 (unreleased)
-----------------
+1.5.1 (2010-04-07)
+------------------
 
-* ...
+* Fixed a missing string in the German translation.
 
 
 1.5 (2010-04-05)
