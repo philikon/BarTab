@@ -88,42 +88,23 @@ var BarTap = {
     /* Initialize timer */
     tabbrowser.BarTapTimer = new BarTapTimer(tabbrowser);
 
-    /* Insert context menu items for putting tabs back on your bar tab */
+    /* We need an event listener for the context menu so that we can adjust
+       the label of the whitelist menu item */
     let popup = tabbrowser.tabContainer.contextMenu;
-    let before;
-    /* Fuzzy test for FFX 3.7 where the tabbar lives outside the tabbrowser. */
-    if (popup) {
-      before = document.getElementById("context_openTabInWindow");
-    } else {
+    if (!popup) {
+      /* In Firefox <3.7, the tab context menu lives inside the tabbrowser. */
       popup = document.getAnonymousElementByAttribute(
           tabbrowser, "anonid", "tabContextMenu");
-      before = document.getAnonymousElementByAttribute(
+      let before = document.getAnonymousElementByAttribute(
           tabbrowser, "id", "context_openTabInWindow");
+      for each (let menuitemid in ["context_putOnTap",
+                                   "context_putAllOnTapBut",
+                                   "context_neverPutOnTap",
+                                   "context_tapSeparator"]) {
+        let menuitem = document.getElementById(menuitemid);
+        popup.insertBefore(menuitem, before);
+      }
     }
-
-    let putontap = document.createElement('menuitem');
-    putontap.setAttribute('id', 'context_putOnTap');
-    putontap.setAttribute('label', this.l10n.getString('putOnTap'));
-    putontap.setAttribute('tbattr', 'tabbrowser-multiple');
-    putontap.setAttribute('oncommand', "BarTap.putOnTap(gBrowser.mContextTab, gBrowser);");
-    popup.insertBefore(putontap, before);
-
-    let putallontap = document.createElement('menuitem');
-    putallontap.setAttribute('id', 'context_putAllOnTapBut');
-    putallontap.setAttribute('label', this.l10n.getString('putAllOnTapBut'));
-    putallontap.setAttribute('tbattr', 'tabbrowser-multiple');
-    putallontap.setAttribute('oncommand', "BarTap.putAllOnTapBut(gBrowser.mContextTab, gBrowser);");
-    popup.insertBefore(putallontap, before);
-
-    let neverputontap = document.createElement('menuitem');
-    neverputontap.setAttribute('id', 'context_neverPutOnTap');
-    neverputontap.setAttribute('tbattr', 'tabbrowser-multiple');
-    neverputontap.setAttribute('type', 'checkbox');
-    neverputontap.setAttribute('autocheck', 'false');
-    neverputontap.setAttribute('oncommand', "BarTap.toggleHostWhitelist(gBrowser.mContextTab, gBrowser);");
-    popup.insertBefore(neverputontap, before);
-
-    popup.insertBefore(document.createElement('menuseparator'), before);
     popup.addEventListener('popupshowing', this, false);
   },
 

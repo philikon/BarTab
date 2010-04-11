@@ -11,4 +11,28 @@
                   src="chrome://bartap/locale/overlay.properties"/>
   </stringbundleset>
 
+  <popupset id="mainPopupSet">
+    <menupopup id="tabContextMenu">
+      <menuitem id="context_putOnTap"
+                label="&putOnTap.label;"
+                tbattr="tabbrowser-multiple"
+                oncommand="BarTap.putOnTap(gBrowser.mContextTab, gBrowser);"
+                insertbefore="context_openTabInWindow"/>
+      <menuitem id="context_putAllOnTapBut"
+                label="&putAllOnTapBut.label;"
+                tbattr="tabbrowser-multiple"
+                oncommand="BarTap.putAllOnTapBut(gBrowser.mContextTab, gBrowser);"
+                insertbefore="context_openTabInWindow"/>
+      <menuitem id="context_neverPutOnTap"
+                label=""
+                tbattr="tabbrowser-multiple"
+                type="checkbox"
+                autocheck="false"
+                oncommand="BarTap.toggleHostWhitelist(gBrowser.mContextTab, gBrowser);"
+                insertbefore="context_openTabInWindow"/>
+      <menuseparator id="context_tapSeparator"
+                     insertbefore="context_openTabInWindow"/>
+    </menupopup>
+  </popupset>
+
 </overlay>
