@@ -3,6 +3,8 @@
 
 * Improved compatibility with Firefox 3.7a5 (Bug 554991).
 
+* Improved tab context menu item behaviour.
+
 
 1.5.1 (2010-04-07)
 ------------------
