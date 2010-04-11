@@ -25,7 +25,6 @@
                 insertbefore="context_openTabInWindow"/>
       <menuitem id="context_neverPutOnTap"
                 label=""
-                tbattr="tabbrowser-multiple"
                 type="checkbox"
                 autocheck="false"
                 oncommand="BarTap.toggleHostWhitelist(gBrowser.mContextTab, gBrowser);"
