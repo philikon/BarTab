@@ -115,8 +115,15 @@ var BarTap = {
     let neverputontap = document.getElementById("context_neverPutOnTap");
     let putontap = document.getElementById("context_putOnTap");
 
-    // TODO the tab could also be unloaded (so uri is about:blank),
-    // but one still might want to put the host on the whitelist.
+    if (tab.getAttribute("ontap") == "true") {
+      putontap.setAttribute("disabled", "true");
+
+      // TODO even though the tab is unloaded one still might want to
+      // put the host on the whitelist.
+      neverputontap.setAttribute("hidden", "true");
+      return;
+    }
+
     let uri = tab.linkedBrowser.currentURI;
     try {
       let label = this.l10n.getFormattedString('neverPutOnTap', [uri.host]);
