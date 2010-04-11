@@ -109,11 +109,11 @@ var BarTap = {
   },
 
   onPopupShowing: function(event) {
-    let tab =  document.popupNode.localName == "tab" ?
+    var tab =  document.popupNode.localName == "tab" ?
           document.popupNode : gBrowser.selectedTab;
 
-    let neverputontap = document.getElementById("context_neverPutOnTap");
-    let putontap = document.getElementById("context_putOnTap");
+    var neverputontap = document.getElementById("context_neverPutOnTap");
+    var putontap = document.getElementById("context_putOnTap");
 
     if (tab.getAttribute("ontap") == "true") {
       putontap.setAttribute("disabled", "true");
@@ -124,23 +124,26 @@ var BarTap = {
       return;
     }
 
-    let uri = tab.linkedBrowser.currentURI;
+    let host;
     try {
-      let label = this.l10n.getFormattedString('neverPutOnTap', [uri.host]);
-      neverputontap.setAttribute("label", label);
-      if (this.getHostWhitelist().indexOf(uri.host) == -1) {
-        neverputontap.removeAttribute("checked");
-        putontap.removeAttribute("disabled");
-      } else {
-        neverputontap.setAttribute("checked", "true");
-        putontap.setAttribute("disabled", "true");
-      }
-      neverputontap.removeAttribute("hidden");
+      host = tab.linkedBrowser.currentURI.host;
     } catch (ex) {
       /* Most likely uri.host doesn't exist which probably means whitelisting
          doesn't make sense on this tab.  Don't show the menu item */
       neverputontap.setAttribute("hidden", "true");
       putontap.removeAttribute("disabled");
+      return;
+    }
+
+    let label = this.l10n.getFormattedString('neverPutOnTap', [host]);
+    neverputontap.setAttribute("label", label);
+    neverputontap.removeAttribute("hidden");
+    if (this.getHostWhitelist().indexOf(host) == -1) {
+      neverputontap.removeAttribute("checked");
+      putontap.removeAttribute("disabled");
+    } else {
+      neverputontap.setAttribute("checked", "true");
+      putontap.setAttribute("disabled", "true");
     }
   },
 
