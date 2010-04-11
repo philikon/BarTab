@@ -109,16 +109,15 @@ var BarTap = {
   },
 
   onPopupShowing: function(event) {
-    if (event.target != event.currentTarget) {
-      return;
-    }
+    let tab =  document.popupNode.localName == "tab" ?
+          document.popupNode : gBrowser.selectedTab;
 
     let neverputontap = document.getElementById("context_neverPutOnTap");
     let putontap = document.getElementById("context_putOnTap");
 
     // TODO the tab could also be unloaded (so uri is about:blank),
     // but one still might want to put the host on the whitelist.
-    let uri = document.popupNode.linkedBrowser.currentURI;
+    let uri = tab.linkedBrowser.currentURI;
     try {
       let label = this.l10n.getFormattedString('neverPutOnTap', [uri.host]);
       neverputontap.setAttribute("label", label);
