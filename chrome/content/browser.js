@@ -634,7 +634,7 @@ XPCOMUtils.defineLazyServiceGetter(BarTap, "mHistory",
                                    "@mozilla.org/browser/nav-history-service;1",
                                    "nsINavHistoryService");
 
-// Initialize BarTap when the 
+// Initialize BarTap as soon as possible.
 window.addEventListener("DOMContentLoaded", BarTap, false);
 
 
