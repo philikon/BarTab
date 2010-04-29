@@ -609,10 +609,16 @@ XPCOMUtils.defineLazyServiceGetter(BarTap, "mHistory",
                                    "@mozilla.org/browser/nav-history-service;1",
                                    "nsINavHistoryService");
 
-
+// Initialize BarTap when the 
 window.addEventListener("DOMContentLoaded", BarTap, false);
 
 
+/*
+ * A timer that keeps track of how long ago each tab was last visited.
+ * If that time reaches a user-defined value, it unloads the tab in
+ * question.  (The actual implementation works differently.  It uses
+ * setTimeout, of course).
+ */
 function BarTapTimer(tabbrowser) {
   this.tabbrowser = tabbrowser;
   tabbrowser.tabContainer.addEventListener('TabSelect', this, false);
