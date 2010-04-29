@@ -32,7 +32,7 @@ var BarTap = {
     this.initTabBrowser(tabbrowser);
   },
 
-  /* 
+  /*
    * Initialize the tab browser.  This is deliberately its own method
    * so that extensions that have other tabbrowsers can call it.
    */
@@ -110,69 +110,13 @@ var BarTap = {
     popup.addEventListener('popupshowing', this, false);
   },
 
-  onPopupShowing: function(event) {
-    var tab =  document.popupNode.localName == "tab" ?
-          document.popupNode : gBrowser.selectedTab;
 
-    var neverputontap = document.getElementById("context_neverPutOnTap");
-    var putontap = document.getElementById("context_putOnTap");
-
-    if (tab.getAttribute("ontap") == "true") {
-      putontap.setAttribute("disabled", "true");
-
-      // TODO even though the tab is unloaded one still might want to
-      // put the host on the whitelist.
-      neverputontap.setAttribute("hidden", "true");
-      return;
-    }
-
-    let host;
-    try {
-      host = tab.linkedBrowser.currentURI.host;
-    } catch (ex) {
-      // Most likely uri.host doesn't exist which probably means whitelisting
-      // doesn't make sense on this tab.  Don't show the menu item
-      neverputontap.setAttribute("hidden", "true");
-      putontap.removeAttribute("disabled");
-      return;
-    }
-
-    let label = this.l10n.getFormattedString('neverPutOnTap', [host]);
-    neverputontap.setAttribute("label", label);
-    neverputontap.removeAttribute("hidden");
-    if (this.getHostWhitelist().indexOf(host) == -1) {
-      neverputontap.removeAttribute("checked");
-      putontap.removeAttribute("disabled");
-    } else {
-      neverputontap.setAttribute("checked", "true");
-      putontap.setAttribute("disabled", "true");
-    }
-  },
-
-  toggleHostWhitelist: function(tab, tabbrowser) {
-    // TODO the tab could also be tapped (so uri is about:blank)
-    var uri = tab.linkedBrowser.currentURI;
-    try {
-      var host = uri.host;
-    } catch(ex) {
-      // Most likely uri.host doesn't exist.  Ignore then.
-      return;
-    }
-
-    let whitelist = this.getHostWhitelist();
-    let index = whitelist.indexOf(host);
-    if (index == -1) {
-      whitelist.push(host);
-    } else {
-      whitelist.splice(index, 1);
-    }
-
-    this.setHostWhitelist(whitelist);
-  },
+  /*** Core machinery ***/
 
   /*
    * Listen to the 'SSTabRestoring' event from the nsISessionStore
-   * service and put a marker on restored tabs.
+   * service and put a marker on restored tabs so that 'onTabStateChange'
+   * can take the appropriate action.
    */
   onTabRestoring: function(event) {
     if (!this.mPrefs.getBoolPref("extensions.bartap.tapRestoredTabs")) {
@@ -189,7 +133,7 @@ var BarTap = {
   /*
    * Called when a tab is opened with a new URI (e.g. by opening a
    * link in a new tab.)  Stores the parameters on the tab so that
-   * 'onTabStateChange' can carry out the action later.
+   * 'onTabStateChange' can take the appropriate action.
    */
   writeBarTap: function(aTab, aBrowser, aURI, aFlags, aReferrerURI, aCharset, aPostData) {
     if (!aURI) {
@@ -256,7 +200,7 @@ var BarTap = {
         if (this.getHostWhitelist().indexOf(gotouri.host) != -1) {
           tab.removeAttribute("ontap");
           browser.removeAttribute("ontap");
-          return false;          
+          return false;
         }
       } catch(ex) {
         // Most likely gotouri.host failed.  No matter, just carry on.
@@ -363,6 +307,48 @@ var BarTap = {
     }
   },
 
+
+  /*** Handlers for commands (e.g. context menu items) ***/
+
+  onPopupShowing: function(event) {
+    var tab =  document.popupNode.localName == "tab" ?
+          document.popupNode : gBrowser.selectedTab;
+
+    var neverputontap = document.getElementById("context_neverPutOnTap");
+    var putontap = document.getElementById("context_putOnTap");
+
+    if (tab.getAttribute("ontap") == "true") {
+      putontap.setAttribute("disabled", "true");
+
+      // TODO even though the tab is unloaded one still might want to
+      // put the host on the whitelist.
+      neverputontap.setAttribute("hidden", "true");
+      return;
+    }
+
+    let host;
+    try {
+      host = tab.linkedBrowser.currentURI.host;
+    } catch (ex) {
+      // Most likely uri.host doesn't exist which probably means whitelisting
+      // doesn't make sense on this tab.  Don't show the menu item
+      neverputontap.setAttribute("hidden", "true");
+      putontap.removeAttribute("disabled");
+      return;
+    }
+
+    let label = this.l10n.getFormattedString('neverPutOnTap', [host]);
+    neverputontap.setAttribute("label", label);
+    neverputontap.removeAttribute("hidden");
+    if (this.getHostWhitelist().indexOf(host) == -1) {
+      neverputontap.removeAttribute("checked");
+      putontap.removeAttribute("disabled");
+    } else {
+      neverputontap.setAttribute("checked", "true");
+      putontap.setAttribute("disabled", "true");
+    }
+  },
+
   putOnTap: function(aTab, aTabBrowser) {
     // Ignore tabs that are already unloaded or are on the host whitelist.
     if (aTab.getAttribute("ontap") == "true") {
@@ -443,7 +429,31 @@ var BarTap = {
       });
   },
 
-  /* 
+  toggleHostWhitelist: function(tab, tabbrowser) {
+    // TODO the tab could also be tapped (so uri is about:blank)
+    var uri = tab.linkedBrowser.currentURI;
+    try {
+      var host = uri.host;
+    } catch(ex) {
+      // Most likely uri.host doesn't exist.  Ignore then.
+      return;
+    }
+
+    let whitelist = this.getHostWhitelist();
+    let index = whitelist.indexOf(host);
+    if (index == -1) {
+      whitelist.push(host);
+    } else {
+      whitelist.splice(index, 1);
+    }
+
+    this.setHostWhitelist(whitelist);
+  },
+
+
+  /*** Helper functions ***/
+
+  /*
    * In relation to a given tab, find the closest tab that is loaded.
    * Note: if there's no such tab available, this will return unloaded
    * tabs as a last resort.
@@ -488,6 +498,10 @@ var BarTap = {
     return aTab.previousSibling;
   },
 
+  /*
+   * Set a tab's title and favicon given a URI, e.g. by querying the
+   * history service.
+   */
   setTitleAndIcon: function(aTab, aURI) {
     // See if we have title, favicon in stock for it. This should definitely
     // work for restored tabs as they're in the history database.
@@ -528,8 +542,10 @@ var BarTap = {
     }
   },
 
-  /* Get information about a URI from the history service,
-   * e.g. title, favicon, ... */
+  /*
+   * Get information about a URI from the history service,
+   * e.g. title, favicon, ...
+   */
   getInfoFromHistory: function(aURI) {
     var history = Cc["@mozilla.org/browser/nav-history-service;1"]
                     .getService(Ci.nsINavHistoryService);
