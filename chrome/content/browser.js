@@ -41,9 +41,9 @@ var BarTap = {
     // Monkey patch our way into the tabbrowser.  Hook into the tab
     // progress listener so that we can stop a tab from loading when
     // necessary.
-    tabbrowser.oldTabProgressListener = tabbrowser.mTabProgressListener;
+    tabbrowser.BarTabProgressListener = tabbrowser.mTabProgressListener;
     tabbrowser.mTabProgressListener = function(aTab, aBrowser, aStartsBlank) {
-      var listener = this.oldTabProgressListener(aTab, aBrowser, aStartsBlank);
+      var listener = this.BarTabProgressListener(aTab, aBrowser, aStartsBlank);
       listener.oldStateChange = listener.onStateChange;
       listener.onStateChange = BarTap.TBonStateChange;
       return listener;
