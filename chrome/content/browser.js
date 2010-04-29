@@ -38,13 +38,18 @@ var BarTap = {
     tabbrowser.tabContainer.addEventListener('TabSelect', this, false);
     tabbrowser.tabContainer.addEventListener('TabClose', this, false);
 
-    // Monkey patch our way into the tab browser.  This is by far the
-    // most efficient but also ugliest way :\
-    eval('tabbrowser.mTabProgressListener = '+tabbrowser.mTabProgressListener.toSource().replace(
-        /\{(this.mTab.setAttribute\("busy", "true"\);[^\}]+)\}/,
-        'if (!BarTap.onTabStateChange(this.mTab)) { $1 }'
-    ));
+    // Monkey patch our way into the tabbrowser.  Hook into the tab
+    // progress listener so that we can stop a tab from loading when
+    // necessary.
+    tabbrowser.oldTabProgressListener = tabbrowser.mTabProgressListener;
+    tabbrowser.mTabProgressListener = function(aTab, aBrowser, aStartsBlank) {
+      var listener = this.oldTabProgressListener(aTab, aBrowser, aStartsBlank);
+      listener.oldStateChange = listener.onStateChange;
+      listener.onStateChange = BarTap.TBonStateChange;
+      return listener;
+    };
 
+    // I wish we could get rid of this eval()...
     eval('tabbrowser.addTab = '+tabbrowser.addTab.toSource().replace(
         'b.loadURIWithFlags(aURI, flags, aReferrerURI, aCharset, aPostData)',
         'BarTap.writeBarTap(t, b, aURI, flags, aReferrerURI, aCharset, aPostData); $&'
@@ -156,6 +161,25 @@ var BarTap = {
   },
 
   /*
+   * New implementation of the onStateChange method for the tabbrowser's
+   * mTabProgressListener.  See the monkey patches in init().
+   * Note: 'this' refers to the tabbrowser.
+   */
+  TBonStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus) {
+    if (!aRequest)
+      return;
+    this.oldStateChange(aWebProgress, aRequest, aStateFlags, aStatus);
+
+    const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
+    if (aStateFlags & nsIWebProgressListener.STATE_START
+        && aStateFlags & nsIWebProgressListener.STATE_IS_NETWORK
+        && !(aStateFlags & nsIWebProgressListener.STATE_RESTORING)
+        && !this.mBlank) {
+      BarTap.onTabStateChange(this.mTab);
+    }
+  },
+
+  /*
    * Called when the browser wants to load stuff into a tab.  If the
    * tab has been placed on tap, stop the loading and defer to an
    * event listener.  Returns true of the tab has been tapped.
@@ -206,6 +230,7 @@ var BarTap = {
 
     // The URI isn't on the white list, so let's defer loading the tab
     // to an event handler.
+    tab.removeAttribute("busy");
     browser.stop();
     if (gotouri) {
       window.setTimeout(this.setTitleAndIcon, 0, tab, gotouri);
