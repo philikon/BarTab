@@ -85,7 +85,7 @@ var BarTapPreferences = {
     var whitelist = this.getHostWhitelist();
     var host = textbox.value.trim();
 
-    /* We don't want empty entries or duplicates. */
+    // We don't want empty entries or duplicates.
     if (!host || (whitelist.indexOf(host) != -1)) {
       return;
     }
