@@ -216,31 +216,33 @@ var BarTap = {
       return false;
     }
 
-    /* We need these here because they leak into the event listener below. */
     var browser = tab.linkedBrowser;
     var history = browser.webNavigation.sessionHistory;
     var bartap = browser.getAttribute("bartap");
-    var gotoindex;
     var gotouri;
+    var loadHandler;
 
     if (bartap) {
       /* The tab was likely opened by clicking on a link */
       browser.removeAttribute("bartap");
       bartap = JSON.parse(bartap);
       gotouri = makeURI(bartap.uri);
+      loadHandler = this.loadHandlerFromBarTap(bartap);
     } else if (history.count) {
       /* Likely a restored tab, try loading from history. */
-      gotoindex = history.requestedIndex;
+      let gotoindex = history.requestedIndex;
       if (gotoindex == -1) {
         gotoindex = history.index;
       }
       gotouri = history.getEntryAtIndex(gotoindex, false).URI;
+      loadHandler = this.loadHandlerFromHistory(gotoindex);
     } else if (browser.userTypedValue) {
       /* This might not make much sense here... */
       gotouri = makeURI(browser.userTypedValue);
+      loadHandler = this.loadFromUserValue;
     }
 
-    /* Check whether we should put this URI on the bar tab or not. */
+    /* Check whether this URI is on the white list */
     if (gotouri) {
       try {
         if (this.getHostWhitelist().indexOf(gotouri.host) != -1) {
@@ -253,33 +255,44 @@ var BarTap = {
       }
     }
 
+    /* The URI isn't on the white list, so let's defer loading the tab
+       to an event handler. */
     browser.stop();
-
     if (gotouri) {
       window.setTimeout(this.setTitleAndIcon, 0, tab, gotouri);
     }
-
-    browser.addEventListener("BarTapLoad", function() {
-        browser.removeEventListener("BarTapLoad", arguments.callee, false);
-
-        if (bartap) {
-          /* The referrer might be undefined. */
-          let referrer = bartap.referrer;
-          if (referrer) {
-            referrer = makeURI(referrer);
-          }
-          /* Gotta love the inconsistency of this API */
-          browser.loadURIWithFlags(bartap.uri, bartap.flags, referrer,
-                                   bartap.charset, bartap.postdata);
-        } else if (history.count) {
-          browser.webNavigation.gotoIndex(gotoindex);
-        } else if (browser.userTypedValue) {
-          /* This might not make much sense here... */
-          browser.loadURI(browser.userTypedValue);
-        }
-      }, false);
-
+    browser.addEventListener("BarTapLoad", loadHandler, false);
     return true;
+  },
+
+  loadHandlerFromBarTap: function(bartap) {
+    return function(aEvent) {
+      var browser = aEvent.target;
+      browser.removeEventListener("BarTapLoad", arguments.callee, false);
+
+      /* The referrer might be undefined. */
+      let referrer = bartap.referrer;
+      if (referrer) {
+        referrer = makeURI(referrer);
+      }
+      /* Gotta love the inconsistency of this API */
+      browser.loadURIWithFlags(bartap.uri, bartap.flags, referrer,
+                               bartap.charset, bartap.postdata);
+    };
+  },
+
+  loadHandlerFromHistory: function(gotoindex) {
+    return function(aEvent) {
+      var browser = aEvent.target;
+      browser.removeEventListener("BarTapLoad", arguments.callee, false);
+      browser.webNavigation.gotoIndex(gotoindex);
+    };
+  },
+
+  loadFromUserValue: function(aEvent) {
+    var browser = aEvent.target;
+    browser.removeEventListener("BarTapLoad", arguments.callee, false);
+    browser.loadURI(browser.userTypedValue);
   },
 
   onTabSelect: function(event) {
