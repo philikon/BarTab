@@ -256,42 +256,7 @@ var BarTap = {
     browser.stop();
 
     if (gotouri) {
-      /* See if we have title, favicon in stock for it. This should definitely
-         work for restored tabs as they're in the history database. */
-      let info = this.getInfoFromHistory(gotouri);
-      if (info) {
-        /* Firefox cripples nsINavHistoryService entries for fragment links.
-           See https://bugzilla.mozilla.org/show_bug.cgi?id=420605
-           Try to work around that by stripping the fragment from the URI. */
-        let anchor = gotouri.path.indexOf('#');
-        if (!info.icon && (anchor != -1)) {
-          let uri = gotouri.clone();
-          uri.path = uri.path.substr(0, anchor);
-          let anchorinfo = this.getInfoFromHistory(uri);
-          if (anchorinfo) {
-            info = anchorinfo;
-          }
-        }
-        tab.setAttribute("image", info.icon);
-        tab.label = info.title;
-      } else {
-        try {
-          /* Set a meaningful part of the URI as tab label */
-          let hostPort = gotouri.hostPort;
-          let path = gotouri.path;
-          if (hostPort.substr(0, 4) == "www.") {
-            hostPort = hostPort.substr(4);
-          }
-          if (path == "/") {
-            path = "";
-          }
-          tab.label = hostPort + path;
-        } catch (ex) {
-          /* Most likely gotouri.hostPort and gotouri.path failed.
-             Let's handle this gracefully. */
-          tab.label = gotouri.spec;
-        }
-      }
+      window.setTimeout(this.setTitleAndIcon, 0, tab, gotouri);
     }
 
     browser.addEventListener("BarTapLoad", function() {
@@ -498,6 +463,46 @@ var BarTap = {
       return aTab.nextSibling;
     }
     return aTab.previousSibling;
+  },
+
+  setTitleAndIcon: function(aTab, aURI) {
+    /* See if we have title, favicon in stock for it. This should definitely
+       work for restored tabs as they're in the history database. */
+    let info = BarTap.getInfoFromHistory(aURI);
+    if (info) {
+      /* Firefox cripples nsINavHistoryService entries for fragment links.
+         See https://bugzilla.mozilla.org/show_bug.cgi?id=420605
+         Try to work around that by stripping the fragment from the URI. */
+      let anchor = aURI.path.indexOf('#');
+      if (!info.icon && (anchor != -1)) {
+        let uri = aURI.clone();
+        uri.path = uri.path.substr(0, anchor);
+        let anchorinfo = BarTap.getInfoFromHistory(uri);
+        if (anchorinfo) {
+          info = anchorinfo;
+        }
+      }
+      aTab.setAttribute("image", info.icon);
+      aTab.label = info.title;
+      return;
+    }
+
+    try {
+      /* Set a meaningful part of the URI as tab label */
+      let hostPort = aURI.hostPort;
+      let path = aURI.path;
+      if (hostPort.substr(0, 4) == "www.") {
+        hostPort = hostPort.substr(4);
+      }
+      if (path == "/") {
+        path = "";
+      }
+      aTab.label = hostPort + path;
+    } catch (ex) {
+      /* Most likely aURI.hostPort and aURI.path failed.
+         Let's handle this gracefully. */
+      aTab.label = aURI.spec;
+    }
   },
 
   /* Get information about a URI from the history service,
