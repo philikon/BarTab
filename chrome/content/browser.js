@@ -54,12 +54,12 @@ var BarTap = {
     /* Tab Mix Plus compatibility: It likes reusing blank tabs.  In doing
        so it confuses tabs on the bar tab with blank ones.  Fix that. */
     if (tabbrowser.isBlankBrowser) {
-      tabbrowser.TMPisBlankBrowser = tabbrowser.isBlankBrowser;
+      this.TMPisBlankBrowser = tabbrowser.isBlankBrowser;
       tabbrowser.isBlankBrowser = function (aBrowser) {
         if (aBrowser.getAttribute("ontap") == "true") {
           return false;
         }
-        return this.TMPisBlankBrowser(aBrowser);
+        return BarTap.TMPisBlankBrowser(aBrowser);
       };
     }
 
