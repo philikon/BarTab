@@ -25,7 +25,6 @@ var BarTap = {
 
   init: function() {
     window.removeEventListener("DOMContentLoaded", this, false);
-    window.addEventListener("SSTabRestoring", this, false);
 
     this.l10n = document.getElementById('bartap-strings');
 
@@ -38,6 +37,7 @@ var BarTap = {
    * so that extensions that have other tabbrowsers can call it.
    */
   initTabBrowser: function(tabbrowser) {
+    tabbrowser.tabContainer.addEventListener('SSTabRestoring', this, false);
     tabbrowser.tabContainer.addEventListener('TabSelect', this, false);
     tabbrowser.tabContainer.addEventListener('TabClose', this, false);
 
