@@ -1,6 +1,10 @@
 1.6 (unreleased)
 ----------------
 
+* If enabled, jumping to the nearest loaded tab now prefers tabs on
+  the right hand side given equally distant tabs.  This matches
+  Firefox's default behaviour of closing tabs to the right.
+
 * Improved compatibility with Firefox 3.7a5 (Bug 554991).
 
 * Improved tab context menu item behaviour.

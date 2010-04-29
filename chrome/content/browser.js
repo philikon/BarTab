@@ -476,14 +476,14 @@ var BarTap = {
     let i = 1;
     while ((aTab._tPos - i >= 0) ||
            (aTab._tPos + i < aTabBrowser.mTabs.length)) {
-      if (aTab._tPos - i >= 0) {
-        if (aTabBrowser.mTabs[aTab._tPos-i].getAttribute("ontap") != "true") {
-          return aTabBrowser.mTabs[aTab._tPos-i];
-        }
-      }
       if (aTab._tPos + i < aTabBrowser.mTabs.length) {
         if (aTabBrowser.mTabs[aTab._tPos+i].getAttribute("ontap") != "true") {
           return aTabBrowser.mTabs[aTab._tPos+i];
+        }
+      }
+      if (aTab._tPos - i >= 0) {
+        if (aTabBrowser.mTabs[aTab._tPos-i].getAttribute("ontap") != "true") {
+          return aTabBrowser.mTabs[aTab._tPos-i];
         }
       }
       i++;
