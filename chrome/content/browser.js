@@ -1,8 +1,5 @@
 var BarTap = {
 
-  mPrefs: Components.classes['@mozilla.org/preferences-service;1']
-          .getService(Components.interfaces.nsIPrefService).getBranch(null),
-
   handleEvent: function(event) {
     switch (event.type) {
     case 'DOMContentLoaded':
@@ -375,8 +372,7 @@ var BarTap = {
       }
     }
 
-    var sessionstore = Components.classes["@mozilla.org/browser/sessionstore;1"]
-                       .getService(Components.interfaces.nsISessionStore);
+    var sessionstore = this.mSessionStore;
     var state = sessionstore.getTabState(aTab);
     var newtab = aTabBrowser.addTab();
 
@@ -547,9 +543,7 @@ var BarTap = {
    * e.g. title, favicon, ...
    */
   getInfoFromHistory: function(aURI) {
-    var history = Cc["@mozilla.org/browser/nav-history-service;1"]
-                    .getService(Ci.nsINavHistoryService);
-
+    var history = this.mHistory;
     var options = history.getNewQueryOptions();
     options.queryType = Ci.nsINavHistoryQueryOptions.QUERY_TYPE_HISTORY;
     options.maxResults = 1;
@@ -598,6 +592,23 @@ var BarTap = {
   }
 
 };
+
+/*
+ * Lazy getters for XPCOM services.  This is in analogy to
+ * Services.jsm which is available in Firefox 3.7.
+ */
+XPCOMUtils.defineLazyGetter(BarTap, "mPrefs", function () {
+  return Cc["@mozilla.org/preferences-service;1"]
+         .getService(Ci.nsIPrefService)
+         .QueryInterface(Ci.nsIPrefBranch2);
+});
+XPCOMUtils.defineLazyServiceGetter(BarTap, "mSessionStore",
+                                   "@mozilla.org/browser/sessionstore;1",
+                                   "nsISessionStore");
+XPCOMUtils.defineLazyServiceGetter(BarTap, "mHistory",
+                                   "@mozilla.org/browser/nav-history-service;1",
+                                   "nsINavHistoryService");
+
 
 window.addEventListener("DOMContentLoaded", BarTap, false);
 
