@@ -169,7 +169,7 @@ var BarTap = {
       this.tabContainer.addEventListener("TabOpen", function (aEvent) {
           self.tabContainer.removeEventListener("TabOpen", arguments.callee, false);
           var tab = aEvent.originalTarget;
-          BarTap.writeBarTap(tab, tab.linkedBrowser, aURI, aReferrerURI);
+          BarTap.hookNewTab(tab, aURI, aReferrerURI);
       }, false);
     }
 
@@ -225,10 +225,10 @@ var BarTap = {
 
   /*
    * Called when a tab is opened with a new URI (e.g. by opening a
-   * link in a new tab.)  Stores the parameters on the tab so that
-   * 'onTabStateChange' can take the appropriate action.
+   * link or bookmark in a new tab.)  Depending on the user's
+   * settings, this either puts the tab on hold or hooks up the timer.
    */
-  writeBarTap: function(aTab, aBrowser, aURI, aReferrerURI) {
+  hookNewTab: function(aTab, aURI, aReferrerURI) {
     if (!aURI) {
       return;
     }
@@ -248,12 +248,12 @@ var BarTap = {
       if (typeof entry.setUniqueDocIdentifier === "function") {
         entry.setUniqueDocIdentifier();
       }
-      let history = aBrowser.webNavigation.sessionHistory;
+      let history = aTab.linkedBrowser.webNavigation.sessionHistory;
       history.QueryInterface(Ci.nsISHistoryInternal);
       history.addEntry(entry, true);
 
       aTab.setAttribute("ontap", "true");
-      aBrowser.setAttribute("ontap", "true");
+      aTab.linkedBrowser.setAttribute("ontap", "true");
     } else if (this.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
       this.getTabBrowserForTab(aTab).BarTapTimer.startTimer(aTab);
     }
