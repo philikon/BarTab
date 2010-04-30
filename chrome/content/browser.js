@@ -1,3 +1,28 @@
+/*
+ * Replace a method with another one while still making the all too
+ * popuplar kind of toSource + eval hack possible.
+ */
+function monkeyPatchMethod(obj, name, backupname, func) {
+    var oldfunc = obj[name];
+    obj[backupname] = oldfunc;
+
+    // Make the new method "look" like the old one.
+    func.toSource = function () {
+        return oldfunc.toSource();
+    };
+    func.toString = function () {
+        return oldfunc.toString();
+    };
+
+    // If anyone should try to replace the method, replace the old one.
+    obj.__defineGetter__(name, function () {
+        return func;
+    });
+    obj.__defineSetter__(name, function (value) {
+        obj[backupname] = value;
+    });
+}
+
 var BarTap = {
 
   handleEvent: function(event) {
@@ -41,20 +66,20 @@ var BarTap = {
     // Monkey patch our way into the tabbrowser.  Hook into the tab
     // progress listener so that we can stop a tab from loading when
     // necessary.
-    tabbrowser.BarTabProgressListener = tabbrowser.mTabProgressListener;
-    tabbrowser.mTabProgressListener = function(aTab, aBrowser, aStartsBlank) {
+    function newTabProgressListener(aTab, aBrowser, aStartsBlank) {
       var listener = this.BarTabProgressListener(aTab, aBrowser, aStartsBlank);
-      listener.oldStateChange = listener.onStateChange;
-      listener.onStateChange = BarTap.TBonStateChange;
+      monkeyPatchMethod(listener, "onStateChange", "oldStateChange",
+                        BarTap.TBonStateChange);
       return listener;
     };
+    monkeyPatchMethod(tabbrowser, "mTabProgressListener",
+                      "BarTabProgressListener", newTabProgressListener);
 
     // Hook into the 'addTab' method so that we can mark tabs that are
     // opened in the background.  Whether or not they're going to be
     // loaded will then be decided by the progress listener.
-    tabbrowser.BarTabAddTab = tabbrowser.addTab;
-    tabbrowser.addTab = function(aURI, aReferrerURI, aCharset, aPostData,
-                                 aOwner, aAllowThirdPartyFixup) {
+    function newAddTab(aURI, aReferrerURI, aCharset, aPostData, aOwner,
+                       aAllowThirdPartyFixup) {
       // We need to mark the tab before the browser.loadURI*() is
       // called.  We can do that by registering a TabOpen event
       // handler which is registered inline so that it has access to
@@ -86,6 +111,7 @@ var BarTap = {
 
       return tabbrowser.BarTabAddTab.apply(this, arguments);
     };
+    monkeyPatchMethod(tabbrowser, "addTab", "BarTabAddTab", newAddTab);
 
     // Tab Mix Plus compatibility: It likes reusing blank tabs.  In doing
     // so it confuses tabs on the bar tab with blank ones.  Fix that.
