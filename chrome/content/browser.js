@@ -172,7 +172,7 @@ var BarTap = {
 
       let self = this;
       this.tabContainer.addEventListener("TabOpen", function (aEvent) {
-          self.removeEventListener("TabOpen", arguments.callee, false);
+          self.tabContainer.removeEventListener("TabOpen", arguments.callee, false);
           var tab = aEvent.originalTarget;
           var flags = aAllowThirdPartyFixup ?
               Ci.nsIWebNavigation.LOAD_FLAGS_ALLOW_THIRD_PARTY_FIXUP :
