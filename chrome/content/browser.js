@@ -49,11 +49,43 @@ var BarTap = {
       return listener;
     };
 
-    // I wish we could get rid of this eval()...
-    eval('tabbrowser.addTab = '+tabbrowser.addTab.toSource().replace(
-        'b.loadURIWithFlags(aURI, flags, aReferrerURI, aCharset, aPostData)',
-        'BarTap.writeBarTap(t, b, aURI, flags, aReferrerURI, aCharset, aPostData); $&'
-    ));
+    // Hook into the 'addTab' method so that we can mark tabs that are
+    // opened in the background.  Whether or not they're going to be
+    // loaded will then be decided by the progress listener.
+    tabbrowser.BarTabAddTab = tabbrowser.addTab;
+    tabbrowser.addTab = function(aURI, aReferrerURI, aCharset, aPostData,
+                                 aOwner, aAllowThirdPartyFixup) {
+      // We need to mark the tab before the browser.loadURI*() is
+      // called.  We can do that by registering a TabOpen event
+      // handler which is registered inline so that it has access to
+      // this method's arguments.
+      var blank = !aURI || (aURI == "about:blank");
+      if (!blank) {
+        if (arguments.length == 2
+            && typeof arguments[1] == "object"
+            && !(arguments[1] instanceof Ci.nsIURI)) {
+          let params = arguments[1];
+          aReferrerURI          = params.referrerURI;
+          aCharset              = params.charset;
+          aPostData             = params.postData;
+          aOwner                = params.ownerTab;
+          aAllowThirdPartyFixup = params.allowThirdPartyFixup;
+        }
+
+        let self = this;
+        this.addEventListener("TabOpen", function (aEvent) {
+            self.removeEventListener("TabOpen", arguments.callee, false);
+            var tab = aEvent.originalTarget;
+            var flags = aAllowThirdPartyFixup ?
+                Ci.nsIWebNavigation.LOAD_FLAGS_ALLOW_THIRD_PARTY_FIXUP :
+                Ci.nsIWebNavigation.LOAD_FLAGS_NONE;
+            BarTap.writeBarTap(tab, tab.linkedBrowser,
+                               aURI, flags, aReferrerURI, aCharset, aPostData);
+        }, false);
+      }
+
+      return tabbrowser.BarTabAddTab.apply(this, arguments);
+    };
 
     // Tab Mix Plus compatibility: It likes reusing blank tabs.  In doing
     // so it confuses tabs on the bar tab with blank ones.  Fix that.
