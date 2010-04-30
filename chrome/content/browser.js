@@ -169,7 +169,7 @@ var BarTap = {
       this.tabContainer.addEventListener("TabOpen", function (aEvent) {
           self.tabContainer.removeEventListener("TabOpen", arguments.callee, false);
           var tab = aEvent.originalTarget;
-          BarTap.hookNewTab(tab, aURI, aReferrerURI);
+          BarTap.hookNewTab(self, tab, aURI, aReferrerURI);
       }, false);
     }
 
@@ -228,7 +228,7 @@ var BarTap = {
    * link or bookmark in a new tab.)  Depending on the user's
    * settings, this either puts the tab on hold or hooks up the timer.
    */
-  hookNewTab: function(aTab, aURI, aReferrerURI) {
+  hookNewTab: function(aTabBrowser, aTab, aURI, aReferrerURI) {
     if (!aURI) {
       return;
     }
@@ -255,7 +255,7 @@ var BarTap = {
       aTab.setAttribute("ontap", "true");
       aTab.linkedBrowser.setAttribute("ontap", "true");
     } else if (this.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
-      this.getTabBrowserForTab(aTab).BarTapTimer.startTimer(aTab);
+      aTabBrowser.BarTapTimer.startTimer(aTab);
     }
   },
 
