@@ -162,23 +162,14 @@ var BarTap = {
       if (arguments.length == 2
           && typeof arguments[1] == "object"
           && !(arguments[1] instanceof Ci.nsIURI)) {
-        let params = arguments[1];
-        aReferrerURI          = params.referrerURI;
-        aCharset              = params.charset;
-        aPostData             = params.postData;
-        aOwner                = params.ownerTab;
-        aAllowThirdPartyFixup = params.allowThirdPartyFixup;
+        aReferrerURI = arguments[1].referrerURI;
       }
 
       let self = this;
       this.tabContainer.addEventListener("TabOpen", function (aEvent) {
           self.tabContainer.removeEventListener("TabOpen", arguments.callee, false);
           var tab = aEvent.originalTarget;
-          var flags = aAllowThirdPartyFixup ?
-              Ci.nsIWebNavigation.LOAD_FLAGS_ALLOW_THIRD_PARTY_FIXUP :
-              Ci.nsIWebNavigation.LOAD_FLAGS_NONE;
-          BarTap.writeBarTap(tab, tab.linkedBrowser,
-                             aURI, flags, aReferrerURI, aCharset, aPostData);
+          BarTap.writeBarTap(tab, tab.linkedBrowser, aURI, aReferrerURI);
       }, false);
     }
 
@@ -237,24 +228,33 @@ var BarTap = {
    * link in a new tab.)  Stores the parameters on the tab so that
    * 'onTabStateChange' can take the appropriate action.
    */
-  writeBarTap: function(aTab, aBrowser, aURI, aFlags, aReferrerURI, aCharset, aPostData) {
+  writeBarTap: function(aTab, aBrowser, aURI, aReferrerURI) {
     if (!aURI) {
       return;
     }
     if (this.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) {
-      let bartap = "";
-      if (aURI) {
-        bartap = JSON.stringify({
-          uri:      (aURI instanceof Ci.nsIURI) ? aURI.spec : aURI,
-          flags:    aFlags,
-          referrer: (aReferrerURI instanceof Ci.nsIURI) ? aReferrerURI.spec : aReferrerURI,
-          charset:  aCharset,
-          postdata: aPostData
-        });
+      // Create a fake history entry from the URI information.  That
+      // way the nsISessionStore service knows how to persist an
+      // unloaded tab created in the background.
+      let entry = Cc["@mozilla.org/browser/session-history-entry;1"]
+                  .createInstance(Ci.nsISHEntry);
+      entry.setURI(makeURI(aURI));
+      entry.setTitle(aURI); //TODO get title from history if available
+      entry.loadType = Ci.nsIDocShellLoadInfo.loadHistory;
+      if (aReferrerURI) {
+        entry.referrerURI = aReferrerURI;
       }
+
+      // Ensure a new document identifier (Firefox 3.7)
+      if (typeof entry.setUniqueDocIdentifier === "function") {
+        entry.setUniqueDocIdentifier();
+      }
+      let history = aBrowser.webNavigation.sessionHistory;
+      history.QueryInterface(Ci.nsISHistoryInternal);
+      history.addEntry(entry, true);
+
       aTab.setAttribute("ontap", "true");
       aBrowser.setAttribute("ontap", "true");
-      aBrowser.setAttribute("bartap", bartap);
     } else if (this.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
       this.getTabBrowserForTab(aTab).BarTapTimer.startTimer(aTab);
     }
@@ -272,17 +272,10 @@ var BarTap = {
 
     var browser = tab.linkedBrowser;
     var history = browser.webNavigation.sessionHistory;
-    var bartap = browser.getAttribute("bartap");
     var gotouri;
     var loadHandler;
 
-    if (bartap) {
-      // The tab was likely opened by clicking on a link
-      browser.removeAttribute("bartap");
-      bartap = JSON.parse(bartap);
-      gotouri = makeURI(bartap.uri);
-      loadHandler = this.loadHandlerFromBarTap(bartap);
-    } else if (history.count) {
+    if (history.count) {
       // Likely a restored tab, try loading from history.
       let gotoindex = history.requestedIndex;
       if (gotoindex == -1) {
@@ -318,22 +311,6 @@ var BarTap = {
     }
     browser.addEventListener("BarTapLoad", loadHandler, false);
     return true;
-  },
-
-  loadHandlerFromBarTap: function(bartap) {
-    return function(aEvent) {
-      var browser = aEvent.target;
-      browser.removeEventListener("BarTapLoad", arguments.callee, false);
-
-      // The referrer might be undefined.
-      let referrer = bartap.referrer;
-      if (referrer) {
-        referrer = makeURI(referrer);
-      }
-      // Gotta love the inconsistency of this API
-      browser.loadURIWithFlags(bartap.uri, bartap.flags, referrer,
-                               bartap.charset, bartap.postdata);
-    };
   },
 
   loadHandlerFromHistory: function(gotoindex) {
