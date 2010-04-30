@@ -66,7 +66,12 @@ var BarTap = {
     // Monkey patch our way into the tabbrowser.
     monkeyPatchMethod(tabbrowser, "mTabProgressListener",
                       "BarTabProgressListener", this.TBmTabProgressListener);
-    monkeyPatchMethod(tabbrowser, "addTab", "BarTabAddTab", this.TBaddTab);
+    monkeyPatchMethod(tabbrowser, "addTab", "BarTabAddTab",
+                      this.TBaddTab);
+    monkeyPatchMethod(tabbrowser, "reloadTab", "BarTabReloadTab",
+                      this.TBreloadTab);
+    monkeyPatchMethod(tabbrowser, "reloadAllTabs", "BarTabReloadAllTabs",
+                      this.TBreloadAllTabs);
 
     // Tab Mix Plus compatibility: It likes reusing blank tabs.  In doing
     // so it confuses tabs on the bar tab with blank ones.  Fix that.
@@ -79,28 +84,6 @@ var BarTap = {
         return BarTap.TMPisBlankBrowser(aBrowser);
       };
     }
-
-    // When the user wants one or all tabs to reload, do the right
-    // thing in case it's tapped.
-    tabbrowser.reloadTab = function(aTab) {
-      if (aTab.getAttribute("ontap") == "true") {
-        BarTap.loadTabContents(aTab);
-        if (!aTab.selected) {
-          tabbrowser.BarTapTimer.startTimer(aTab);
-        }
-        return;
-      }
-      aTab.linkedBrowser.reload();
-    };
-    tabbrowser.reloadAllTabs = function() {
-      for (var i = 0; i < this.mTabs.length; i++) {
-        try {
-          this.reloadTab(this.mTabs[i]);
-        } catch (e) {
-          // ignore failure to reload so others will be reloaded
-        }
-      }
-    };
 
     // Initialize timer
     tabbrowser.BarTapTimer = new BarTapTimer(tabbrowser);
@@ -200,6 +183,33 @@ var BarTap = {
     }
 
     return this.BarTabAddTab.apply(this, arguments);
+  },
+
+  /*
+   * When the user wants one or all tabs to reload, do the right
+   * thing in case the tab isn't loaded yet.
+   * 
+   * Note: 'this' refers to the tabbrowser.
+   */
+  TBreloadTab: function(aTab) {
+    if (aTab.getAttribute("ontap") == "true") {
+      BarTap.loadTabContents(aTab);
+      if (!aTab.selected) {
+        this.BarTapTimer.startTimer(aTab);
+      }
+      return;
+    }
+    aTab.linkedBrowser.reload();
+  },
+
+  TBreloadAllTabs: function() {
+    for (var i = 0; i < this.mTabs.length; i++) {
+      try {
+        this.reloadTab(this.mTabs[i]);
+      } catch (e) {
+        // ignore failure to reload so others will be reloaded
+      }
+    }
   },
 
 
