@@ -63,55 +63,10 @@ var BarTap = {
     tabbrowser.tabContainer.addEventListener('TabSelect', this, false);
     tabbrowser.tabContainer.addEventListener('TabClose', this, false);
 
-    // Monkey patch our way into the tabbrowser.  Hook into the tab
-    // progress listener so that we can stop a tab from loading when
-    // necessary.
-    function newTabProgressListener(aTab, aBrowser, aStartsBlank) {
-      var listener = this.BarTabProgressListener(aTab, aBrowser, aStartsBlank);
-      monkeyPatchMethod(listener, "onStateChange", "oldStateChange",
-                        BarTap.TBonStateChange);
-      return listener;
-    };
+    // Monkey patch our way into the tabbrowser.
     monkeyPatchMethod(tabbrowser, "mTabProgressListener",
-                      "BarTabProgressListener", newTabProgressListener);
-
-    // Hook into the 'addTab' method so that we can mark tabs that are
-    // opened in the background.  Whether or not they're going to be
-    // loaded will then be decided by the progress listener.
-    function newAddTab(aURI, aReferrerURI, aCharset, aPostData, aOwner,
-                       aAllowThirdPartyFixup) {
-      // We need to mark the tab before the browser.loadURI*() is
-      // called.  We can do that by registering a TabOpen event
-      // handler which is registered inline so that it has access to
-      // this method's arguments.
-      var blank = !aURI || (aURI == "about:blank");
-      if (!blank) {
-        if (arguments.length == 2
-            && typeof arguments[1] == "object"
-            && !(arguments[1] instanceof Ci.nsIURI)) {
-          let params = arguments[1];
-          aReferrerURI          = params.referrerURI;
-          aCharset              = params.charset;
-          aPostData             = params.postData;
-          aOwner                = params.ownerTab;
-          aAllowThirdPartyFixup = params.allowThirdPartyFixup;
-        }
-
-        let self = this;
-        this.tabContainer.addEventListener("TabOpen", function (aEvent) {
-            self.removeEventListener("TabOpen", arguments.callee, false);
-            var tab = aEvent.originalTarget;
-            var flags = aAllowThirdPartyFixup ?
-                Ci.nsIWebNavigation.LOAD_FLAGS_ALLOW_THIRD_PARTY_FIXUP :
-                Ci.nsIWebNavigation.LOAD_FLAGS_NONE;
-            BarTap.writeBarTap(tab, tab.linkedBrowser,
-                               aURI, flags, aReferrerURI, aCharset, aPostData);
-        }, false);
-      }
-
-      return tabbrowser.BarTabAddTab.apply(this, arguments);
-    };
-    monkeyPatchMethod(tabbrowser, "addTab", "BarTabAddTab", newAddTab);
+                      "BarTabProgressListener", this.TBmTabProgressListener);
+    monkeyPatchMethod(tabbrowser, "addTab", "BarTabAddTab", this.TBaddTab);
 
     // Tab Mix Plus compatibility: It likes reusing blank tabs.  In doing
     // so it confuses tabs on the bar tab with blank ones.  Fix that.
@@ -171,6 +126,83 @@ var BarTap = {
   },
 
 
+  /*** Replacement methods ***/
+
+  /*
+   * Hook into the tabbrowser's mTabProgressListener so that we can
+   * replace its onStateChange method (see below).
+   *
+   * Note: 'this' refers to the tabbrowser.
+   */
+  TBmTabProgressListener: function(aTab, aBrowser, aStartsBlank) {
+    var listener = this.BarTabProgressListener(aTab, aBrowser, aStartsBlank);
+    monkeyPatchMethod(listener, "onStateChange", "oldStateChange",
+                      BarTap.TBonStateChange);
+    return listener;
+  },
+
+  /*
+   * New implementation of the progress listener's onStateChange
+   * method so that we can stop a tab from loading when necessary.
+   *
+   * Note: 'this' refers to the progress listener.
+   */
+  TBonStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus) {
+    if (!aRequest)
+      return;
+    this.oldStateChange(aWebProgress, aRequest, aStateFlags, aStatus);
+
+    const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
+    if (aStateFlags & nsIWebProgressListener.STATE_START
+        && aStateFlags & nsIWebProgressListener.STATE_IS_NETWORK
+        && !(aStateFlags & nsIWebProgressListener.STATE_RESTORING)
+        && !this.mBlank) {
+      BarTap.onTabStateChange(this.mTab);
+    }
+  },
+
+  /*
+   * Hook into the 'addTab' method so that we can mark tabs that are
+   * opened in the background.  Whether or not they're going to be
+   * loaded will then be decided by the progress listener.
+   *
+   * Note: 'this' refers to the tabbrowser.
+   */
+  TBaddTab: function(aURI, aReferrerURI, aCharset, aPostData, aOwner,
+                     aAllowThirdPartyFixup) {
+    // We need to mark the tab before the browser.loadURI*() is
+    // called.  We can do that by registering a TabOpen event
+    // handler which is registered inline so that it has access to
+    // this method's arguments.
+    var blank = !aURI || (aURI == "about:blank");
+    if (!blank) {
+      if (arguments.length == 2
+          && typeof arguments[1] == "object"
+          && !(arguments[1] instanceof Ci.nsIURI)) {
+        let params = arguments[1];
+        aReferrerURI          = params.referrerURI;
+        aCharset              = params.charset;
+        aPostData             = params.postData;
+        aOwner                = params.ownerTab;
+        aAllowThirdPartyFixup = params.allowThirdPartyFixup;
+      }
+
+      let self = this;
+      this.tabContainer.addEventListener("TabOpen", function (aEvent) {
+          self.removeEventListener("TabOpen", arguments.callee, false);
+          var tab = aEvent.originalTarget;
+          var flags = aAllowThirdPartyFixup ?
+              Ci.nsIWebNavigation.LOAD_FLAGS_ALLOW_THIRD_PARTY_FIXUP :
+              Ci.nsIWebNavigation.LOAD_FLAGS_NONE;
+          BarTap.writeBarTap(tab, tab.linkedBrowser,
+                             aURI, flags, aReferrerURI, aCharset, aPostData);
+      }, false);
+    }
+
+    return this.BarTabAddTab.apply(this, arguments);
+  },
+
+
   /*** Core machinery ***/
 
   /*
@@ -215,25 +247,6 @@ var BarTap = {
       aBrowser.setAttribute("bartap", bartap);
     } else if (this.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
       this.getTabBrowserForTab(aTab).BarTapTimer.startTimer(aTab);
-    }
-  },
-
-  /*
-   * New implementation of the onStateChange method for the tabbrowser's
-   * mTabProgressListener.  See the monkey patches in init().
-   * Note: 'this' refers to the tabbrowser.
-   */
-  TBonStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus) {
-    if (!aRequest)
-      return;
-    this.oldStateChange(aWebProgress, aRequest, aStateFlags, aStatus);
-
-    const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
-    if (aStateFlags & nsIWebProgressListener.STATE_START
-        && aStateFlags & nsIWebProgressListener.STATE_IS_NETWORK
-        && !(aStateFlags & nsIWebProgressListener.STATE_RESTORING)
-        && !this.mBlank) {
-      BarTap.onTabStateChange(this.mTab);
     }
   },
 
