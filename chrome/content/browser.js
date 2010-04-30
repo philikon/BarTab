@@ -98,7 +98,7 @@ var BarTap = {
         }
 
         let self = this;
-        this.addEventListener("TabOpen", function (aEvent) {
+        this.tabContainer.addEventListener("TabOpen", function (aEvent) {
             self.removeEventListener("TabOpen", arguments.callee, false);
             var tab = aEvent.originalTarget;
             var flags = aAllowThirdPartyFixup ?
