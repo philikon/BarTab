@@ -239,7 +239,6 @@ var BarTap = {
       let entry = Cc["@mozilla.org/browser/session-history-entry;1"]
                   .createInstance(Ci.nsISHEntry);
       entry.setURI(makeURI(aURI));
-      entry.setTitle(aURI); //TODO get title from history if available
       entry.loadType = Ci.nsIDocShellLoadInfo.loadHistory;
       if (aReferrerURI) {
         entry.referrerURI = aReferrerURI;
