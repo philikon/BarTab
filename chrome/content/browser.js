@@ -150,25 +150,25 @@ var BarTap = {
    *
    * Note: 'this' refers to the tabbrowser.
    */
-  TBaddTab: function(aURI, aReferrerURI, aCharset, aPostData, aOwner,
-                     aAllowThirdPartyFixup) {
+  TBaddTab: function(aURI) {
     // We need to mark the tab before the browser.loadURI*() is
     // called.  We can do that by registering a TabOpen event
     // handler which is registered inline so that it has access to
     // this method's arguments.
     var blank = !aURI || (aURI == "about:blank");
     if (!blank) {
+      let referrer = arguments[1];
       if (arguments.length == 2
           && typeof arguments[1] == "object"
           && !(arguments[1] instanceof Ci.nsIURI)) {
-        aReferrerURI = arguments[1].referrerURI;
+        referrer = arguments[1].referrerURI;
       }
 
       let self = this;
       this.tabContainer.addEventListener("TabOpen", function (aEvent) {
           self.tabContainer.removeEventListener("TabOpen", arguments.callee, false);
           var tab = aEvent.originalTarget;
-          BarTap.hookNewTab(self, tab, aURI, aReferrerURI);
+          BarTap.hookNewTab(self, tab, aURI, referrer);
       }, false);
     }
 
