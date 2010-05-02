@@ -237,10 +237,19 @@ var BarTap = {
       // unloaded tab created in the background.
       let entry = Cc["@mozilla.org/browser/session-history-entry;1"]
                   .createInstance(Ci.nsISHEntry);
-      entry.setURI(makeURI(aURI));
+      aURI = makeURI(aURI);
+      entry.setURI(aURI);
       entry.loadType = Ci.nsIDocShellLoadInfo.loadHistory;
+
       if (aReferrerURI) {
         entry.referrerURI = aReferrerURI;
+      }
+
+      let info = BarTap.getInfoFromHistory(aURI);
+      if (info) {
+        entry.setTitle(info.title);
+      } else {
+        entry.setTitle(this.titleFromURI(aURI));
       }
 
       // Ensure a new document identifier (Firefox 3.7)
@@ -279,8 +288,11 @@ var BarTap = {
       if (gotoindex == -1) {
         gotoindex = history.index;
       }
-      gotouri = history.getEntryAtIndex(gotoindex, false).URI;
+      let entry = history.getEntryAtIndex(gotoindex, false);
+      gotouri = entry.URI;
       loadHandler = this.loadHandlerFromHistory(gotoindex);
+      tab.label = entry.title;
+      window.setTimeout(this.setIcon, 0, tab, gotouri);
     } else if (browser.userTypedValue) {
       gotouri = makeURI(browser.userTypedValue);
       loadHandler = this.loadFromUserValue;
@@ -290,25 +302,20 @@ var BarTap = {
     }
 
     // Check whether this URI is on the white list
-    if (gotouri) {
-      try {
-        if (this.getHostWhitelist().indexOf(gotouri.host) != -1) {
-          tab.removeAttribute("ontap");
-          browser.removeAttribute("ontap");
-          return false;
-        }
-      } catch(ex) {
-        // Most likely gotouri.host failed.  No matter, just carry on.
+    try {
+      if (this.getHostWhitelist().indexOf(gotouri.host) != -1) {
+        tab.removeAttribute("ontap");
+        browser.removeAttribute("ontap");
+        return false;
       }
+    } catch(ex) {
+      // Most likely gotouri.host failed.  No matter, just carry on.
     }
 
     // The URI isn't on the white list, so let's defer loading the tab
     // to an event handler.
     tab.removeAttribute("busy");
     browser.stop();
-    if (gotouri) {
-      window.setTimeout(this.setTitleAndIcon, 0, tab, gotouri);
-    }
     browser.addEventListener("BarTapLoad", loadHandler, false);
     return true;
   },
@@ -578,33 +585,70 @@ var BarTap = {
   },
 
   /*
-   * Set a tab's title and favicon given a URI, e.g. by querying the
-   * history service.
+   * Find and set the tab's favicon for a given URI.
+   */
+  setIcon: function(aTab, aURI) {
+    try {
+      let iconURI = BarTap.mFavicon.getFaviconForPage(aURI);
+      aTab.setAttribute("image", iconURI.spec);
+    } catch (ex) {
+      // No favicon found.  Perhaps it's a URL with an anchor?
+      // Firefox doesn't always store favicons for those.
+      // See https://bugzilla.mozilla.org/show_bug.cgi?id=420605
+      aURI = BarTap.stripFragmentFromURI(aURI);
+      if (aURI) {
+        BarTap.setIcon(aTab, aURI);
+      }
+    }
+  },
+
+  /*
+   * Set a tab's title and favicon given a URI by querying the history
+   * service.
    */
   setTitleAndIcon: function(aTab, aURI) {
     // See if we have title, favicon in stock for it. This should definitely
     // work for restored tabs as they're in the history database.
     let info = BarTap.getInfoFromHistory(aURI);
-    if (info) {
-      // Firefox cripples nsINavHistoryService entries for fragment links.
-      // See https://bugzilla.mozilla.org/show_bug.cgi?id=420605
-      // Try to work around that by stripping the fragment from the URI.
-      let anchor = aURI.path.indexOf('#');
-      if (!info.icon && (anchor != -1)) {
-        let uri = aURI.clone();
-        uri.path = uri.path.substr(0, anchor);
+    if (!info) {
+      aTab.label = BarTap.titleFromURI(aURI);
+    }
+    // Firefox cripples nsINavHistoryService entries for fragment links.
+    // See https://bugzilla.mozilla.org/show_bug.cgi?id=503832
+    // Try to work around that by stripping the fragment from the URI.
+    if (!info.icon) {
+      let uri = BarTap.stripFragmentFromURI(aURI);
+      if (uri) {
         let anchorinfo = BarTap.getInfoFromHistory(uri);
         if (anchorinfo) {
           info = anchorinfo;
         }
       }
-      aTab.setAttribute("image", info.icon);
-      aTab.label = info.title;
-      return;
     }
+    aTab.setAttribute("image", info.icon);
+    aTab.label = info.title;
+  },
 
+  /*
+   * Strip the fragment from a URI.  Returns a new URI object, or null
+   * if the URI didn't contain a fragment.
+   */
+  stripFragmentFromURI: function(aURI) {
+    var anchor = aURI.path.indexOf('#');
+    if (anchor == -1) {
+      return null;
+    }
+    let uri = aURI.clone();
+    uri.path = uri.path.substr(0, anchor);
+    return uri;
+  },
+
+  /*
+   * Derive a title from a URI by stripping the protocol and potentially
+   * "www.", so "http://www.mozilla.org" would become "mozilla.org".
+   */
+  titleFromURI: function(aURI) {
     try {
-      // Set a meaningful part of the URI as tab label
       let hostPort = aURI.hostPort;
       let path = aURI.path;
       if (hostPort.substr(0, 4) == "www.") {
@@ -613,11 +657,11 @@ var BarTap = {
       if (path == "/") {
         path = "";
       }
-      aTab.label = hostPort + path;
+      return hostPort + path;
     } catch (ex) {
       // Most likely aURI.hostPort and aURI.path failed.
       // Let's handle this gracefully.
-      aTab.label = aURI.spec;
+      return aURI.spec;
     }
   },
 
@@ -691,6 +735,10 @@ XPCOMUtils.defineLazyServiceGetter(BarTap, "mSessionStore",
 XPCOMUtils.defineLazyServiceGetter(BarTap, "mHistory",
                                    "@mozilla.org/browser/nav-history-service;1",
                                    "nsINavHistoryService");
+XPCOMUtils.defineLazyServiceGetter(BarTap, "mFavicon",
+                                   "@mozilla.org/browser/favicon-service;1",
+                                   "nsIFaviconService");
+
 
 // Initialize BarTap as soon as possible.
 window.addEventListener("DOMContentLoaded", BarTap, false);
