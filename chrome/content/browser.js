@@ -3,15 +3,14 @@
  * popuplar kind of toSource + eval hack possible.
  */
 function monkeyPatchMethod(obj, name, backupname, func) {
-    var oldfunc = obj[name];
-    obj[backupname] = oldfunc;
+    obj[backupname] = obj[name];
 
     // Make the new method "look" like the old one.
     func.toSource = function () {
-        return oldfunc.toSource();
+        return obj[backupname].toSource();
     };
     func.toString = function () {
-        return oldfunc.toString();
+        return obj[backupname].toString();
     };
 
     // If anyone should try to replace the method, replace the old one.
