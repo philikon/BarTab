@@ -1,4 +1,26 @@
 /*
+ * Firefox 3.5 doesn't have these handy functions for defining lazy getters.
+ */
+if (typeof XPCOMUtils.defineLazyGetter !== "function") {
+  XPCOMUtils.defineLazyGetter = function(aObject, aName, aLambda) {
+    aObject.__defineGetter__(aName, function() {
+      delete aObject[aName];
+      return aObject[aName] = aLambda.apply(aObject);
+    });
+  };    
+}
+
+if (typeof XPCOMUtils.defineLazyServiceGetter !== "function") {
+  XPCOMUtils.defineLazyServiceGetter = function(aObject, aName,
+                                                aContract, aInterfaceName) {
+    XPCOMUtils.defineLazyGetter(aObject, aName, function XPCU_serviceLambda() {
+      return Cc[aContract].getService(Ci[aInterfaceName]);
+    });
+  };
+}
+
+
+/*
  * Replace a method with another one while still making the all too
  * popuplar kind of toSource + eval hack possible.
  */
@@ -21,6 +43,7 @@ function monkeyPatchMethod(obj, name, backupname, func) {
         obj[backupname] = value;
     });
 }
+
 
 var BarTap = {
 
