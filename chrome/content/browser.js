@@ -282,9 +282,11 @@ var BarTap = {
       gotouri = history.getEntryAtIndex(gotoindex, false).URI;
       loadHandler = this.loadHandlerFromHistory(gotoindex);
     } else if (browser.userTypedValue) {
-      // This might not make much sense here...
       gotouri = makeURI(browser.userTypedValue);
       loadHandler = this.loadFromUserValue;
+      window.setTimeout(this.setTitleAndIcon, 0, tab, gotouri);
+    } else {
+      return false;
     }
 
     // Check whether this URI is on the white list
