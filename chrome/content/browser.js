@@ -72,17 +72,10 @@ var BarTap = {
     monkeyPatchMethod(tabbrowser, "reloadAllTabs", "BarTabReloadAllTabs",
                       this.TBreloadAllTabs);
 
-    // Tab Mix Plus compatibility: It likes reusing blank tabs.  In doing
-    // so it confuses tabs on the bar tab with blank ones.  Fix that.
-    if (tabbrowser.isBlankBrowser) {
-      this.TMPisBlankBrowser = tabbrowser.isBlankBrowser;
-      tabbrowser.isBlankBrowser = function (aBrowser) {
-        if (aBrowser.getAttribute("ontap") == "true") {
-          return false;
-        }
-        return BarTap.TMPisBlankBrowser(aBrowser);
-      };
-    }
+    // Tab Mix Plus & Tab Utils compatibility: They like reusing blank tabs.
+    // In doing so they confuse unloaded tabs with blank ones.  Fix that.
+    monkeyPatchMethod(tabbrowser, "isBlankBrowser", "BarTabIsBlankBrowser",
+                      this.TBisBlankBrowser);
 
     // Initialize timer
     tabbrowser.BarTapTimer = new BarTapTimer(tabbrowser);
@@ -202,6 +195,19 @@ var BarTap = {
     }
   },
 
+  /*
+   * Tab Mix Plus and Tab Utils provide tabbrowser.isBlankBrowser() to
+   * check whether a tab is blank.  Make sure they're not confused
+   * about unloaded tabs.
+   *
+   * Note: 'this' refers to the tabbrowser.
+   */
+  TBisBlankBrowser: function (aBrowser) {
+    if (aBrowser.getAttribute("ontap") == "true") {
+      return false;
+    }
+    return this.BarTabIsBlankBrowser(aBrowser);
+  },
 
   /*** Core machinery ***/
 
