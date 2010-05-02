@@ -7,7 +7,7 @@ if (typeof XPCOMUtils.defineLazyGetter !== "function") {
       delete aObject[aName];
       return aObject[aName] = aLambda.apply(aObject);
     });
-  };    
+  };
 }
 
 if (typeof XPCOMUtils.defineLazyServiceGetter !== "function") {
@@ -194,7 +194,7 @@ var BarTap = {
   /*
    * When the user wants one or all tabs to reload, do the right
    * thing in case the tab isn't loaded yet.
-   * 
+   *
    * Note: 'this' refers to the tabbrowser.
    */
   TBreloadTab: function(aTab) {
