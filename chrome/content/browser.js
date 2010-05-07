@@ -197,11 +197,6 @@ var BarTap = {
 
     if (tab.getAttribute("ontap") == "true") {
       putontap.setAttribute("disabled", "true");
-
-      // TODO even though the tab is unloaded one still might want to
-      // put the host on the whitelist.
-      neverputontap.setAttribute("hidden", "true");
-      return;
     }
 
     let host;
