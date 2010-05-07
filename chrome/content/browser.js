@@ -641,6 +641,7 @@ var BarTap = {
     let info = BarTap.getInfoFromHistory(aURI);
     if (!info) {
       aTab.label = BarTap.titleFromURI(aURI);
+      return;
     }
     // Firefox cripples nsINavHistoryService entries for fragment links.
     // See https://bugzilla.mozilla.org/show_bug.cgi?id=503832
