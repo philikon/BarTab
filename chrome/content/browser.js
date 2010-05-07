@@ -20,31 +20,6 @@ if (typeof XPCOMUtils.defineLazyServiceGetter !== "function") {
 }
 
 
-/*
- * Replace a method with another one while still making the all too
- * popuplar kind of toSource + eval hack possible.
- */
-function monkeyPatchMethod(obj, name, backupname, func) {
-    obj[backupname] = obj[name];
-
-    // Make the new method "look" like the old one.
-    func.toSource = function () {
-        return obj[backupname].toSource();
-    };
-    func.toString = function () {
-        return obj[backupname].toString();
-    };
-
-    // If anyone should try to replace the method, replace the old one.
-    obj.__defineGetter__(name, function () {
-        return func;
-    });
-    obj.__defineSetter__(name, function (value) {
-        obj[backupname] = value;
-    });
-}
-
-
 var BarTap = {
 
   handleEvent: function(event) {
@@ -54,6 +29,9 @@ var BarTap = {
       return;
     case 'SSTabRestoring':
       this.onTabRestoring(event);
+      return;
+    case 'TabOpen':
+      this.onTabOpen(event);
       return;
     case 'TabSelect':
       this.onTabSelect(event);
@@ -82,23 +60,9 @@ var BarTap = {
    */
   initTabBrowser: function(tabbrowser) {
     tabbrowser.tabContainer.addEventListener('SSTabRestoring', this, false);
+    tabbrowser.tabContainer.addEventListener('TabOpen', this, false);
     tabbrowser.tabContainer.addEventListener('TabSelect', this, false);
     tabbrowser.tabContainer.addEventListener('TabClose', this, false);
-
-    // Monkey patch our way into the tabbrowser.
-    monkeyPatchMethod(tabbrowser, "mTabProgressListener",
-                      "BarTabProgressListener", this.TBmTabProgressListener);
-    monkeyPatchMethod(tabbrowser, "addTab", "BarTabAddTab",
-                      this.TBaddTab);
-    monkeyPatchMethod(tabbrowser, "reloadTab", "BarTabReloadTab",
-                      this.TBreloadTab);
-    monkeyPatchMethod(tabbrowser, "reloadAllTabs", "BarTabReloadAllTabs",
-                      this.TBreloadAllTabs);
-
-    // Tab Mix Plus & Tab Utils compatibility: They like reusing blank tabs.
-    // In doing so they confuse unloaded tabs with blank ones.  Fix that.
-    monkeyPatchMethod(tabbrowser, "isBlankBrowser", "BarTabIsBlankBrowser",
-                      this.TBisBlankBrowser);
 
     // Initialize timer
     tabbrowser.BarTapTimer = new BarTapTimer(tabbrowser);
@@ -124,243 +88,40 @@ var BarTap = {
   },
 
 
-  /*** Replacement methods ***/
-
-  /*
-   * Hook into the tabbrowser's mTabProgressListener so that we can
-   * replace its onStateChange method (see below).
-   *
-   * Note: 'this' refers to the tabbrowser.
-   */
-  TBmTabProgressListener: function(aTab, aBrowser, aStartsBlank) {
-    var listener = this.BarTabProgressListener(aTab, aBrowser, aStartsBlank);
-    monkeyPatchMethod(listener, "onStateChange", "oldStateChange",
-                      BarTap.TBonStateChange);
-    return listener;
-  },
-
-  /*
-   * New implementation of the progress listener's onStateChange
-   * method so that we can stop a tab from loading when necessary.
-   *
-   * Note: 'this' refers to the progress listener.
-   */
-  TBonStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus) {
-    if (!aRequest)
-      return;
-    this.oldStateChange(aWebProgress, aRequest, aStateFlags, aStatus);
-
-    const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
-    if (aStateFlags & nsIWebProgressListener.STATE_START
-        && aStateFlags & nsIWebProgressListener.STATE_IS_NETWORK
-        && !(aStateFlags & nsIWebProgressListener.STATE_RESTORING)
-        && !this.mBlank) {
-      BarTap.onTabStateChange(this.mTab);
-    }
-  },
-
-  /*
-   * Hook into the 'addTab' method so that we can mark tabs that are
-   * opened in the background.  Whether or not they're going to be
-   * loaded will then be decided by the progress listener.
-   *
-   * Note: 'this' refers to the tabbrowser.
-   */
-  TBaddTab: function(aURI) {
-    // We need to mark the tab before the browser.loadURI*() is
-    // called.  We can do that by registering a TabOpen event
-    // handler which is registered inline so that it has access to
-    // this method's arguments.
-    var blank = !aURI || (aURI == "about:blank");
-    if (!blank) {
-      let referrer = arguments[1];
-      if (arguments.length == 2
-          && typeof arguments[1] == "object"
-          && !(arguments[1] instanceof Ci.nsIURI)) {
-        referrer = arguments[1].referrerURI;
-      }
-
-      let self = this;
-      this.tabContainer.addEventListener("TabOpen", function (aEvent) {
-          self.tabContainer.removeEventListener("TabOpen", arguments.callee, false);
-          var tab = aEvent.originalTarget;
-          BarTap.hookNewTab(self, tab, aURI, referrer);
-      }, false);
-    }
-
-    return this.BarTabAddTab.apply(this, arguments);
-  },
-
-  /*
-   * When the user wants one or all tabs to reload, do the right
-   * thing in case the tab isn't loaded yet.
-   *
-   * Note: 'this' refers to the tabbrowser.
-   */
-  TBreloadTab: function(aTab) {
-    if (aTab.getAttribute("ontap") == "true") {
-      BarTap.loadTabContents(aTab);
-      if (!aTab.selected) {
-        this.BarTapTimer.startTimer(aTab);
-      }
-      return;
-    }
-    aTab.linkedBrowser.reload();
-  },
-
-  TBreloadAllTabs: function() {
-    for (var i = 0; i < this.mTabs.length; i++) {
-      try {
-        this.reloadTab(this.mTabs[i]);
-      } catch (e) {
-        // ignore failure to reload so others will be reloaded
-      }
-    }
-  },
-
-  /*
-   * Tab Mix Plus and Tab Utils provide tabbrowser.isBlankBrowser() to
-   * check whether a tab is blank.  Make sure they're not confused
-   * about unloaded tabs.
-   *
-   * Note: 'this' refers to the tabbrowser.
-   */
-  TBisBlankBrowser: function (aBrowser) {
-    if (aBrowser.getAttribute("ontap") == "true") {
-      return false;
-    }
-    return this.BarTabIsBlankBrowser(aBrowser);
-  },
-
   /*** Core machinery ***/
 
   /*
+   * Hook into newly opened tabs if the user wants to prevent tabs
+   * opened in the background from loading.  (If this tab ends up not
+   * being in the background after all, 'onTabSelect' will take care
+   * of loading the tab.)
+   */
+  onTabOpen: function(aEvent) {
+    var tab = aEvent.originalTarget;
+    if (!tab.selected
+        && this.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) {
+      tab.setAttribute("ontap", "true");
+      (new BarTabWebNavigation()).hook(tab);
+    } else if (this.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
+      this.getTabBrowserForTab(tab).BarTapTimer.startTimer(tab);
+    }
+  },
+
+  /*
    * Listen to the 'SSTabRestoring' event from the nsISessionStore
-   * service and put a marker on restored tabs so that 'onTabStateChange'
-   * can take the appropriate action.
+   * service and hook into restored tabs if the user wants to prevent
+   * restored tabs from loading.
    */
   onTabRestoring: function(event) {
     if (!this.mPrefs.getBoolPref("extensions.bartap.tapRestoredTabs")) {
       return;
     }
     let tab = event.originalTarget;
-    if (tab.selected) {
+    if (tab.selected || tab.getAttribute("ontap") == "true") {
       return;
     }
     tab.setAttribute("ontap", "true");
-    tab.linkedBrowser.setAttribute("ontap", "true");
-  },
-
-  /*
-   * Called when a tab is opened with a new URI (e.g. by opening a
-   * link or bookmark in a new tab.)  Depending on the user's
-   * settings, this either puts the tab on hold or hooks up the timer.
-   */
-  hookNewTab: function(aTabBrowser, aTab, aURI, aReferrerURI) {
-    if (!aURI) {
-      return;
-    }
-    if (this.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) {
-      // Create a fake history entry from the URI information.  That
-      // way the nsISessionStore service knows how to persist an
-      // unloaded tab created in the background.
-      let entry = Cc["@mozilla.org/browser/session-history-entry;1"]
-                  .createInstance(Ci.nsISHEntry);
-      aURI = makeURI(aURI);
-      entry.setURI(aURI);
-      entry.loadType = Ci.nsIDocShellLoadInfo.loadHistory;
-
-      if (aReferrerURI) {
-        entry.referrerURI = aReferrerURI;
-      }
-
-      let info = BarTap.getInfoFromHistory(aURI);
-      if (info) {
-        entry.setTitle(info.title);
-      } else {
-        entry.setTitle(this.titleFromURI(aURI));
-      }
-
-      // Ensure a new document identifier (Firefox 3.7)
-      if (typeof entry.setUniqueDocIdentifier === "function") {
-        entry.setUniqueDocIdentifier();
-      }
-      let history = aTab.linkedBrowser.webNavigation.sessionHistory;
-      history.QueryInterface(Ci.nsISHistoryInternal);
-      history.addEntry(entry, true);
-
-      aTab.setAttribute("ontap", "true");
-      aTab.linkedBrowser.setAttribute("ontap", "true");
-    } else if (this.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
-      aTabBrowser.BarTapTimer.startTimer(aTab);
-    }
-  },
-
-  /*
-   * Called when the browser wants to load stuff into a tab.  If the
-   * tab has been placed on tap, stop the loading and defer to an
-   * event listener.  Returns true of the tab has been tapped.
-   */
-  onTabStateChange: function(tab) {
-    if (tab.getAttribute("ontap") != "true") {
-      return false;
-    }
-
-    var browser = tab.linkedBrowser;
-    var history = browser.webNavigation.sessionHistory;
-    var gotouri;
-    var loadHandler;
-
-    if (history.count) {
-      // Likely a restored tab, try loading from history.
-      let gotoindex = history.requestedIndex;
-      if (gotoindex == -1) {
-        gotoindex = history.index;
-      }
-      let entry = history.getEntryAtIndex(gotoindex, false);
-      gotouri = entry.URI;
-      loadHandler = this.loadHandlerFromHistory(gotoindex);
-      tab.label = entry.title;
-      window.setTimeout(this.setIcon, 0, tab, gotouri);
-    } else if (browser.userTypedValue) {
-      gotouri = makeURI(browser.userTypedValue);
-      loadHandler = this.loadFromUserValue;
-      window.setTimeout(this.setTitleAndIcon, 0, tab, gotouri);
-    } else {
-      return false;
-    }
-
-    // Check whether this URI is on the white list
-    try {
-      if (this.getHostWhitelist().indexOf(gotouri.host) != -1) {
-        tab.removeAttribute("ontap");
-        browser.removeAttribute("ontap");
-        return false;
-      }
-    } catch(ex) {
-      // Most likely gotouri.host failed.  No matter, just carry on.
-    }
-
-    // The URI isn't on the white list, so let's defer loading the tab
-    // to an event handler.
-    tab.removeAttribute("busy");
-    browser.stop();
-    browser.addEventListener("BarTapLoad", loadHandler, false);
-    return true;
-  },
-
-  loadHandlerFromHistory: function(gotoindex) {
-    return function(aEvent) {
-      var browser = aEvent.target;
-      browser.removeEventListener("BarTapLoad", arguments.callee, false);
-      browser.webNavigation.gotoIndex(gotoindex);
-    };
-  },
-
-  loadFromUserValue: function(aEvent) {
-    var browser = aEvent.target;
-    browser.removeEventListener("BarTapLoad", arguments.callee, false);
-    browser.loadURI(browser.userTypedValue);
+    (new BarTabWebNavigation()).hook(tab);
   },
 
   onTabSelect: function(event) {
@@ -368,6 +129,14 @@ var BarTap = {
     if (tab.getAttribute("ontap") != "true") {
       return;
     }
+
+    // Always load a blank page immediately
+    let uri = tab.linkedBrowser.webNavigation.currentURI;
+    if (!uri || (uri.spec == "about:blank")) {
+      this.loadTabContents(tab);
+      return;      
+    }
+
     switch (this.mPrefs.getIntPref("extensions.bartap.loadOnSelect")) {
     case 1:
       // Load immediately
@@ -397,15 +166,8 @@ var BarTap = {
   },
 
   loadTabContents: function(tab) {
-    // Remove marker so that we can proceed loading the browser
-    // contents or, in case of about:blank where there's no event
-    // handler, continue to function normally.
     tab.removeAttribute("ontap");
-    tab.linkedBrowser.removeAttribute("ontap");
-
-    let event = document.createEvent("Event");
-    event.initEvent("BarTapLoad", true, true);
-    tab.linkedBrowser.dispatchEvent(event);
+    tab.linkedBrowser.webNavigation.resume();
   },
 
   onTabClose: function(event) {
@@ -729,6 +491,18 @@ var BarTap = {
   },
 
   /*
+   * Check whether a URI is on the white list.
+   */
+  whiteListed: function(aURI) {
+    try {
+      return (this.getHostWhitelist().indexOf(aURI.host) != -1);
+    } catch(ex) {
+      // Most likely gotouri.host failed, so it isn't on the white list.
+      return false;
+    }
+  },
+
+  /*
    * It might seem more elegant to use a getter & setter here so you could
    * just use this.hostWhiteList or similar.  However, that would suggest
    * this.hostWhiteList would always return the same array and that
@@ -850,3 +624,182 @@ BarTapTimer.prototype = {
     aTab._barTapTimer = null;
   }
 }
+
+
+function BarTabWebNavigation () {}
+BarTabWebNavigation.prototype = {
+
+    /*
+     * Install ourself as browser's webNavigation.  This needs to be
+     * passed the tab object (rather than just its associated browser
+     * object) because we need to be able to read and change tab's
+     * 'ontap' attribute.
+     */
+    hook: function (aTab) {
+        this._tab = aTab;
+        this._original = aTab.linkedBrowser.webNavigation;
+
+        var self = this;
+        aTab.linkedBrowser.__defineGetter__('webNavigation', function () {
+            return self;
+        });
+    },
+
+    /*
+     * Restore the browser's original webNavigation.
+     */
+    unhook: function () {
+        if (this._tab.linkedBrowser.webNavigation === this) {
+            // This will delete the instance getter for 'webNavigation',
+            // thus revealing the original implementation.
+            delete this._tab.linkedBrowser.webNavigation;
+        }
+        delete this._original;
+        delete this._tab;
+    },
+
+    /*
+     * This will be replaced with either _resumeGotoIndex or _resumeLoadURI,
+     * unless it's a blank tab.  For the latter case we make sure we'll
+     * unhook ourselves.
+     */
+    resume: function () {
+        this.unhook();
+    },
+
+
+    /*** Hook into gotoIndex() ***/
+
+    gotoIndex: function (aIndex) {
+        if (this._tab.getAttribute("ontap") == "true") {
+            return this._pauseGotoIndex(aIndex);
+        }
+        return this._original.gotoIndex(aIndex);
+    },
+
+    _pauseGotoIndex: function (aIndex) {
+        var history = this._original.sessionHistory;
+        var entry = history.getEntryAtIndex(aIndex, false);
+        if (BarTap.whiteListed(entry.URI)) {
+            this._tab.removeAttribute("ontap");
+            return this._original.gotoIndex(aIndex);
+        }
+
+        this._tab.removeAttribute("busy");
+        this._tab.label = entry.title;
+        window.setTimeout(BarTap.setIcon, 0, this._tab, entry.URI);
+        this._gotoindex = aIndex;
+        this._currenturi = entry.URI;
+        this._referringuri = entry.referrerURI;
+        this.resume = this._resumeGotoIndex;
+    },
+
+    _resumeGotoIndex: function () {
+        var index = this._gotoindex;
+        var original = this._original;
+        delete this._gotoindex;
+        delete this._currenturi;
+        delete this._referringuri;
+        this.unhook();
+        return original.gotoIndex(index);
+    },
+
+
+    /*** Hook into loadURI() ***/
+
+    loadURI: function (aURI) {
+        // We allow about:blank to load
+        if (aURI
+            && (aURI != "about:blank")
+            && (this._tab.getAttribute("ontap") == "true")) {
+            return this._pauseLoadURI.apply(this, arguments);
+        }
+        return this._original.loadURI.apply(this._original, arguments);
+    },
+
+    _pauseLoadURI: function (aURI, aLoadFlags, aReferrer) {
+        var uri = makeURI(aURI);
+        if (BarTap.whiteListed(uri)) {
+            let original = this._original;
+            this._tab.removeAttribute("ontap");
+            this.unhook();
+            return original.loadURI.apply(original, arguments);
+        }
+
+        this._tab.removeAttribute("busy");
+        window.setTimeout(BarTap.setTitleAndIcon, 0, this._tab, uri);
+        this._loaduri_args = arguments;
+        this._currenturi = makeURI(aURI);
+        if (aReferrer instanceof Ci.nsIURI) {
+            this._referringuri = aReferrer.clone();
+        }
+        this.resume = this._resumeLoadURI;
+    },
+
+    _resumeLoadURI: function () {
+        var args = this._loaduri_args;
+        var original = this._original;
+        delete this._loaduri_args;
+        delete this._currenturi;
+        delete this._referringuri;
+        this.unhook();
+        return original.loadURI.apply(original, args);
+    },
+
+
+    /*** Behaviour changed for unloaded tabs. ***/
+
+    get currentURI() {
+        if (this._currenturi) {
+            return this._currenturi.clone();
+        }
+        return this._original.currentURI;
+    },
+    get referringURI() {
+        if (this._referringuri) {
+            return this._referringuri.clone();
+        }
+        return this._original.currentURI;
+    },
+
+    reload: function(aReloadFlags) {
+        if (this._tab.getAttribute("ontap") == "true") {
+            this._tab.removeAttribute("ontap");
+            //TODO should we patch aReloadFlags into this._loaduri_args?
+            return this.resume();
+        }
+        return this._original.reload(aReloadFlags);
+    },
+
+    QueryInterface: function(aIID) {
+        if (Ci.nsISupports.equals(aIID) || Ci.nsIWebNavigation.equals(aIID)) {
+            return this;
+        }
+        return this._original.QueryInterface(aIID);
+    },
+
+
+    /*** These methods and properties are simply passed through. ***/
+
+    goBack: function () {
+        return this._original.goBack();
+    },
+    goForward: function () {
+        return this._original.goForward();
+    },
+    stop: function(aStopFlags) {
+        return this._original.stop(aStopFlags);
+    },
+    get canGoBack() {
+        return this._original.canGoBack;
+    },
+    get canGoForward() {
+        return this._original.canGoForward;
+    },
+    get document() {
+        return this._original.document;
+    },
+    get sessionHistory() {
+        return this._original.sessionHistory;
+    }
+};
