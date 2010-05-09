@@ -7,10 +7,10 @@
 <!ENTITY backgroundTabs.accesskey "B">
 <!ENTITY loadTabs.label "load them (Firefox default)">
 <!ENTITY putOnBarTab.label "don't load them">
-<!ENTITY tapAfterTimeout.label "When I don't visit a tab for a while: ">
-<!ENTITY tapAfterTimeout.accesskey "T">
+<!ENTITY unloadAfterTimeout.label "When I don't visit a tab for a while: ">
+<!ENTITY unloadAfterTimeout.accesskey "T">
 <!ENTITY doNothing.label "do nothing (Firefox default)">
-<!ENTITY putOnBarTapAfter.label "unload it after...">
+<!ENTITY unloadAfter.label "unload it after...">
 <!ENTITY timeoutSecs.label "secs">
 <!ENTITY timeoutMins.label "mins">
 <!ENTITY timeoutHours.label "hours">
@@ -30,4 +30,4 @@
 <!ENTITY delayMilliseconds.label "ms">
 <!ENTITY closingTabs.label "When closing a tab:">
 <!ENTITY closingTabs.accesskey "C">
-<!ENTITY findClosestUntappedTab.label "select the nearest loaded tab">
+<!ENTITY findClosestLoadedTab.label "select the nearest loaded tab">

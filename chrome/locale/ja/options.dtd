@@ -7,10 +7,10 @@
 <!ENTITY backgroundTabs.accesskey "B">
 <!ENTITY loadTabs.label "読み込む (Firefox 初期状態)">
 <!ENTITY putOnBarTab.label "待機させておく">
-<!ENTITY tapAfterTimeout.label "しばらくタブを見なかった場合: ">
-<!ENTITY tapAfterTimeout.accesskey "T">
+<!ENTITY unloadAfterTimeout.label "しばらくタブを見なかった場合: ">
+<!ENTITY unloadAfterTimeout.accesskey "T">
 <!ENTITY doNothing.label "なにもしない (Firefox 初期状態)">
-<!ENTITY putOnBarTapAfter.label "時間が経ったら待機させる">
+<!ENTITY unloadAfter.label "時間が経ったら待機させる">
 <!ENTITY timeoutSecs.label "秒">
 <!ENTITY timeoutMins.label "分">
 <!ENTITY timeoutHours.label "時間">
@@ -30,4 +30,4 @@
 <!ENTITY delayMilliseconds.label "ミリ秒">
 <!ENTITY closingTabs.label "タブを閉じた場合:">
 <!ENTITY closingTabs.accesskey "C">
-<!ENTITY findClosestUntappedTab.label "最寄りの読み込まれているタブを選択する">
+<!ENTITY findClosestLoadedTab.label "最寄りの読み込まれているタブを選択する">

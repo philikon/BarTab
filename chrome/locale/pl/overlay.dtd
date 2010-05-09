@@ -1,3 +1,3 @@
-<!ENTITY putOnTap.label "Zwolnij kartę">
-<!ENTITY putAllOnTapBut.label "Zwolnij pozostałe karty">
+<!ENTITY unloadTab.label "Zwolnij kartę">
+<!ENTITY unloadOtherTabs.label "Zwolnij pozostałe karty">
 

@@ -7,10 +7,10 @@
 <!ENTITY backgroundTabs.accesskey "B">
 <!ENTITY loadTabs.label "les charger (par défaut dans Firefox)">
 <!ENTITY putOnBarTab.label "ne pas les charger">
-<!ENTITY tapAfterTimeout.label "Lorsqu'un onglet est inutilisé:">
-<!ENTITY tapAfterTimeout.accesskey "T">
+<!ENTITY unloadAfterTimeout.label "Lorsqu'un onglet est inutilisé:">
+<!ENTITY unloadAfterTimeout.accesskey "T">
 <!ENTITY doNothing.label "ne rien faire (par défaut dans Firefox)">
-<!ENTITY putOnBarTapAfter.label "le décharger après...">
+<!ENTITY unloadAfter.label "le décharger après...">
 <!ENTITY timeoutSecs.label "s">
 <!ENTITY timeoutMins.label "min">
 <!ENTITY timeoutHours.label "heures">
@@ -30,4 +30,4 @@
 <!ENTITY delayMilliseconds.label "ms">
 <!ENTITY closingTabs.label "Lors de la fermeture d'un onglet :">
 <!ENTITY closingTabs.accesskey "C">
-<!ENTITY findClosestUntappedTab.label "sélectionner l'onglet chargé le plus proche">
+<!ENTITY findClosestLoadedTab.label "sélectionner l'onglet chargé le plus proche">

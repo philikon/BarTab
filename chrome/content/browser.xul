@@ -14,12 +14,12 @@
   <popupset id="mainPopupSet">
     <menupopup id="tabContextMenu">
       <menuitem id="context_BarTabUnloadTab"
-                label="&putOnTap.label;"
+                label="&unloadTab.label;"
                 tbattr="tabbrowser-multiple"
                 oncommand="gBrowser.BarTabHandler.unloadTab(gBrowser.mContextTab);"
                 insertbefore="context_openTabInWindow"/>
       <menuitem id="context_BarTabUnloadOtherTabs"
-                label="&putAllOnTapBut.label;"
+                label="&unloadOtherTabs.label;"
                 tbattr="tabbrowser-multiple"
                 oncommand="gBrowser.BarTabHandler.unloadOtherTabs(gBrowser.mContextTab);"
                 insertbefore="context_openTabInWindow"/>

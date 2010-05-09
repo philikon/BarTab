@@ -1,2 +1,2 @@
-<!ENTITY putOnTap.label "Tab entladen">
-<!ENTITY putAllOnTapBut.label "Andere Tabs entladen">
+<!ENTITY unloadTab.label "Tab entladen">
+<!ENTITY unloadOtherTabs.label "Andere Tabs entladen">

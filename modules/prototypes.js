@@ -211,7 +211,7 @@ BarTabHandler.prototype = {
             return;
         }
 
-        let label = this.l10n.getFormattedString('neverPutOnTap', [host]);
+        let label = this.l10n.getFormattedString('neverUnload', [host]);
         neverunload.setAttribute("label", label);
         neverunload.removeAttribute("hidden");
         if (BarTabUtils.whiteListed(tab.linkedBrowser.currentURI)) {

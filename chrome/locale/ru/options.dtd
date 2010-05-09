@@ -7,10 +7,10 @@
 <!ENTITY backgroundTabs.accesskey "Ф">
 <!ENTITY loadTabs.label "загружать их (по умолчанию в Firefox)">
 <!ENTITY putOnBarTab.label "не загружать их">
-<!ENTITY tapAfterTimeout.label "Когда я не посещаю вкладку некоторое время: ">
-<!ENTITY tapAfterTimeout.accesskey "Н">
+<!ENTITY unloadAfterTimeout.label "Когда я не посещаю вкладку некоторое время: ">
+<!ENTITY unloadAfterTimeout.accesskey "Н">
 <!ENTITY doNothing.label "ничего не делать (по умолчанию в Firefox)">
-<!ENTITY putOnBarTapAfter.label "выгружать ее после">
+<!ENTITY unloadAfter.label "выгружать ее после">
 <!ENTITY timeoutSecs.label "сек.">
 <!ENTITY timeoutMins.label "мин.">
 <!ENTITY timeoutHours.label "часов">
@@ -30,4 +30,4 @@
 <!ENTITY delayMilliseconds.label "мс">
 <!ENTITY closingTabs.label "При закрытии вкладки:">
 <!ENTITY closingTabs.accesskey "З">
-<!ENTITY findClosestUntappedTab.label "выбирать ближайшую загруженную вкладку">
+<!ENTITY findClosestLoadedTab.label "выбирать ближайшую загруженную вкладку">

@@ -78,15 +78,15 @@
     <separator class="thin"/>
 
     <row align="center">
-      <label value="&tapAfterTimeout.label;"
-             accesskey="&tapAfterTimeout.accesskey;"
+      <label value="&unloadAfterTimeout.label;"
+             accesskey="&unloadAfterTimeout.accesskey;"
              control="tapAfterTimeout" />
       <menulist id="tapAfterTimeout"
                 preference="extensions.bartap.tapAfterTimeout"
                 oncommand="BarTabPreferences.onTimeoutChange();">
         <menupopup>
           <menuitem label="&doNothing.label;" value="false"/>
-          <menuitem label="&putOnBarTapAfter.label;" value="true"/>
+          <menuitem label="&unloadAfter.label;" value="true"/>
         </menupopup>
       </menulist>
       <hbox id="timerWidgets" align="center">
@@ -180,7 +180,7 @@
                 preference="extensions.bartap.findClosestUntappedTab">
         <menupopup>
           <menuitem label="&doNothing.label;" value="false"/>
-          <menuitem label="&findClosestUntappedTab.label;" value="true"/>
+          <menuitem label="&findClosestLoadedTab.label;" value="true"/>
         </menupopup>
       </menulist>
     </row>

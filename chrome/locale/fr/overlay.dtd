@@ -1,2 +1,2 @@
-<!ENTITY putOnTap.label "Décharger">
-<!ENTITY putAllOnTapBut.label "Décharger les autres onglets">
+<!ENTITY unloadTab.label "Décharger">
+<!ENTITY unloadOtherTabs.label "Décharger les autres onglets">

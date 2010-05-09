@@ -7,10 +7,10 @@
 <!ENTITY backgroundTabs.accesskey "B">
 <!ENTITY loadTabs.label "laden (Standardeinstellung)">
 <!ENTITY putOnBarTab.label "nicht laden">
-<!ENTITY tapAfterTimeout.label "Wenn ein Tab nicht benutzt wird, ">
-<!ENTITY tapAfterTimeout.accesskey "T">
+<!ENTITY unloadAfterTimeout.label "Wenn ein Tab nicht benutzt wird, ">
+<!ENTITY unloadAfterTimeout.accesskey "T">
 <!ENTITY doNothing.label "nichts machen (Standardeinstellung)">
-<!ENTITY putOnBarTapAfter.label "entladen nach...">
+<!ENTITY unloadAfter.label "entladen nach...">
 <!ENTITY timeoutSecs.label "Sek.">
 <!ENTITY timeoutMins.label "Min.">
 <!ENTITY timeoutHours.label "Std.">
@@ -30,4 +30,4 @@
 <!ENTITY delayMilliseconds.label "ms">
 <!ENTITY closingTabs.label "Wenn ein Tab geschlossen wird:">
 <!ENTITY closingTabs.accesskey "C">
-<!ENTITY findClosestUntappedTab.label "das nächste geladene Tab auswählen">
+<!ENTITY findClosestLoadedTab.label "das nächste geladene Tab auswählen">

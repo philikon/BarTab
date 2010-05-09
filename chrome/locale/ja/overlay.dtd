@@ -1,3 +1,3 @@
-<!ENTITY putOnTap.label "タブを待機させる">
-<!ENTITY putAllOnTapBut.label "他のタブを待機させる">
+<!ENTITY unloadTab.label "タブを待機させる">
+<!ENTITY unloadOtherTabs.label "他のタブを待機させる">
 

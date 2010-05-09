@@ -7,10 +7,10 @@
 <!ENTITY backgroundTabs.accesskey "B">
 <!ENTITY loadTabs.label "cargarlas (por defecto en Firefox)">
 <!ENTITY putOnBarTab.label "no cargarlas">
-<!ENTITY tapAfterTimeout.label "Cuando no visite una pestaña por un tiempo">
-<!ENTITY tapAfterTimeout.accesskey "T">
+<!ENTITY unloadAfterTimeout.label "Cuando no visite una pestaña por un tiempo">
+<!ENTITY unloadAfterTimeout.accesskey "T">
 <!ENTITY doNothing.label "No hacer nada (por defecto en Firefox)">
-<!ENTITY putOnBarTapAfter.label "descargarla después de...">
+<!ENTITY unloadAfter.label "descargarla después de...">
 <!ENTITY timeoutSecs.label "segs">
 <!ENTITY timeoutMins.label "mins">
 <!ENTITY timeoutHours.label "horas">
@@ -30,4 +30,4 @@
 <!ENTITY delayMilliseconds.label "ms">
 <!ENTITY closingTabs.label "Cuando cierre una pestaña:">
 <!ENTITY closingTabs.accesskey "C">
-<!ENTITY findClosestUntappedTab.label "seleccionar la pestaña cargada más cercana">
+<!ENTITY findClosestLoadedTab.label "seleccionar la pestaña cargada más cercana">
