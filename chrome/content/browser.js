@@ -19,8 +19,7 @@ BarTabHandler.prototype = {
     aTabBrowser.tabContainer.addEventListener('TabSelect', this, false);
     aTabBrowser.tabContainer.addEventListener('TabClose', this, false);
 
-    // Initialize timer
-    this.timer = new BarTabTimer(aTabBrowser);
+    (new BarTabTimer()).init(aTabBrowser);
 
     // We need an event listener for the context menu so that we can
     // adjust the label of the whitelist menu item

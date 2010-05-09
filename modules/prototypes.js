@@ -232,16 +232,18 @@ BarTabWebNavigation.prototype = {
  * question.  (The actual implementation works differently.  It uses
  * setTimeout, of course).
  */
-function BarTabTimer(aTabBrowser) {
-    this.tabbrowser = aTabBrowser;
-    aTabBrowser.tabContainer.addEventListener('TabOpen', this, false);
-    aTabBrowser.tabContainer.addEventListener('TabSelect', this, false);
-    aTabBrowser.tabContainer.addEventListener('TabClose', this, false);
-
-    this.previousTab = null;
-    this.selectedTab = aTabBrowser.selectedTab;
-}
+function BarTabTimer() {}
 BarTabTimer.prototype = {
+
+    init: function(aTabBrowser) {
+        this.tabbrowser = aTabBrowser;
+        aTabBrowser.tabContainer.addEventListener('TabOpen', this, false);
+        aTabBrowser.tabContainer.addEventListener('TabSelect', this, false);
+        aTabBrowser.tabContainer.addEventListener('TabClose', this, false);
+
+        this.previousTab = null;
+        this.selectedTab = aTabBrowser.selectedTab;
+    },
 
     handleEvent: function(event) {
         switch (event.type) {
