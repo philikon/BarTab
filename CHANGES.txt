@@ -1,13 +1,29 @@
 2.0 (unreleased)
 ----------------
 
-* Many internal improvements concerning reliability, maintenance, and
-  speed.
+* Instead of a series of brittle patches, BarTab now only uses a
+  single plug point -- the nsIWebNavigation object -- to hook itself
+  into the tabbrowser.  This improves maintainability and
+  compatibility with other add-ons.
 
-* Unloaded tabs can now be bookmarked.
+  Note: Due to differences in the event setup, not loading background
+  tabs is no longer supported when using Firefox 3.5.  However, BarTab
+  still allows you to not load restored tabs as well as to manually
+  and automatically unload tabs.
 
-* Tabs that were opened in the background but not loaded are now
+* Unloaded tabs now report the right URI to other components.  That
+  means unloaded tabs can now be bookmarked and add-ons such as Tab
+  Popup report the right URI for them.
+
+* Tabs that were opened in the background but never loaded are now
   properly restored after a restart.
+
+* Queries to the nsINavHistoryService and nsIFaviconService are now
+  performed asynchronously when restoring tabs.  While this may cause
+  small delays in the display of tab titles and icons, it makes the UI
+  more responsive directly after the browser start.
+
+* XPCOM services are now acquired lazily and cached.
 
 * If enabled, switching to the nearest loaded tab now prefers tabs on
   the right hand side given equally distant tabs.  This matches
