@@ -229,11 +229,13 @@ var BarTap = {
     var newtab = aTabBrowser.addTab();
 
     // The user might not have the 'extensions.bartap.tapRestoredTabs'
-    // preference enabled but still wants to put this tab on the bar tab.
-    // That's why we need to make sure this attribute exists before
+    // preference enabled but still wants to unload this tab.  That's
+    // why we need to make sure we hook into the new tab before
     // restoring the tab state.
-    newtab.setAttribute("ontap", "true");
-    newtab.linkedBrowser.setAttribute("ontap", "true");
+    if (newtab.getAttribute("ontap") != "true") {
+      newtab.setAttribute("ontap", "true");
+      (new BarTabWebNavigation()).hook(newtab);
+    }
     sessionstore.setTabState(newtab, state);
 
     // Move the new tab next to the one we're removing, but not in
