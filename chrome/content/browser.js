@@ -73,13 +73,12 @@ BarTabHandler.prototype = {
    */
   onTabOpen: function(aEvent) {
     var tab = aEvent.originalTarget;
-    if (!tab.selected
-        && BarTabUtils.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) {
-      tab.setAttribute("ontap", "true");
-      (new BarTabWebNavigation()).hook(tab);
-    } else if (BarTabUtils.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
-      this.timer.startTimer(tab);
+    if (tab.selected
+        || !BarTabUtils.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) {
+      return;
     }
+    tab.setAttribute("ontap", "true");
+    (new BarTabWebNavigation()).hook(tab);
   },
 
   /*

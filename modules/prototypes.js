@@ -232,18 +232,22 @@ BarTabWebNavigation.prototype = {
  * question.  (The actual implementation works differently.  It uses
  * setTimeout, of course).
  */
-function BarTabTimer(tabbrowser) {
-    this.tabbrowser = tabbrowser;
-    tabbrowser.tabContainer.addEventListener('TabSelect', this, false);
-    tabbrowser.tabContainer.addEventListener('TabClose', this, false);
+function BarTabTimer(aTabBrowser) {
+    this.tabbrowser = aTabBrowser;
+    aTabBrowser.tabContainer.addEventListener('TabOpen', this, false);
+    aTabBrowser.tabContainer.addEventListener('TabSelect', this, false);
+    aTabBrowser.tabContainer.addEventListener('TabClose', this, false);
 
     this.previousTab = null;
-    this.selectedTab = tabbrowser.selectedTab;
+    this.selectedTab = aTabBrowser.selectedTab;
 }
 BarTabTimer.prototype = {
 
     handleEvent: function(event) {
         switch (event.type) {
+        case 'TabOpen':
+            this.onTabOpen(event);
+            return;
         case 'TabSelect':
             this.onTabSelect(event);
             return;
@@ -251,6 +255,15 @@ BarTabTimer.prototype = {
             this.onTabClose(event);
             return;
         }
+    },
+
+    onTabOpen: function(aEvent) {
+        var tab = aEvent.originalTarget;
+        if (tab.selected
+            || BarTabUtils.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) {
+            return;
+        }
+        this.startTimer(tab);
     },
 
     onTabClose: function(event) {
@@ -273,7 +286,7 @@ BarTabTimer.prototype = {
             this.startTimer(this.previousTab);
         }
         this.clearTimer(this.selectedTab);
-  },
+    },
 
     startTimer: function(aTab) {
         if (!BarTabUtils.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
