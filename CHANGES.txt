@@ -1,4 +1,4 @@
-1.6 (unreleased)
+2.0 (unreleased)
 ----------------
 
 * Many internal improvements concerning reliability, maintenance, and
