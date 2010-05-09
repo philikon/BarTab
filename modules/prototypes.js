@@ -67,13 +67,13 @@ BarTabHandler.prototype = {
                 aTabBrowser, "anonid", "tabContextMenu");
             let before = document.getAnonymousElementByAttribute(
                 aTabBrowser, "id", "context_openTabInWindow");
-            for each (let menuitemid in ["context_BarTabUnloadTab",
-                                         "context_BarTabUnloadOtherTabs",
-                                         "context_BarTabNeverUnload",
-                                         "context_BarTabSeparator"]) {
+            ["context_BarTabUnloadTab",
+             "context_BarTabUnloadOtherTabs",
+             "context_BarTabNeverUnload",
+             "context_BarTabSeparator"].forEach(function (menuitemid) {
                 let menuitem = document.getElementById(menuitemid);
                 popup.insertBefore(menuitem, before);
-            }
+            });
         }
         popup.addEventListener('popupshowing', this, false);
     },
