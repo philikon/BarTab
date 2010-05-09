@@ -684,8 +684,12 @@ BarTabWebNavigation.prototype = {
         this._tab.label = entry.title;
         window.setTimeout(BarTap.setIcon, 0, this._tab, entry.URI);
         this._gotoindex = aIndex;
-        this._currenturi = entry.URI;
+
+        // Fake the docshell's currentURI.  (This will also affect
+        // window.location etc.)
+        this._tab.linkedBrowser.docShell.setCurrentURI(entry.URI);
         this._referringuri = entry.referrerURI;
+
         this.resume = this._resumeGotoIndex;
     },
 
@@ -693,7 +697,6 @@ BarTabWebNavigation.prototype = {
         var index = this._gotoindex;
         var original = this._original;
         delete this._gotoindex;
-        delete this._currenturi;
         delete this._referringuri;
         this.unhook();
         return original.gotoIndex(index);
@@ -724,10 +727,14 @@ BarTabWebNavigation.prototype = {
         this._tab.removeAttribute("busy");
         window.setTimeout(BarTap.setTitleAndIcon, 0, this._tab, uri);
         this._loaduri_args = arguments;
-        this._currenturi = makeURI(aURI);
+
+        // Fake the docshell's currentURI.  (This will also affect
+        // window.location etc.)
+        this._tab.linkedBrowser.docShell.setCurrentURI(uri);
         if (aReferrer instanceof Ci.nsIURI) {
             this._referringuri = aReferrer.clone();
         }
+
         this.resume = this._resumeLoadURI;
     },
 
@@ -735,7 +742,6 @@ BarTabWebNavigation.prototype = {
         var args = this._loaduri_args;
         var original = this._original;
         delete this._loaduri_args;
-        delete this._currenturi;
         delete this._referringuri;
         this.unhook();
         return original.loadURI.apply(original, args);
@@ -744,12 +750,6 @@ BarTabWebNavigation.prototype = {
 
     /*** Behaviour changed for unloaded tabs. ***/
 
-    get currentURI() {
-        if (this._currenturi) {
-            return this._currenturi.clone();
-        }
-        return this._original.currentURI;
-    },
     get referringURI() {
         if (this._referringuri) {
             return this._referringuri.clone();
@@ -784,6 +784,9 @@ BarTabWebNavigation.prototype = {
     },
     stop: function(aStopFlags) {
         return this._original.stop(aStopFlags);
+    },
+    get currentURI() {
+        return this._original.currentURI;
     },
     get canGoBack() {
         return this._original.canGoBack;
