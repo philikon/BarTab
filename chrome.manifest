@@ -1,4 +1,5 @@
 content   bartap                 chrome/content/
+resource  bartap                 modules/
 locale    bartap   en-US         chrome/locale/en-US/
 locale    bartap   ja            chrome/locale/ja/
 locale    bartap   de            chrome/locale/de/

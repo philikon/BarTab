@@ -1,24 +1,4 @@
-/*
- * Firefox 3.5 doesn't have these handy functions for defining lazy getters.
- */
-if (typeof XPCOMUtils.defineLazyGetter !== "function") {
-  XPCOMUtils.defineLazyGetter = function(aObject, aName, aLambda) {
-    aObject.__defineGetter__(aName, function() {
-      delete aObject[aName];
-      return aObject[aName] = aLambda.apply(aObject);
-    });
-  };
-}
-
-if (typeof XPCOMUtils.defineLazyServiceGetter !== "function") {
-  XPCOMUtils.defineLazyServiceGetter = function(aObject, aName,
-                                                aContract, aInterfaceName) {
-    XPCOMUtils.defineLazyGetter(aObject, aName, function XPCU_serviceLambda() {
-      return Cc[aContract].getService(Ci[aInterfaceName]);
-    });
-  };
-}
-
+Components.utils.import("resource://bartap/prototypes.js");
 
 var BarTap = {
 
@@ -99,10 +79,10 @@ var BarTap = {
   onTabOpen: function(aEvent) {
     var tab = aEvent.originalTarget;
     if (!tab.selected
-        && this.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) {
+        && BarTabUtils.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) {
       tab.setAttribute("ontap", "true");
       (new BarTabWebNavigation()).hook(tab);
-    } else if (this.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
+    } else if (BarTabUtils.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
       this.getTabBrowserForTab(tab).BarTapTimer.startTimer(tab);
     }
   },
@@ -113,7 +93,7 @@ var BarTap = {
    * restored tabs from loading.
    */
   onTabRestoring: function(event) {
-    if (!this.mPrefs.getBoolPref("extensions.bartap.tapRestoredTabs")) {
+    if (!BarTabUtils.mPrefs.getBoolPref("extensions.bartap.tapRestoredTabs")) {
       return;
     }
     let tab = event.originalTarget;
@@ -137,14 +117,14 @@ var BarTap = {
       return;      
     }
 
-    switch (this.mPrefs.getIntPref("extensions.bartap.loadOnSelect")) {
+    switch (BarTabUtils.mPrefs.getIntPref("extensions.bartap.loadOnSelect")) {
     case 1:
       // Load immediately
       this.loadTabContents(tab);
       return;
     case 2:
       // Load after delay
-      let delay = this.mPrefs.getIntPref("extensions.bartap.loadOnSelectDelay");
+      let delay = BarTabUtils.mPrefs.getIntPref("extensions.bartap.loadOnSelectDelay");
       window.setTimeout(function() {
           if (tab.selected) {
             BarTap.loadTabContents(tab);
@@ -171,7 +151,7 @@ var BarTap = {
   },
 
   onTabClose: function(event) {
-    if (!this.mPrefs.getBoolPref("extensions.bartap.findClosestUntappedTab")) {
+    if (!BarTabUtils.mPrefs.getBoolPref("extensions.bartap.findClosestUntappedTab")) {
       return;
     }
     let tab = event.originalTarget;
@@ -213,7 +193,7 @@ var BarTap = {
     let label = this.l10n.getFormattedString('neverPutOnTap', [host]);
     neverputontap.setAttribute("label", label);
     neverputontap.removeAttribute("hidden");
-    if (this.getHostWhitelist().indexOf(host) == -1) {
+    if (BarTabUtils.getHostWhitelist().indexOf(host) == -1) {
       neverputontap.removeAttribute("checked");
       putontap.removeAttribute("disabled");
     } else {
@@ -229,7 +209,7 @@ var BarTap = {
     }
     try {
       let uri = aTab.linkedBrowser.currentURI;
-      if (this.getHostWhitelist().indexOf(uri.host) != -1) {
+      if (BarTabUtils.getHostWhitelist().indexOf(uri.host) != -1) {
         return;
       }
     } catch(ex) {
@@ -248,7 +228,7 @@ var BarTap = {
       }
     }
 
-    var sessionstore = this.mSessionStore;
+    var sessionstore = BarTabUtils.mSessionStore;
     var state = sessionstore.getTabState(aTab);
     var newtab = aTabBrowser.addTab();
 
@@ -311,7 +291,7 @@ var BarTap = {
       return;
     }
 
-    let whitelist = this.getHostWhitelist();
+    let whitelist = BarTabUtils.getHostWhitelist();
     let index = whitelist.indexOf(host);
     if (index == -1) {
       whitelist.push(host);
@@ -319,7 +299,7 @@ var BarTap = {
       whitelist.splice(index, 1);
     }
 
-    this.setHostWhitelist(whitelist);
+    BarTabUtils.setHostWhitelist(whitelist);
   },
 
 
@@ -370,110 +350,6 @@ var BarTap = {
     return aTab.previousSibling;
   },
 
-  /*
-   * Find and set the tab's favicon for a given URI.
-   */
-  setIcon: function(aTab, aURI) {
-    try {
-      let iconURI = BarTap.mFavicon.getFaviconForPage(aURI);
-      aTab.setAttribute("image", iconURI.spec);
-    } catch (ex) {
-      // No favicon found.  Perhaps it's a URL with an anchor?
-      // Firefox doesn't always store favicons for those.
-      // See https://bugzilla.mozilla.org/show_bug.cgi?id=420605
-      aURI = BarTap.stripFragmentFromURI(aURI);
-      if (aURI) {
-        BarTap.setIcon(aTab, aURI);
-      }
-    }
-  },
-
-  /*
-   * Set a tab's title and favicon given a URI by querying the history
-   * service.
-   */
-  setTitleAndIcon: function(aTab, aURI) {
-    // See if we have title, favicon in stock for it. This should definitely
-    // work for restored tabs as they're in the history database.
-    let info = BarTap.getInfoFromHistory(aURI);
-    if (!info) {
-      aTab.label = BarTap.titleFromURI(aURI);
-      return;
-    }
-    // Firefox cripples nsINavHistoryService entries for fragment links.
-    // See https://bugzilla.mozilla.org/show_bug.cgi?id=503832
-    // Try to work around that by stripping the fragment from the URI.
-    if (!info.icon) {
-      let uri = BarTap.stripFragmentFromURI(aURI);
-      if (uri) {
-        let anchorinfo = BarTap.getInfoFromHistory(uri);
-        if (anchorinfo) {
-          info = anchorinfo;
-        }
-      }
-    }
-    aTab.setAttribute("image", info.icon);
-    aTab.label = info.title;
-  },
-
-  /*
-   * Strip the fragment from a URI.  Returns a new URI object, or null
-   * if the URI didn't contain a fragment.
-   */
-  stripFragmentFromURI: function(aURI) {
-    var anchor = aURI.path.indexOf('#');
-    if (anchor == -1) {
-      return null;
-    }
-    let uri = aURI.clone();
-    uri.path = uri.path.substr(0, anchor);
-    return uri;
-  },
-
-  /*
-   * Derive a title from a URI by stripping the protocol and potentially
-   * "www.", so "http://www.mozilla.org" would become "mozilla.org".
-   */
-  titleFromURI: function(aURI) {
-    try {
-      let hostPort = aURI.hostPort;
-      let path = aURI.path;
-      if (hostPort.substr(0, 4) == "www.") {
-        hostPort = hostPort.substr(4);
-      }
-      if (path == "/") {
-        path = "";
-      }
-      return hostPort + path;
-    } catch (ex) {
-      // Most likely aURI.hostPort and aURI.path failed.
-      // Let's handle this gracefully.
-      return aURI.spec;
-    }
-  },
-
-  /*
-   * Get information about a URI from the history service,
-   * e.g. title, favicon, ...
-   */
-  getInfoFromHistory: function(aURI) {
-    var history = this.mHistory;
-    var options = history.getNewQueryOptions();
-    options.queryType = Ci.nsINavHistoryQueryOptions.QUERY_TYPE_HISTORY;
-    options.maxResults = 1;
-
-    var query = history.getNewQuery();
-    query.uri = aURI;
-
-    var result = history.executeQuery(query, options);
-    result.root.containerOpen = true;
-
-    if (!result.root.childCount) {
-      return null;
-    }
-    return result.root.getChild(0);
-  },
-
   getTabBrowserForTab: function(tab) {
     // Fuzzy test for FFX 3.7 where the tabbar lives outside the tabbrowser.
     if (tab.parentNode.tabbrowser) {
@@ -483,60 +359,9 @@ var BarTap = {
       tab = tab.parentNode;
     }
     return tab;
-  },
-
-  /*
-   * Check whether a URI is on the white list.
-   */
-  whiteListed: function(aURI) {
-    try {
-      return (this.getHostWhitelist().indexOf(aURI.host) != -1);
-    } catch(ex) {
-      // Most likely gotouri.host failed, so it isn't on the white list.
-      return false;
-    }
-  },
-
-  /*
-   * It might seem more elegant to use a getter & setter here so you could
-   * just use this.hostWhiteList or similar.  However, that would suggest
-   * this.hostWhiteList would always return the same array and that
-   * mutations to it would be persisted.  Both are not the case.
-   */
-
-  getHostWhitelist: function() {
-    var whitelist = this.mPrefs.getCharPref("extensions.bartap.hostWhitelist");
-    if (!whitelist) {
-      return [];
-    }
-    return whitelist.split(";");
-  },
-
-  setHostWhitelist: function(whitelist) {
-    this.mPrefs.setCharPref("extensions.bartap.hostWhitelist",
-                            whitelist.join(";"));
   }
 
 };
-
-/*
- * Lazy getters for XPCOM services.  This is in analogy to
- * Services.jsm which is available in Firefox 3.7.
- */
-XPCOMUtils.defineLazyGetter(BarTap, "mPrefs", function () {
-  return Cc["@mozilla.org/preferences-service;1"]
-         .getService(Ci.nsIPrefService)
-         .QueryInterface(Ci.nsIPrefBranch2);
-});
-XPCOMUtils.defineLazyServiceGetter(BarTap, "mSessionStore",
-                                   "@mozilla.org/browser/sessionstore;1",
-                                   "nsISessionStore");
-XPCOMUtils.defineLazyServiceGetter(BarTap, "mHistory",
-                                   "@mozilla.org/browser/nav-history-service;1",
-                                   "nsINavHistoryService");
-XPCOMUtils.defineLazyServiceGetter(BarTap, "mFavicon",
-                                   "@mozilla.org/browser/favicon-service;1",
-                                   "nsIFaviconService");
 
 
 // Initialize BarTap as soon as possible.
@@ -619,185 +444,3 @@ BarTapTimer.prototype = {
     aTab._barTapTimer = null;
   }
 }
-
-
-function BarTabWebNavigation () {}
-BarTabWebNavigation.prototype = {
-
-    /*
-     * Install ourself as browser's webNavigation.  This needs to be
-     * passed the tab object (rather than just its associated browser
-     * object) because we need to be able to read and change tab's
-     * 'ontap' attribute.
-     */
-    hook: function (aTab) {
-        this._tab = aTab;
-        this._original = aTab.linkedBrowser.webNavigation;
-
-        var self = this;
-        aTab.linkedBrowser.__defineGetter__('webNavigation', function () {
-            return self;
-        });
-    },
-
-    /*
-     * Restore the browser's original webNavigation.
-     */
-    unhook: function () {
-        if (this._tab.linkedBrowser.webNavigation === this) {
-            // This will delete the instance getter for 'webNavigation',
-            // thus revealing the original implementation.
-            delete this._tab.linkedBrowser.webNavigation;
-        }
-        delete this._original;
-        delete this._tab;
-    },
-
-    /*
-     * This will be replaced with either _resumeGotoIndex or _resumeLoadURI,
-     * unless it's a blank tab.  For the latter case we make sure we'll
-     * unhook ourselves.
-     */
-    resume: function () {
-        this.unhook();
-    },
-
-
-    /*** Hook into gotoIndex() ***/
-
-    gotoIndex: function (aIndex) {
-        if (this._tab.getAttribute("ontap") == "true") {
-            return this._pauseGotoIndex(aIndex);
-        }
-        return this._original.gotoIndex(aIndex);
-    },
-
-    _pauseGotoIndex: function (aIndex) {
-        var history = this._original.sessionHistory;
-        var entry = history.getEntryAtIndex(aIndex, false);
-        if (BarTap.whiteListed(entry.URI)) {
-            this._tab.removeAttribute("ontap");
-            return this._original.gotoIndex(aIndex);
-        }
-
-        this._tab.removeAttribute("busy");
-        this._tab.label = entry.title;
-        window.setTimeout(BarTap.setIcon, 0, this._tab, entry.URI);
-        this._gotoindex = aIndex;
-
-        // Fake the docshell's currentURI.  (This will also affect
-        // window.location etc.)
-        this._tab.linkedBrowser.docShell.setCurrentURI(entry.URI);
-        this._referringuri = entry.referrerURI;
-
-        this.resume = this._resumeGotoIndex;
-    },
-
-    _resumeGotoIndex: function () {
-        var index = this._gotoindex;
-        var original = this._original;
-        delete this._gotoindex;
-        delete this._referringuri;
-        this.unhook();
-        return original.gotoIndex(index);
-    },
-
-
-    /*** Hook into loadURI() ***/
-
-    loadURI: function (aURI) {
-        // We allow about:blank to load
-        if (aURI
-            && (aURI != "about:blank")
-            && (this._tab.getAttribute("ontap") == "true")) {
-            return this._pauseLoadURI.apply(this, arguments);
-        }
-        return this._original.loadURI.apply(this._original, arguments);
-    },
-
-    _pauseLoadURI: function (aURI, aLoadFlags, aReferrer) {
-        var uri = makeURI(aURI);
-        if (BarTap.whiteListed(uri)) {
-            let original = this._original;
-            this._tab.removeAttribute("ontap");
-            this.unhook();
-            return original.loadURI.apply(original, arguments);
-        }
-
-        this._tab.removeAttribute("busy");
-        window.setTimeout(BarTap.setTitleAndIcon, 0, this._tab, uri);
-        this._loaduri_args = arguments;
-
-        // Fake the docshell's currentURI.  (This will also affect
-        // window.location etc.)
-        this._tab.linkedBrowser.docShell.setCurrentURI(uri);
-        if (aReferrer instanceof Ci.nsIURI) {
-            this._referringuri = aReferrer.clone();
-        }
-
-        this.resume = this._resumeLoadURI;
-    },
-
-    _resumeLoadURI: function () {
-        var args = this._loaduri_args;
-        var original = this._original;
-        delete this._loaduri_args;
-        delete this._referringuri;
-        this.unhook();
-        return original.loadURI.apply(original, args);
-    },
-
-
-    /*** Behaviour changed for unloaded tabs. ***/
-
-    get referringURI() {
-        if (this._referringuri) {
-            return this._referringuri.clone();
-        }
-        return this._original.currentURI;
-    },
-
-    reload: function(aReloadFlags) {
-        if (this._tab.getAttribute("ontap") == "true") {
-            this._tab.removeAttribute("ontap");
-            //TODO should we patch aReloadFlags into this._loaduri_args?
-            return this.resume();
-        }
-        return this._original.reload(aReloadFlags);
-    },
-
-    QueryInterface: function(aIID) {
-        if (Ci.nsISupports.equals(aIID) || Ci.nsIWebNavigation.equals(aIID)) {
-            return this;
-        }
-        return this._original.QueryInterface(aIID);
-    },
-
-
-    /*** These methods and properties are simply passed through. ***/
-
-    goBack: function () {
-        return this._original.goBack();
-    },
-    goForward: function () {
-        return this._original.goForward();
-    },
-    stop: function(aStopFlags) {
-        return this._original.stop(aStopFlags);
-    },
-    get currentURI() {
-        return this._original.currentURI;
-    },
-    get canGoBack() {
-        return this._original.canGoBack;
-    },
-    get canGoForward() {
-        return this._original.canGoForward;
-    },
-    get document() {
-        return this._original.document;
-    },
-    get sessionHistory() {
-        return this._original.sessionHistory;
-    }
-};
