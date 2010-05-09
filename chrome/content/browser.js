@@ -207,13 +207,8 @@ var BarTap = {
     if (aTab.getAttribute("ontap") == "true") {
       return;
     }
-    try {
-      let uri = aTab.linkedBrowser.currentURI;
-      if (BarTabUtils.getHostWhitelist().indexOf(uri.host) != -1) {
-        return;
-      }
-    } catch(ex) {
-      // Most likely uri.host failed.  No matter, just carry on.
+    if (BarTabUtils.whiteListed(aTab.linkedBrowser.currentURI)) {
+      return;
     }
 
     if (!aTabBrowser) {
