@@ -4,7 +4,7 @@
 <prefwindow id="bartap-preferences"
             title="&prefwindow.title;"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-            onload="BarTapPreferences.init();">
+            onload="BarTabPreferences.init();">
   <script type="application/javascript" src="preferences.js" />
 
   <prefpane id="bartap-prefpane" label="&prefpane.title;">
@@ -83,7 +83,7 @@
              control="tapAfterTimeout" />
       <menulist id="tapAfterTimeout"
                 preference="extensions.bartap.tapAfterTimeout"
-                oncommand="BarTapPreferences.onTimeoutChange();">
+                oncommand="BarTabPreferences.onTimeoutChange();">
         <menupopup>
           <menuitem label="&doNothing.label;" value="false"/>
           <menuitem label="&putOnBarTapAfter.label;" value="true"/>
@@ -122,7 +122,7 @@
       <listbox id="hostWhitelist"
                flex="1"
                style="height: 5em;"
-               onselect="BarTapPreferences.hostSelected(event);">
+               onselect="BarTabPreferences.hostSelected(event);">
       </listbox>
       <vbox>
         <spacer flex="1" />
@@ -130,17 +130,17 @@
                 disabled="true"
                 label="&hostWhitelistRemove.label;"
                 accesskey="&hostWhitelistRemove.accesskey;"
-                oncommand="BarTapPreferences.removeHost();" />
+                oncommand="BarTabPreferences.removeHost();" />
       </vbox>
     </row>
     <row>
       <spacer flex="1" />
       <textbox id="hostWhitelistNewHost"
-               onkeypress="BarTapPreferences.onNewHostKeyPress(event);" />
+               onkeypress="BarTabPreferences.onNewHostKeyPress(event);" />
       <button id="hostWhitelistAdd"
               label="&hostWhitelistAdd.label;"
               accesskey="&hostWhitelistAdd.accesskey;"
-              oncommand="BarTapPreferences.addHost();" />      
+              oncommand="BarTabPreferences.addHost();" />      
     </row>
 
     <separator class="thin"/>
@@ -151,7 +151,7 @@
              control="loadOnSelect" />
       <menulist id="loadOnSelect"
                 preference="extensions.bartap.loadOnSelect"
-                oncommand="BarTapPreferences.onLoadChange();">
+                oncommand="BarTabPreferences.onLoadChange();">
         <menupopup>
           <menuitem label="&loadAfterAskingMe.label;" value="0"/>
           <menuitem label="&loadImmediately.label;" value="1"/>

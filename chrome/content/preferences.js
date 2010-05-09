@@ -1,4 +1,4 @@
-var BarTapPreferences = {
+var BarTabPreferences = {
 
   prefs: Components.classes["@mozilla.org/preferences-service;1"]
          .getService(Components.interfaces.nsIPrefBranch)
