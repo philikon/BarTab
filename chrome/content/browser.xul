@@ -16,12 +16,12 @@
       <menuitem id="context_BarTabUnloadTab"
                 label="&putOnTap.label;"
                 tbattr="tabbrowser-multiple"
-                oncommand="BarTap.putOnTap(gBrowser.mContextTab, gBrowser);"
+                oncommand="BarTap.unloadTab(gBrowser.mContextTab, gBrowser);"
                 insertbefore="context_openTabInWindow"/>
       <menuitem id="context_BarTabUnloadOtherTabs"
                 label="&putAllOnTapBut.label;"
                 tbattr="tabbrowser-multiple"
-                oncommand="BarTap.putAllOnTapBut(gBrowser.mContextTab, gBrowser);"
+                oncommand="BarTap.unloadOtherTabs(gBrowser.mContextTab, gBrowser);"
                 insertbefore="context_openTabInWindow"/>
       <menuitem id="context_BarTabNeverUnload"
                 label=""

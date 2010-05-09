@@ -68,7 +68,7 @@ var BarTap = {
   },
 
 
-  /*** Core machinery ***/
+  /*** Event handlers ***/
 
   /*
    * Hook into newly opened tabs if the user wants to prevent tabs
@@ -165,9 +165,6 @@ var BarTap = {
     }
   },
 
-
-  /*** Handlers for commands (e.g. context menu items) ***/
-
   onPopupShowing: function(event) {
     var tab =  document.popupNode.localName == "tab" ?
           document.popupNode : gBrowser.selectedTab;
@@ -203,7 +200,10 @@ var BarTap = {
     }
   },
 
-  putOnTap: function(aTab, aTabBrowser) {
+
+  /*** API ***/
+
+  unloadTab: function(aTab, aTabBrowser) {
     // Ignore tabs that are already unloaded or are on the host whitelist.
     if (aTab.getAttribute("ontap") == "true") {
       return;
@@ -256,7 +256,7 @@ var BarTap = {
     aTabBrowser._endRemoveTab(aTabBrowser._beginRemoveTab(aTab, true, null, false));
   },
 
-  putAllOnTapBut: function(aTab, aTabBrowser) {
+  unloadOtherTabs: function(aTab, aTabBrowser) {
     if (!aTabBrowser) {
       aTabBrowser = this.getTabBrowserForTab(aTab);
     }
@@ -265,7 +265,7 @@ var BarTap = {
       aTabBrowser.selectedTab = aTab;
     }
 
-    // putOnTap() mutates the tabs so the only sane thing to do is to
+    // unloadTab() mutates the tabs so the only sane thing to do is to
     // copy the list of tabs now and then work off that list.
     var tabs = [];
     for (let i = 0; i < aTabBrowser.mTabs.length; i++) {
@@ -274,7 +274,7 @@ var BarTap = {
     var self = this;
     tabs.forEach(function(tab) {
         if (tab != aTab) {
-          self.putOnTap(tab, aTabBrowser);
+          self.unloadTab(tab, aTabBrowser);
         }
       });
   },
