@@ -48,7 +48,7 @@ BarTabHandler.prototype = {
         this.tabbrowser = aTabBrowser;
 
         let document = aTabBrowser.ownerDocument;
-        this.l10n = document.getElementById('bartap-strings');
+        this.l10n = document.getElementById('bartab-strings');
 
         aTabBrowser.tabContainer.addEventListener('SSTabRestoring', this, false);
         aTabBrowser.tabContainer.addEventListener('TabOpen', this, false);
@@ -171,7 +171,7 @@ BarTabHandler.prototype = {
                 label: this.l10n.getString("loadButton"),
                 accessKey: this.l10n.getString("loadButton.accesskey"),
                 callback: function() {self.loadTab(tab);}}];
-            box.appendNotification(label, 'bartap-load', "",
+            box.appendNotification(label, 'bartab-load', "",
                                    box.PRIORITY_INFO_MEDIUM, buttons);
             return;
         }

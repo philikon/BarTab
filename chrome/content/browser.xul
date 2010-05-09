@@ -2,12 +2,12 @@
 <?xml-stylesheet href="chrome://bartap/content/browser.css" type="text/css"?>
 <!DOCTYPE overlay SYSTEM "chrome://bartap/locale/overlay.dtd">
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-         id="bartap-overlay">
+         id="bartab-overlay">
 
   <script type="application/javascript" src="browser.js"/>
 
   <stringbundleset id="stringbundleset">
-    <stringbundle id="bartap-strings"
+    <stringbundle id="bartab-strings"
                   src="chrome://bartap/locale/overlay.properties"/>
   </stringbundleset>
 
