@@ -56,10 +56,10 @@ var BarTap = {
           tabbrowser, "anonid", "tabContextMenu");
       let before = document.getAnonymousElementByAttribute(
           tabbrowser, "id", "context_openTabInWindow");
-      for each (let menuitemid in ["context_putOnTap",
-                                   "context_putAllOnTapBut",
-                                   "context_neverPutOnTap",
-                                   "context_tapSeparator"]) {
+      for each (let menuitemid in ["context_BarTabUnloadTab",
+                                   "context_BarTabUnloadOtherTabs",
+                                   "context_BarTabNeverUnload",
+                                   "context_BarTabSeparator"]) {
         let menuitem = document.getElementById(menuitemid);
         popup.insertBefore(menuitem, before);
       }
@@ -172,11 +172,11 @@ var BarTap = {
     var tab =  document.popupNode.localName == "tab" ?
           document.popupNode : gBrowser.selectedTab;
 
-    var neverputontap = document.getElementById("context_neverPutOnTap");
-    var putontap = document.getElementById("context_putOnTap");
+    var neverunload = document.getElementById("context_BarTabNeverUnload");
+    var unloadtab = document.getElementById("context_BarTabUnloadTab");
 
     if (tab.getAttribute("ontap") == "true") {
-      putontap.setAttribute("disabled", "true");
+      unloadtab.setAttribute("disabled", "true");
     }
 
     let host;
@@ -185,20 +185,20 @@ var BarTap = {
     } catch (ex) {
       // Most likely uri.host doesn't exist which probably means whitelisting
       // doesn't make sense on this tab.  Don't show the menu item
-      neverputontap.setAttribute("hidden", "true");
-      putontap.removeAttribute("disabled");
+      neverunload.setAttribute("hidden", "true");
+      unloadtab.removeAttribute("disabled");
       return;
     }
 
     let label = this.l10n.getFormattedString('neverPutOnTap', [host]);
-    neverputontap.setAttribute("label", label);
-    neverputontap.removeAttribute("hidden");
+    neverunload.setAttribute("label", label);
+    neverunload.removeAttribute("hidden");
     if (BarTabUtils.getHostWhitelist().indexOf(host) == -1) {
-      neverputontap.removeAttribute("checked");
-      putontap.removeAttribute("disabled");
+      neverunload.removeAttribute("checked");
+      unloadtab.removeAttribute("disabled");
     } else {
-      neverputontap.setAttribute("checked", "true");
-      putontap.setAttribute("disabled", "true");
+      neverunload.setAttribute("checked", "true");
+      unloadtab.setAttribute("disabled", "true");
     }
   },
 
