@@ -149,7 +149,7 @@ BarTabHandler.prototype = {
     if (!tab.selected) {
       return;
     }
-    let activeTab = this.findClosestUntappedTab(tab);
+    let activeTab = this.findClosestLoadedTab(tab);
     if (activeTab) {
       this.tabbrowser.selectedTab = activeTab;
     }
@@ -215,7 +215,7 @@ BarTabHandler.prototype = {
     // Make sure that we're not on this tab.  If we are, find the
     // closest tab that isn't on the bar tab.
     if (aTab.selected) {
-      let activeTab = this.findClosestUntappedTab(aTab);
+      let activeTab = this.findClosestLoadedTab(aTab);
       if (activeTab) {
         tabbrowser.selectedTab = activeTab;
       }
@@ -304,7 +304,7 @@ BarTabHandler.prototype = {
    * Note: if there's no such tab available, this will return unloaded
    * tabs as a last resort.
    */
-  findClosestUntappedTab: function(aTab) {
+  findClosestLoadedTab: function(aTab) {
     var tabbrowser = this.tabbrowser;
 
     // Shortcut: if this is the only tab available, we're not going to
