@@ -72,8 +72,7 @@ BarTabHandler.prototype = {
    */
   onTabOpen: function(aEvent) {
     var tab = aEvent.originalTarget;
-    if (tab.selected
-        || !BarTabUtils.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) {
+    if (tab.selected || !BarTabUtils.getBoolPref("tapBackgroundTabs")) {
       return;
     }
     tab.setAttribute("ontap", "true");
@@ -86,7 +85,7 @@ BarTabHandler.prototype = {
    * restored tabs from loading.
    */
   onTabRestoring: function(aEvent) {
-    if (!BarTabUtils.mPrefs.getBoolPref("extensions.bartap.tapRestoredTabs")) {
+    if (!BarTabUtils.getBoolPref("tapRestoredTabs")) {
       return;
     }
     let tab = aEvent.originalTarget;
@@ -112,14 +111,14 @@ BarTabHandler.prototype = {
 
     let self = this;
 
-    switch (BarTabUtils.mPrefs.getIntPref("extensions.bartap.loadOnSelect")) {
+    switch (BarTabUtils.getIntPref("loadOnSelect")) {
     case 1:
       // Load immediately
       this.loadTab(tab);
       return;
     case 2:
       // Load after delay
-      let delay = BarTabUtils.mPrefs.getIntPref("extensions.bartap.loadOnSelectDelay");
+      let delay = BarTabUtils.getIntPref("loadOnSelectDelay");
       window.setTimeout(function() {
           if (tab.selected) {
             self.loadTab(tab);
@@ -140,7 +139,7 @@ BarTabHandler.prototype = {
   },
 
   onTabClose: function(aEvent) {
-    if (!BarTabUtils.mPrefs.getBoolPref("extensions.bartap.findClosestUntappedTab")) {
+    if (!BarTabUtils.getBoolPref("findClosestUntappedTab")) {
       return;
     }
     let tab = aEvent.originalTarget;

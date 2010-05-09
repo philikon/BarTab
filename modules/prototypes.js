@@ -262,7 +262,7 @@ BarTabTimer.prototype = {
     onTabOpen: function(aEvent) {
         var tab = aEvent.originalTarget;
         if (tab.selected
-            || BarTabUtils.mPrefs.getBoolPref("extensions.bartap.tapBackgroundTabs")) {
+            || BarTabUtils.getBoolPref("tapBackgroundTabs")) {
             return;
         }
         this.startTimer(tab);
@@ -291,7 +291,7 @@ BarTabTimer.prototype = {
     },
 
     startTimer: function(aTab) {
-        if (!BarTabUtils.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
+        if (!BarTabUtils.getBoolPref("tapAfterTimeout")) {
             return;
         }
         if (aTab.getAttribute("ontap") == "true") {
@@ -301,8 +301,8 @@ BarTabTimer.prototype = {
         if (aTab._barTabTimer) {
             this.clearTimer(aTab);
         }
-        let secs = BarTabUtils.mPrefs.getIntPref("extensions.bartap.timeoutValue")
-                 * BarTabUtils.mPrefs.getIntPref("extensions.bartap.timeoutUnit");
+        let secs = BarTabUtils.getIntPref("timeoutValue")
+                 * BarTabUtils.getIntPref("timeoutUnit");
         let window = aTab.ownerDocument.defaultView;
         // Allow 'this' to leak into the inline function
         let self = this;
@@ -433,6 +433,14 @@ var BarTabUtils = {
             return null;
         }
         return result.root.getChild(0);
+    },
+
+    getBoolPref: function(aPref) {
+         return BarTabUtils.mPrefs.getBoolPref("extensions.bartap." + aPref);
+    },
+
+    getIntPref: function(aPref) {
+         return BarTabUtils.mPrefs.getIntPref("extensions.bartap." + aPref);
     },
 
     /*
