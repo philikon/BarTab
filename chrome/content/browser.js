@@ -156,6 +156,7 @@ BarTabHandler.prototype = {
   },
 
   onPopupShowing: function(aEvent) {
+    var document = aEvent.target.ownerDocument;
     var tab =  document.popupNode.localName == "tab" ?
           document.popupNode : gBrowser.selectedTab;
 
