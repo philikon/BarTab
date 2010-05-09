@@ -28,6 +28,18 @@ if (typeof XPCOMUtils.defineLazyServiceGetter !== "function") {
 }
 
 
+/*
+ * A wrapping implementation of nsIWebNavigation.
+ *
+ * It can install itself as the webNavigation property of a tab's
+ * browser object, replacing and wrapping around the original
+ * implementation.  Once it has done so, it will defer all URI loading
+ * until the tab is no longer marked as 'ontap'.
+ *
+ * This provides a new method on top of nsIWebNavigation called
+ * 'resume()' which allows you to resume the operation that was
+ * deferred.
+ */
 function BarTabWebNavigation () {}
 BarTabWebNavigation.prototype = {
 
