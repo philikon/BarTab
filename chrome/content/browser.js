@@ -45,22 +45,22 @@ BarTabHandler.prototype = {
 
   /*** Event handlers ***/
 
-  handleEvent: function(event) {
-    switch (event.type) {
+  handleEvent: function(aEvent) {
+    switch (aEvent.type) {
     case 'SSTabRestoring':
-      this.onTabRestoring(event);
+      this.onTabRestoring(aEvent);
       return;
     case 'TabOpen':
-      this.onTabOpen(event);
+      this.onTabOpen(aEvent);
       return;
     case 'TabSelect':
-      this.onTabSelect(event);
+      this.onTabSelect(aEvent);
       return;
     case 'TabClose':
-      this.onTabClose(event);
+      this.onTabClose(aEvent);
       return;
     case 'popupshowing':
-      this.onPopupShowing(event);
+      this.onPopupShowing(aEvent);
       return;
     }
   },
@@ -87,11 +87,11 @@ BarTabHandler.prototype = {
    * service and hook into restored tabs if the user wants to prevent
    * restored tabs from loading.
    */
-  onTabRestoring: function(event) {
+  onTabRestoring: function(aEvent) {
     if (!BarTabUtils.mPrefs.getBoolPref("extensions.bartap.tapRestoredTabs")) {
       return;
     }
-    let tab = event.originalTarget;
+    let tab = aEvent.originalTarget;
     if (tab.selected || tab.getAttribute("ontap") == "true") {
       return;
     }
@@ -99,8 +99,8 @@ BarTabHandler.prototype = {
     (new BarTabWebNavigation()).hook(tab);
   },
 
-  onTabSelect: function(event) {
-    var tab = event.originalTarget;
+  onTabSelect: function(aEvent) {
+    var tab = aEvent.originalTarget;
     if (tab.getAttribute("ontap") != "true") {
       return;
     }
@@ -141,11 +141,11 @@ BarTabHandler.prototype = {
     }
   },
 
-  onTabClose: function(event) {
+  onTabClose: function(aEvent) {
     if (!BarTabUtils.mPrefs.getBoolPref("extensions.bartap.findClosestUntappedTab")) {
       return;
     }
-    let tab = event.originalTarget;
+    let tab = aEvent.originalTarget;
     if (!tab.selected) {
       return;
     }
@@ -155,7 +155,7 @@ BarTabHandler.prototype = {
     }
   },
 
-  onPopupShowing: function(event) {
+  onPopupShowing: function(aEvent) {
     var tab =  document.popupNode.localName == "tab" ?
           document.popupNode : gBrowser.selectedTab;
 
@@ -275,9 +275,8 @@ BarTabHandler.prototype = {
       });
   },
 
-  toggleHostWhitelist: function(tab) {
-    // TODO the tab could also be tapped (so uri is about:blank)
-    var uri = tab.linkedBrowser.currentURI;
+  toggleHostWhitelist: function(aTab) {
+    var uri = aTab.linkedBrowser.currentURI;
     try {
       var host = uri.host;
     } catch(ex) {
@@ -295,9 +294,6 @@ BarTabHandler.prototype = {
 
     BarTabUtils.setHostWhitelist(whitelist);
   },
-
-
-  /*** Helper functions ***/
 
   /*
    * In relation to a given tab, find the closest tab that is loaded.
