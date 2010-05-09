@@ -108,21 +108,23 @@ BarTabHandler.prototype = {
     // Always load a blank page immediately
     let uri = tab.linkedBrowser.webNavigation.currentURI;
     if (!uri || (uri.spec == "about:blank")) {
-      this.loadTabContents(tab);
+      this.loadTab(tab);
       return;      
     }
+
+    let self = this;
 
     switch (BarTabUtils.mPrefs.getIntPref("extensions.bartap.loadOnSelect")) {
     case 1:
       // Load immediately
-      this.loadTabContents(tab);
+      this.loadTab(tab);
       return;
     case 2:
       // Load after delay
       let delay = BarTabUtils.mPrefs.getIntPref("extensions.bartap.loadOnSelectDelay");
       window.setTimeout(function() {
           if (tab.selected) {
-            BarTap.loadTabContents(tab);
+            self.loadTab(tab);
           }
         }, delay);
       return;
@@ -132,16 +134,11 @@ BarTabHandler.prototype = {
       let label = this.l10n.getString("loadNotification");
       let buttons = [{label: this.l10n.getString("loadButton"),
                       accessKey: this.l10n.getString("loadButton.accesskey"),
-                      callback: function() {BarTap.loadTabContents(tab);}}];
+                      callback: function() {self.loadTab(tab);}}];
       let bar = box.appendNotification(label, 'bartap-load', "",
                                        box.PRIORITY_INFO_MEDIUM, buttons);
       return;
     }
-  },
-
-  loadTabContents: function(tab) {
-    tab.removeAttribute("ontap");
-    tab.linkedBrowser.webNavigation.resume();
   },
 
   onTabClose: function(event) {
@@ -195,6 +192,14 @@ BarTabHandler.prototype = {
 
 
   /*** API ***/
+
+  loadTab: function(aTab) {
+    if (aTab.getAttribute("ontap") != "true") {
+      return;
+    }
+    aTab.removeAttribute("ontap");
+    aTab.linkedBrowser.webNavigation.resume();
+  },
 
   unloadTab: function(aTab) {
     // Ignore tabs that are already unloaded or are on the host whitelist.
