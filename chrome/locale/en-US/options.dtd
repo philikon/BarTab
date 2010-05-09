@@ -6,7 +6,7 @@
 <!ENTITY backgroundTabs.label "When opening tabs in the background: ">
 <!ENTITY backgroundTabs.accesskey "B">
 <!ENTITY loadTabs.label "load them (Firefox default)">
-<!ENTITY putOnBarTab.label "don't load them">
+<!ENTITY dontLoadTabs.label "don't load them">
 <!ENTITY unloadAfterTimeout.label "When I don't visit a tab for a while: ">
 <!ENTITY unloadAfterTimeout.accesskey "T">
 <!ENTITY doNothing.label "do nothing (Firefox default)">

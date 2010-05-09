@@ -6,7 +6,7 @@
 <!ENTITY backgroundTabs.label "リンクから開かれて、まだ読んでいない新しいタブ: ">
 <!ENTITY backgroundTabs.accesskey "B">
 <!ENTITY loadTabs.label "読み込む (Firefox 初期状態)">
-<!ENTITY putOnBarTab.label "待機させておく">
+<!ENTITY dontLoadTabs.label "待機させておく">
 <!ENTITY unloadAfterTimeout.label "しばらくタブを見なかった場合: ">
 <!ENTITY unloadAfterTimeout.accesskey "T">
 <!ENTITY doNothing.label "なにもしない (Firefox 初期状態)">

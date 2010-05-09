@@ -6,7 +6,7 @@
 <!ENTITY backgroundTabs.label "Otwierając karty w tle: ">
 <!ENTITY backgroundTabs.accesskey "T">
 <!ENTITY loadTabs.label "ładuj zawartość (domyślnie)">
-<!ENTITY putOnBarTab.label "wstrzymaj ładowanie zawartości do otwarcia karty">
+<!ENTITY dontLoadTabs.label "wstrzymaj ładowanie zawartości do otwarcia karty">
 <!ENTITY unloadAfterTimeout.label "Jeśli karta pozostaje nieaktywne przez dłuższy czas: ">
 <!ENTITY unloadAfterTimeout.accesskey "C">
 <!ENTITY doNothing.label "nie rób nic (domyślnie)">

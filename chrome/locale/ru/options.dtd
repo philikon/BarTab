@@ -6,7 +6,7 @@
 <!ENTITY backgroundTabs.label "При открытии вкладок в фоне: ">
 <!ENTITY backgroundTabs.accesskey "Ф">
 <!ENTITY loadTabs.label "загружать их (по умолчанию в Firefox)">
-<!ENTITY putOnBarTab.label "не загружать их">
+<!ENTITY dontLoadTabs.label "не загружать их">
 <!ENTITY unloadAfterTimeout.label "Когда я не посещаю вкладку некоторое время: ">
 <!ENTITY unloadAfterTimeout.accesskey "Н">
 <!ENTITY doNothing.label "ничего не делать (по умолчанию в Firefox)">
