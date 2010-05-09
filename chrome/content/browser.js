@@ -1,4 +1,4 @@
-Components.utils.import("resource://bartap/prototypes.js");
+Components.utils.import("resource://bartab/prototypes.js");
 
 // Initialize BarTab as soon as possible.
 window.addEventListener("DOMContentLoaded", function() {

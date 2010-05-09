@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet href="chrome://bartap/content/browser.css" type="text/css"?>
-<!DOCTYPE overlay SYSTEM "chrome://bartap/locale/overlay.dtd">
+<?xml-stylesheet href="chrome://bartab/content/browser.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://bartab/locale/overlay.dtd">
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
          id="bartab-overlay">
 
@@ -8,7 +8,7 @@
 
   <stringbundleset id="stringbundleset">
     <stringbundle id="bartab-strings"
-                  src="chrome://bartap/locale/overlay.properties"/>
+                  src="chrome://bartab/locale/overlay.properties"/>
   </stringbundleset>
 
   <popupset id="mainPopupSet">
