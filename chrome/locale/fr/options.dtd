@@ -10,7 +10,7 @@
 <!ENTITY tapAfterTimeout.label "Lorsqu'un onglet est inutilisé:">
 <!ENTITY tapAfterTimeout.accesskey "T">
 <!ENTITY doNothing.label "ne rien faire (par défaut dans Firefox)">
-<!ENTITY putOnBarTapAfter.label "le décharger après">
+<!ENTITY putOnBarTapAfter.label "le décharger après...">
 <!ENTITY timeoutSecs.label "s">
 <!ENTITY timeoutMins.label "min">
 <!ENTITY timeoutHours.label "heures">

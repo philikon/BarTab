@@ -10,7 +10,7 @@
 <!ENTITY tapAfterTimeout.label "Cuando no visite una pestaña por un tiempo">
 <!ENTITY tapAfterTimeout.accesskey "T">
 <!ENTITY doNothing.label "No hacer nada (por defecto en Firefox)">
-<!ENTITY putOnBarTapAfter.label "descargarla después de ">
+<!ENTITY putOnBarTapAfter.label "descargarla después de...">
 <!ENTITY timeoutSecs.label "segs">
 <!ENTITY timeoutMins.label "mins">
 <!ENTITY timeoutHours.label "horas">

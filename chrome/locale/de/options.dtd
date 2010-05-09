@@ -10,7 +10,7 @@
 <!ENTITY tapAfterTimeout.label "Wenn ein Tab nicht benutzt wird, ">
 <!ENTITY tapAfterTimeout.accesskey "T">
 <!ENTITY doNothing.label "nichts machen (Standardeinstellung)">
-<!ENTITY putOnBarTapAfter.label "entladen nach">
+<!ENTITY putOnBarTapAfter.label "entladen nach...">
 <!ENTITY timeoutSecs.label "Sek.">
 <!ENTITY timeoutMins.label "Min.">
 <!ENTITY timeoutHours.label "Std.">
