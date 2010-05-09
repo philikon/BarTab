@@ -418,6 +418,12 @@ BarTabWebNavigation.prototype = {
      * Restore the browser's original webNavigation.
      */
     unhook: function () {
+        // No longer lie about the URI.  Otherwise the docshell might
+        // not want to load the page (especially seems to happen with
+        // fragment URIs).
+        var blankURI = BarTabUtils.makeURI("about:blank");
+        this._tab.linkedBrowser.docShell.setCurrentURI(blankURI);
+
         if (this._tab.linkedBrowser.webNavigation === this) {
             // This will delete the instance getter for 'webNavigation',
             // thus revealing the original implementation.
