@@ -424,6 +424,10 @@ BarTabWebNavigation.prototype = {
         var blankURI = BarTabUtils.makeURI("about:blank");
         this._tab.linkedBrowser.docShell.setCurrentURI(blankURI);
 
+        delete this._gotoindex;
+        delete this._loaduri_args;
+        delete this._referringuri;
+
         if (this._tab.linkedBrowser.webNavigation === this) {
             // This will delete the instance getter for 'webNavigation',
             // thus revealing the original implementation.
@@ -477,8 +481,6 @@ BarTabWebNavigation.prototype = {
     _resumeGotoIndex: function () {
         var index = this._gotoindex;
         var original = this._original;
-        delete this._gotoindex;
-        delete this._referringuri;
         this.unhook();
         return original.gotoIndex(index);
     },
@@ -523,8 +525,6 @@ BarTabWebNavigation.prototype = {
     _resumeLoadURI: function () {
         var args = this._loaduri_args;
         var original = this._original;
-        delete this._loaduri_args;
-        delete this._referringuri;
         this.unhook();
         return original.loadURI.apply(original, args);
     },
