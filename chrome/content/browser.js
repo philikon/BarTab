@@ -45,7 +45,7 @@ var BarTap = {
     tabbrowser.tabContainer.addEventListener('TabClose', this, false);
 
     // Initialize timer
-    tabbrowser.BarTapTimer = new BarTapTimer(tabbrowser);
+    tabbrowser.BarTabTimer = new BarTabTimer(tabbrowser);
 
     // We need an event listener for the context menu so that we can
     // adjust the label of the whitelist menu item
@@ -83,7 +83,7 @@ var BarTap = {
       tab.setAttribute("ontap", "true");
       (new BarTabWebNavigation()).hook(tab);
     } else if (BarTabUtils.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
-      this.getTabBrowserForTab(tab).BarTapTimer.startTimer(tab);
+      this.getTabBrowserForTab(tab).BarTabTimer.startTimer(tab);
     }
   },
 
@@ -366,81 +366,3 @@ var BarTap = {
 
 // Initialize BarTap as soon as possible.
 window.addEventListener("DOMContentLoaded", BarTap, false);
-
-
-/*
- * A timer that keeps track of how long ago each tab was last visited.
- * If that time reaches a user-defined value, it unloads the tab in
- * question.  (The actual implementation works differently.  It uses
- * setTimeout, of course).
- */
-function BarTapTimer(tabbrowser) {
-  this.tabbrowser = tabbrowser;
-  tabbrowser.tabContainer.addEventListener('TabSelect', this, false);
-  tabbrowser.tabContainer.addEventListener('TabClose', this, false);
-
-  this.previousTab = null;
-  this.selectedTab = tabbrowser.selectedTab;
-}
-
-BarTapTimer.prototype = {
-
-  handleEvent: function(event) {
-    switch (event.type) {
-    case 'TabSelect':
-      this.onTabSelect(event);
-      return;
-    case 'TabClose':
-      this.onTabClose(event);
-      return;
-    }
-  },
-
-  onTabClose: function(event) {
-    this.clearTimer(event.originalTarget);
-    if (event.originalTarget == this.selectedTab) {
-      this.selectedTab = null;
-    };
-    if (event.originalTarget == this.previousTab) {
-      this.previousTab = null;
-    };
-  },
-
-  onTabSelect: function(event) {
-    this.previousTab = this.selectedTab;
-    this.selectedTab = event.originalTarget;
-
-    if (this.previousTab) {
-      /* The previous tab may not be available because it has been closed */
-      this.startTimer(this.previousTab);
-    }
-    this.clearTimer(this.selectedTab);
-  },
-
-  startTimer: function(aTab) {
-    if (!BarTap.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
-      return;
-    }
-    if (aTab.getAttribute("ontap") == "true") {
-      return;
-    }
-
-    if (aTab._barTapTimer) {
-      this.clearTimer(aTab);
-    }
-    let secs = BarTap.mPrefs.getIntPref("extensions.bartap.timeoutValue")
-             * BarTap.mPrefs.getIntPref("extensions.bartap.timeoutUnit");
-    // Allow 'this' to leak into the inline function
-    var self = this;
-    aTab._barTapTimer = window.setTimeout(function() {
-        // The timer will be removed automatically since
-        // BarTap.putOnTab will close and replace the original tab.
-        BarTap.putOnTap(aTab, self.tabbrowser);
-      }, secs*1000);
-  },
-
-  clearTimer: function(aTab) {
-    window.clearTimeout(aTab._barTapTimer);
-    aTab._barTapTimer = null;
-  }
-}

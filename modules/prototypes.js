@@ -1,4 +1,6 @@
-var EXPORTED_SYMBOLS = ["BarTabWebNavigation", "BarTabUtils"];
+var EXPORTED_SYMBOLS = ["BarTabWebNavigation",
+                        "BarTabTimer",
+                        "BarTabUtils"];
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const Cc = Components.classes;
@@ -220,6 +222,86 @@ BarTabWebNavigation.prototype = {
     },
     get sessionHistory() {
         return this._original.sessionHistory;
+    }
+};
+
+
+/*
+ * A timer that keeps track of how long ago each tab was last visited.
+ * If that time reaches a user-defined value, it unloads the tab in
+ * question.  (The actual implementation works differently.  It uses
+ * setTimeout, of course).
+ */
+function BarTabTimer(tabbrowser) {
+    this.tabbrowser = tabbrowser;
+    tabbrowser.tabContainer.addEventListener('TabSelect', this, false);
+    tabbrowser.tabContainer.addEventListener('TabClose', this, false);
+
+    this.previousTab = null;
+    this.selectedTab = tabbrowser.selectedTab;
+}
+BarTabTimer.prototype = {
+
+    handleEvent: function(event) {
+        switch (event.type) {
+        case 'TabSelect':
+            this.onTabSelect(event);
+            return;
+        case 'TabClose':
+            this.onTabClose(event);
+            return;
+        }
+    },
+
+    onTabClose: function(event) {
+        this.clearTimer(event.originalTarget);
+        if (event.originalTarget == this.selectedTab) {
+            this.selectedTab = null;
+        };
+        if (event.originalTarget == this.previousTab) {
+            this.previousTab = null;
+        };
+    },
+
+    onTabSelect: function(event) {
+        this.previousTab = this.selectedTab;
+        this.selectedTab = event.originalTarget;
+
+        if (this.previousTab) {
+            // The previous tab may not be available because it has
+            // been closed.
+            this.startTimer(this.previousTab);
+        }
+        this.clearTimer(this.selectedTab);
+  },
+
+    startTimer: function(aTab) {
+        if (!BarTabUtils.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
+            return;
+        }
+        if (aTab.getAttribute("ontap") == "true") {
+            return;
+        }
+
+        if (aTab._barTabTimer) {
+            this.clearTimer(aTab);
+        }
+        let secs = BarTabUtils.mPrefs.getIntPref("extensions.bartap.timeoutValue")
+                 * BarTabUtils.mPrefs.getIntPref("extensions.bartap.timeoutUnit");
+        let window = aTab.ownerDocument.defaultView;
+        // Allow 'this' to leak into the inline function
+        let self = this;
+        aTab._barTabTimer = window.setTimeout(function() {
+            // The timer will be removed automatically since
+            // BarTap.putOnTab will close and replace the original tab.
+            window.BarTap.putOnTap(aTab, self.tabbrowser);
+        }, secs*1000);
+    },
+
+    clearTimer: function(aTab) {
+        var window = aTab.ownerDocument.defaultView;
+        window.clearTimeout(aTab._barTabTimer);
+        aTab._barTabTimer = null;
     }
 };
 
