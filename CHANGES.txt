@@ -1,18 +1,21 @@
 1.6 (unreleased)
 ----------------
 
-* If enabled, switching to the nearest loaded tab now prefers tabs on
-  the right hand side given equally distant tabs.  This matches
-  Firefox's default behaviour of closing tabs to the right.
+* Many internal improvements concerning reliability, maintenance, and
+  speed.
+
+* Unloaded tabs can now be bookmarked.
 
 * Tabs that were opened in the background but not loaded are now
   properly restored after a restart.
 
-* Improved compatibility with Firefox 3.7a5 (Bug 554991).
+* If enabled, switching to the nearest loaded tab now prefers tabs on
+  the right hand side given equally distant tabs.  This matches
+  Firefox's default behaviour of closing tabs to the right.
 
 * Improved tab context menu item behaviour.
 
-* Many internal improvements concerning reliability and speed.
+* Improved compatibility with Firefox 3.7a5 (Bug 554991).
 
 
 1.5.1 (2010-04-07)
