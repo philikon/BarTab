@@ -1,12 +1,52 @@
 Components.utils.import("resource://bartap/prototypes.js");
 
-var BarTap = {
+function BarTabHandler() {}
+BarTabHandler.prototype = {
+
+  /*
+   * Initialize the tab browser.  This is deliberately its own method
+   * so that extensions that have other tabbrowsers can call it.
+   */
+  init: function(aTabBrowser) {
+    aTabBrowser.BarTabHandler = this;
+    this.tabbrowser = aTabBrowser;
+
+    let document = aTabBrowser.ownerDocument;
+    this.l10n = document.getElementById('bartap-strings');
+
+    aTabBrowser.tabContainer.addEventListener('SSTabRestoring', this, false);
+    aTabBrowser.tabContainer.addEventListener('TabOpen', this, false);
+    aTabBrowser.tabContainer.addEventListener('TabSelect', this, false);
+    aTabBrowser.tabContainer.addEventListener('TabClose', this, false);
+
+    // Initialize timer
+    aTabBrowser.BarTabTimer = new BarTabTimer(aTabBrowser);
+
+    // We need an event listener for the context menu so that we can
+    // adjust the label of the whitelist menu item
+    let popup = aTabBrowser.tabContainer.contextMenu;
+    if (!popup) {
+      // In Firefox <3.7, the tab context menu lives inside the tabbrowser.
+      popup = document.getAnonymousElementByAttribute(
+          aTabBrowser, "anonid", "tabContextMenu");
+      let before = document.getAnonymousElementByAttribute(
+          aTabBrowser, "id", "context_openTabInWindow");
+      for each (let menuitemid in ["context_BarTabUnloadTab",
+                                   "context_BarTabUnloadOtherTabs",
+                                   "context_BarTabNeverUnload",
+                                   "context_BarTabSeparator"]) {
+        let menuitem = document.getElementById(menuitemid);
+        popup.insertBefore(menuitem, before);
+      }
+    }
+    popup.addEventListener('popupshowing', this, false);
+  },
+
+
+  /*** Event handlers ***/
 
   handleEvent: function(event) {
     switch (event.type) {
-    case 'DOMContentLoaded':
-      this.init();
-      return;
     case 'SSTabRestoring':
       this.onTabRestoring(event);
       return;
@@ -24,51 +64,6 @@ var BarTap = {
       return;
     }
   },
-
-  init: function() {
-    window.removeEventListener("DOMContentLoaded", this, false);
-
-    this.l10n = document.getElementById('bartap-strings');
-
-    let tabbrowser = document.getElementById("content");
-    this.initTabBrowser(tabbrowser);
-  },
-
-  /*
-   * Initialize the tab browser.  This is deliberately its own method
-   * so that extensions that have other tabbrowsers can call it.
-   */
-  initTabBrowser: function(tabbrowser) {
-    tabbrowser.tabContainer.addEventListener('SSTabRestoring', this, false);
-    tabbrowser.tabContainer.addEventListener('TabOpen', this, false);
-    tabbrowser.tabContainer.addEventListener('TabSelect', this, false);
-    tabbrowser.tabContainer.addEventListener('TabClose', this, false);
-
-    // Initialize timer
-    tabbrowser.BarTabTimer = new BarTabTimer(tabbrowser);
-
-    // We need an event listener for the context menu so that we can
-    // adjust the label of the whitelist menu item
-    let popup = tabbrowser.tabContainer.contextMenu;
-    if (!popup) {
-      // In Firefox <3.7, the tab context menu lives inside the tabbrowser.
-      popup = document.getAnonymousElementByAttribute(
-          tabbrowser, "anonid", "tabContextMenu");
-      let before = document.getAnonymousElementByAttribute(
-          tabbrowser, "id", "context_openTabInWindow");
-      for each (let menuitemid in ["context_BarTabUnloadTab",
-                                   "context_BarTabUnloadOtherTabs",
-                                   "context_BarTabNeverUnload",
-                                   "context_BarTabSeparator"]) {
-        let menuitem = document.getElementById(menuitemid);
-        popup.insertBefore(menuitem, before);
-      }
-    }
-    popup.addEventListener('popupshowing', this, false);
-  },
-
-
-  /*** Event handlers ***/
 
   /*
    * Hook into newly opened tabs if the user wants to prevent tabs
@@ -362,5 +357,9 @@ var BarTap = {
 };
 
 
-// Initialize BarTap as soon as possible.
-window.addEventListener("DOMContentLoaded", BarTap, false);
+// Initialize BarTab as soon as possible.
+window.addEventListener("DOMContentLoaded", function() {
+    window.removeEventListener("DOMContentLoaded", arguments.callee, false);
+    var tabbrowser = document.getElementById("content");
+    (new BarTabHandler).init(tabbrowser);
+}, false);

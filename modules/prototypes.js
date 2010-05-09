@@ -293,8 +293,8 @@ BarTabTimer.prototype = {
         let self = this;
         aTab._barTabTimer = window.setTimeout(function() {
             // The timer will be removed automatically since
-            // BarTap.unloadTab will close and replace the original tab.
-            window.BarTap.unloadTab(aTab, self.tabbrowser);
+            // unloadTab() will close and replace the original tab.
+            self.tabbrowser.BarTabHandler.unloadTab(aTab, self.tabbrowser);
         }, secs*1000);
     },
 
