@@ -20,7 +20,7 @@ BarTabHandler.prototype = {
     aTabBrowser.tabContainer.addEventListener('TabClose', this, false);
 
     // Initialize timer
-    aTabBrowser.BarTabTimer = new BarTabTimer(aTabBrowser);
+    this.timer = new BarTabTimer(aTabBrowser);
 
     // We need an event listener for the context menu so that we can
     // adjust the label of the whitelist menu item
@@ -78,7 +78,7 @@ BarTabHandler.prototype = {
       tab.setAttribute("ontap", "true");
       (new BarTabWebNavigation()).hook(tab);
     } else if (BarTabUtils.mPrefs.getBoolPref("extensions.bartap.tapAfterTimeout")) {
-      this.getTabBrowserForTab(tab).BarTabTimer.startTimer(tab);
+      this.timer.startTimer(tab);
     }
   },
 
@@ -128,8 +128,7 @@ BarTabHandler.prototype = {
       return;
     case 0:
       // Ask whether to load
-      let tabbrowser = this.getTabBrowserForTab(tab);
-      let box = tabbrowser.getNotificationBox(tab.linkedBrowser);
+      let box = this.tabbrowser.getNotificationBox(tab.linkedBrowser);
       let label = this.l10n.getString("loadNotification");
       let buttons = [{label: this.l10n.getString("loadButton"),
                       accessKey: this.l10n.getString("loadButton.accesskey"),
@@ -153,10 +152,9 @@ BarTabHandler.prototype = {
     if (!tab.selected) {
       return;
     }
-    let tabbrowser = this.getTabBrowserForTab(tab);
-    let activeTab = this.findClosestUntappedTab(tab, tabbrowser);
+    let activeTab = this.findClosestUntappedTab(tab);
     if (activeTab) {
-      tabbrowser.selectedTab = activeTab;
+      this.tabbrowser.selectedTab = activeTab;
     }
   },
 
@@ -198,7 +196,7 @@ BarTabHandler.prototype = {
 
   /*** API ***/
 
-  unloadTab: function(aTab, aTabBrowser) {
+  unloadTab: function(aTab) {
     // Ignore tabs that are already unloaded or are on the host whitelist.
     if (aTab.getAttribute("ontap") == "true") {
       return;
@@ -207,21 +205,20 @@ BarTabHandler.prototype = {
       return;
     }
 
-    if (!aTabBrowser) {
-      aTabBrowser = this.getTabBrowserForTab(aTab);
-    }
+    let tabbrowser = this.tabbrowser;
+
     // Make sure that we're not on this tab.  If we are, find the
     // closest tab that isn't on the bar tab.
     if (aTab.selected) {
-      let activeTab = this.findClosestUntappedTab(aTab, aTabBrowser);
+      let activeTab = this.findClosestUntappedTab(aTab);
       if (activeTab) {
-        aTabBrowser.selectedTab = activeTab;
+        tabbrowser.selectedTab = activeTab;
       }
     }
 
     var sessionstore = BarTabUtils.mSessionStore;
     var state = sessionstore.getTabState(aTab);
-    var newtab = aTabBrowser.addTab();
+    var newtab = tabbrowser.addTab();
 
     // The user might not have the 'extensions.bartap.tapRestoredTabs'
     // preference enabled but still wants to unload this tab.  That's
@@ -235,46 +232,45 @@ BarTabHandler.prototype = {
 
     // Move the new tab next to the one we're removing, but not in
     // front of it as that confuses Tree Style Tab.
-    aTabBrowser.moveTabTo(newtab, aTab._tPos + 1);
+    tabbrowser.moveTabTo(newtab, aTab._tPos + 1);
 
     // Restore tree when using Tree Style Tab
-    if (aTabBrowser.treeStyleTab) {
-      let children = aTabBrowser.treeStyleTab.getChildTabs(aTab);
+    if (tabbrowser.treeStyleTab) {
+      let children = tabbrowser.treeStyleTab.getChildTabs(aTab);
       children.forEach(function(aChild) {
-          aTabBrowser.treeStyleTab.attachTabTo(
+          tabbrowser.treeStyleTab.attachTabTo(
               aChild, newtab, {dontAnimate: true});
         });
     }
 
     // Close the original tab.  We're taking the long way round to ensure the
     // nsISessionStore service won't save this in the recently closed tabs.
-    aTabBrowser._endRemoveTab(aTabBrowser._beginRemoveTab(aTab, true, null, false));
+    tabbrowser._endRemoveTab(tabbrowser._beginRemoveTab(aTab, true, null, false));
   },
 
-  unloadOtherTabs: function(aTab, aTabBrowser) {
-    if (!aTabBrowser) {
-      aTabBrowser = this.getTabBrowserForTab(aTab);
-    }
+  unloadOtherTabs: function(aTab) {
+    var tabbrowser = this.tabbrowser;
+
     // Make sure we're sitting on the tab that isn't going to be unloaded.
-    if (aTabBrowser.selectedTab != aTab) {
-      aTabBrowser.selectedTab = aTab;
+    if (tabbrowser.selectedTab != aTab) {
+      tabbrowser.selectedTab = aTab;
     }
 
     // unloadTab() mutates the tabs so the only sane thing to do is to
     // copy the list of tabs now and then work off that list.
     var tabs = [];
-    for (let i = 0; i < aTabBrowser.mTabs.length; i++) {
-      tabs.push(aTabBrowser.mTabs[i]);
+    for (let i = 0; i < tabbrowser.mTabs.length; i++) {
+      tabs.push(tabbrowser.mTabs[i]);
     }
     var self = this;
     tabs.forEach(function(tab) {
         if (tab != aTab) {
-          self.unloadTab(tab, aTabBrowser);
+          self.unloadTab(tab);
         }
       });
   },
 
-  toggleHostWhitelist: function(tab, tabbrowser) {
+  toggleHostWhitelist: function(tab) {
     // TODO the tab could also be tapped (so uri is about:blank)
     var uri = tab.linkedBrowser.currentURI;
     try {
@@ -303,10 +299,12 @@ BarTabHandler.prototype = {
    * Note: if there's no such tab available, this will return unloaded
    * tabs as a last resort.
    */
-  findClosestUntappedTab: function(aTab, aTabBrowser) {
+  findClosestUntappedTab: function(aTab) {
+    var tabbrowser = this.tabbrowser;
+
     // Shortcut: if this is the only tab available, we're not going to
     // find another active one, are we...
-    if (aTabBrowser.mTabs.length == 1) {
+    if (tabbrowser.mTabs.length == 1) {
       return null;
     }
 
@@ -318,15 +316,15 @@ BarTabHandler.prototype = {
     // Otherwise walk the tab list and see if we can find an active one.
     let i = 1;
     while ((aTab._tPos - i >= 0) ||
-           (aTab._tPos + i < aTabBrowser.mTabs.length)) {
-      if (aTab._tPos + i < aTabBrowser.mTabs.length) {
-        if (aTabBrowser.mTabs[aTab._tPos+i].getAttribute("ontap") != "true") {
-          return aTabBrowser.mTabs[aTab._tPos+i];
+           (aTab._tPos + i < tabbrowser.mTabs.length)) {
+      if (aTab._tPos + i < tabbrowser.mTabs.length) {
+        if (tabbrowser.mTabs[aTab._tPos+i].getAttribute("ontap") != "true") {
+          return tabbrowser.mTabs[aTab._tPos+i];
         }
       }
       if (aTab._tPos - i >= 0) {
-        if (aTabBrowser.mTabs[aTab._tPos-i].getAttribute("ontap") != "true") {
-          return aTabBrowser.mTabs[aTab._tPos-i];
+        if (tabbrowser.mTabs[aTab._tPos-i].getAttribute("ontap") != "true") {
+          return tabbrowser.mTabs[aTab._tPos-i];
         }
       }
       i++;
@@ -341,17 +339,6 @@ BarTabHandler.prototype = {
       return aTab.nextSibling;
     }
     return aTab.previousSibling;
-  },
-
-  getTabBrowserForTab: function(tab) {
-    // Fuzzy test for FFX 3.7 where the tabbar lives outside the tabbrowser.
-    if (tab.parentNode.tabbrowser) {
-      return tab.parentNode.tabbrowser;
-    }
-    while (tab.localName != 'tabbrowser') {
-      tab = tab.parentNode;
-    }
-    return tab;
   }
 
 };
