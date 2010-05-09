@@ -119,6 +119,7 @@ BarTabHandler.prototype = {
     case 2:
       // Load after delay
       let delay = BarTabUtils.getIntPref("loadOnSelectDelay");
+      let window = tab.ownerDocument.defaultView;
       window.setTimeout(function() {
           if (tab.selected) {
             self.loadTab(tab);
