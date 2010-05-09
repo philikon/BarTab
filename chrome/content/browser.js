@@ -175,10 +175,6 @@ var BarTap = {
     var neverunload = document.getElementById("context_BarTabNeverUnload");
     var unloadtab = document.getElementById("context_BarTabUnloadTab");
 
-    if (tab.getAttribute("ontap") == "true") {
-      unloadtab.setAttribute("disabled", "true");
-    }
-
     let host;
     try {
       host = tab.linkedBrowser.currentURI.host;
@@ -193,12 +189,17 @@ var BarTap = {
     let label = this.l10n.getFormattedString('neverPutOnTap', [host]);
     neverunload.setAttribute("label", label);
     neverunload.removeAttribute("hidden");
-    if (BarTabUtils.getHostWhitelist().indexOf(host) == -1) {
-      neverunload.removeAttribute("checked");
-      unloadtab.removeAttribute("disabled");
-    } else {
+    if (BarTabUtils.whiteListed(tab.linkedBrowser.currentURI)) {
       neverunload.setAttribute("checked", "true");
       unloadtab.setAttribute("disabled", "true");
+      return;
+    }
+
+    neverunload.removeAttribute("checked");
+    if (tab.getAttribute("ontap") == "true") {
+      unloadtab.setAttribute("disabled", "true");
+    } else {
+      unloadtab.removeAttribute("disabled");
     }
   },
 
