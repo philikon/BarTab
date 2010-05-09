@@ -1,12 +1,17 @@
 Components.utils.import("resource://bartap/prototypes.js");
 
+/*
+ * This handler attaches to the tabbrowser.  It listens to various tab
+ * related events to prevent tabs from loading or to load them upon
+ * the user's request (e.g. automatic timer or context menu item).
+ *
+ * This object provides a small public API (see below) to perform
+ * these tasks programatically, too.  You may obtain a reference to it
+ * via tabbrowser.BarTabHandler.
+ */
 function BarTabHandler() {}
 BarTabHandler.prototype = {
 
-  /*
-   * Initialize the tab browser.  This is deliberately its own method
-   * so that extensions that have other tabbrowsers can call it.
-   */
   init: function(aTabBrowser) {
     aTabBrowser.BarTabHandler = this;
     this.tabbrowser = aTabBrowser;
@@ -190,7 +195,7 @@ BarTabHandler.prototype = {
   },
 
 
-  /*** API ***/
+  /*** Public API ***/
 
   loadTab: function(aTab) {
     if (aTab.getAttribute("ontap") != "true") {
