@@ -37,6 +37,9 @@
 
 * Improved compatibility with Firefox 3.7a5 (Bug 554991).
 
+* The extension packaging has been slimmed down and compressed to
+  reduce file IO.
+
 
 1.5.1 (2010-04-07)
 ------------------
