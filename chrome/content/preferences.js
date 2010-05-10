@@ -107,6 +107,7 @@ var BarTabPreferences = {
 
     // Sort out duplicates.
     if (whitelist.indexOf(host) != -1) {
+      textbox.value = "";
       return;
     }
 
