@@ -1,0 +1,13 @@
+content   bartab                 jar:bartab.jar!/content/
+resource  bartab                 modules/
+locale    bartab   en-US         jar:bartab.jar!/locale/en-US/
+locale    bartab   ja            jar:bartab.jar!/locale/ja/
+locale    bartab   de            jar:bartab.jar!/locale/de/
+locale    bartab   de-DE         jar:bartab.jar!/locale/de/
+locale    bartab   pl            jar:bartab.jar!/locale/pl/
+locale    bartab   pl-PL         jar:bartab.jar!/locale/pl/
+locale    bartab   fr            jar:bartab.jar!/locale/fr/
+locale    bartab   ru            jar:bartab.jar!/locale/ru/
+locale    bartab   es-ES         jar:bartab.jar!/locale/es-ES/
+
+overlay   chrome://browser/content/browser.xul chrome://bartab/content/browser.xul
