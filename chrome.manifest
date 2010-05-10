@@ -1,13 +1,13 @@
-content   bartab                 chrome/content/
+content   bartab                 content/
 resource  bartab                 modules/
-locale    bartab   en-US         chrome/locale/en-US/
-locale    bartab   ja            chrome/locale/ja/
-locale    bartab   de            chrome/locale/de/
-locale    bartab   de-DE         chrome/locale/de/
-locale    bartab   pl            chrome/locale/pl/
-locale    bartab   pl-PL         chrome/locale/pl/
-locale    bartab   fr            chrome/locale/fr/
-locale    bartab   ru            chrome/locale/ru/
-locale    bartab   es-ES         chrome/locale/es-ES/
+locale    bartab   en-US         locale/en-US/
+locale    bartab   ja            locale/ja/
+locale    bartab   de            locale/de/
+locale    bartab   de-DE         locale/de/
+locale    bartab   pl            locale/pl/
+locale    bartab   pl-PL         locale/pl/
+locale    bartab   fr            locale/fr/
+locale    bartab   ru            locale/ru/
+locale    bartab   es-ES         locale/es-ES/
 
 overlay   chrome://browser/content/browser.xul chrome://bartab/content/browser.xul
