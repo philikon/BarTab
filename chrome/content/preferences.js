@@ -30,7 +30,7 @@ var BarTabPreferences = {
   },
 
 
-  /* Toggle visibility for timeout and load delay settings. */
+  // Toggle visibility for timeout and load delay settings.
 
   onTimeoutChange: function() {
     var menuitem = document.getElementById('tapAfterTimeout').selectedItem;
@@ -46,14 +46,14 @@ var BarTabPreferences = {
     delayWidgets.style.visibility = visibility;
   },
 
-  /* Add to and remove hosts from whitelist */
+  // Add to and remove hosts from whitelist
 
   updateHostWhitelist: function() {
     var list = document.getElementById("hostWhitelist");
     while (list.firstChild) {
       list.removeChild(list.firstChild);
     }
- 
+
     var whitelist = this.getHostWhitelist();
     whitelist.forEach(function(host) {
         let row = document.createElement("listitem");
@@ -75,7 +75,7 @@ var BarTabPreferences = {
   removeHost: function() {
     var list = document.getElementById("hostWhitelist");
     var host = list.selectedItem.getAttribute("label");
-    
+
     var whitelist = this.getHostWhitelist();
     var index = whitelist.indexOf(host);
     if (index == -1) {
@@ -133,7 +133,7 @@ var BarTabPreferences = {
   },
 
 
-  /* For now these methods are duplicated from browser.js :\ */
+  // For now these methods are duplicated from BarTabUtils :\
 
   getHostWhitelist: function() {
     var whitelist = this.prefs.getCharPref("extensions.bartap.hostWhitelist");
