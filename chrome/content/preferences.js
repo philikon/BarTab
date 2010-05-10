@@ -112,7 +112,12 @@ var BarTabPreferences = {
       return;
     }
 
-    // TODO What happens if 'host' contains a semicolon?
+    // We don't allow semicolon in the host name
+    // TODO it couldn't hurt to do a proper check for illegal characters
+    if (host.indexOf(';') != -1) {
+      return;
+    }
+
     whitelist.push(host);
     this.setHostWhitelist(whitelist);
     textbox.value = "";
