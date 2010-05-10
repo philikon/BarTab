@@ -65,7 +65,7 @@ var BarTabPreferences = {
   hostSelected: function() {
     var removeButton = document.getElementById("hostWhitelistRemove");
     var list = document.getElementById("hostWhitelist");
-    if (list.selectedItem) {
+    if (list.selectedItems.length) {
       removeButton.setAttribute("disabled", "false");
     } else {
       removeButton.setAttribute("disabled", "true");
@@ -74,15 +74,16 @@ var BarTabPreferences = {
 
   removeHost: function() {
     var list = document.getElementById("hostWhitelist");
-    var host = list.selectedItem.getAttribute("label");
-
     var whitelist = this.getHostWhitelist();
-    var index = whitelist.indexOf(host);
-    if (index == -1) {
-      return;
-    }
-
-    whitelist.splice(index, 1);
+    var self = this;
+    list.selectedItems.forEach(function (item) {
+        var host = item.getAttribute("label");
+        var index = whitelist.indexOf(host);
+        if (index == -1) {
+            return;
+        }
+        whitelist.splice(index, 1);
+    });
     this.setHostWhitelist(whitelist);
   },
 

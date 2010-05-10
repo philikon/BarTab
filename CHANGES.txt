@@ -30,7 +30,8 @@
   Firefox's default behaviour of closing tabs to the right.
 
 * The preference window is now more forgiving when entering host names
-  of sites that should always be loaded.
+  of sites that should always be loaded.  The list now also allows
+  multiple hosts to be selected for removal.
 
 * Improved tab context menu item behaviour.
 

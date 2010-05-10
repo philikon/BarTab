@@ -122,6 +122,7 @@
       <listbox id="hostWhitelist"
                flex="1"
                style="height: 5em;"
+               seltype="multiple"
                onselect="BarTabPreferences.hostSelected(event);">
       </listbox>
       <vbox>
