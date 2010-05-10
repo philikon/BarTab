@@ -29,6 +29,9 @@
   the right hand side given equally distant tabs.  This matches
   Firefox's default behaviour of closing tabs to the right.
 
+* The preference window is now more forgiving when entering host names
+  of sites that should always be loaded.
+
 * Improved tab context menu item behaviour.
 
 * Improved compatibility with Firefox 3.7a5 (Bug 554991).

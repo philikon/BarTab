@@ -1,3 +1,9 @@
+function makeURI(aURL, aOriginCharset, aBaseURI) {
+  var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                  .getService(Components.interfaces.nsIIOService);
+  return ioService.newURI(aURL, aOriginCharset, aBaseURI);
+}
+
 var BarTabPreferences = {
 
   prefs: Components.classes["@mozilla.org/preferences-service;1"]
@@ -85,8 +91,22 @@ var BarTabPreferences = {
     var whitelist = this.getHostWhitelist();
     var host = textbox.value.trim();
 
-    // We don't want empty entries or duplicates.
-    if (!host || (whitelist.indexOf(host) != -1)) {
+    if (!host) {
+      return;
+    }
+
+    // Convert whole URLs to hostnames
+    if ((host.substr(0, 7) == "http://")
+        || (host.substr(0, 8) == "https://")) {
+      try {
+        host = makeURI(host).host;
+      } catch(ex) {
+        // Ignore
+      }
+    }
+
+    // Sort out duplicates.
+    if (whitelist.indexOf(host) != -1) {
       return;
     }
 
