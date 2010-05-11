@@ -733,7 +733,11 @@ var BarTabUtils = {
             }
         }
         aTab.setAttribute("image", info.icon);
-        aTab.label = info.title;
+        if (info.title) {
+            aTab.label = info.title;
+        } else {
+            aTab.label = BarTabUtils.titleFromURI(aURI);
+        }
     },
 
     /*
