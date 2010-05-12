@@ -237,7 +237,7 @@ BarTabHandler.prototype = {
             return;
         }
         aTab.removeAttribute("ontap");
-        aTab.linkedBrowser.webNavigation.resume();
+        aTab.linkedBrowser.webNavigation._resume();
     },
 
     unloadTab: function(aTab) {
@@ -437,7 +437,7 @@ BarTabWebNavigation.prototype = {
      * unless it's a blank tab.  For the latter case we make sure we'll
      * unhook ourselves.
      */
-    resume: function () {
+    _resume: function () {
         this._unhookProgressListener();
         this.unhook();
     },
@@ -487,7 +487,7 @@ BarTabWebNavigation.prototype = {
         this._referringuri = entry.referrerURI;
 
         this._gotoindex = aIndex;
-        this.resume = this._resumeGotoIndex;
+        this._resume = this._resumeGotoIndex;
     },
 
     _resumeGotoIndex: function () {
@@ -534,7 +534,7 @@ BarTabWebNavigation.prototype = {
         }
 
         this._loaduri_args = arguments;
-        this.resume = this._resumeLoadURI;
+        this._resume = this._resumeLoadURI;
     },
 
     _resumeLoadURI: function () {
@@ -559,7 +559,7 @@ BarTabWebNavigation.prototype = {
         if (this._tab.getAttribute("ontap") == "true") {
             this._tab.removeAttribute("ontap");
             //TODO should we patch aReloadFlags into this._loaduri_args?
-            return this.resume();
+            return this._resume();
         }
         return this._original.reload(aReloadFlags);
     },
