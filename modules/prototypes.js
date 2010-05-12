@@ -1,6 +1,4 @@
 var EXPORTED_SYMBOLS = ["BarTabHandler",
-                        "BarTabWebNavigation",
-                        "BarTabTimer",
                         "BarTabUtils"];
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
