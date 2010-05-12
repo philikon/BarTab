@@ -2,19 +2,15 @@ Components.utils.import("resource://bartab/prototypes.js");
 
 var BarTabPreferences = {
 
-  prefs: Components.classes["@mozilla.org/preferences-service;1"]
-         .getService(Components.interfaces.nsIPrefBranch)
-         .QueryInterface(Components.interfaces.nsIPrefBranch2),
-
   init: function() {
-    this.prefs.addObserver("extensions.bartap.hostWhitelist", this, false);
+    BarTabUtils.mPrefs.addObserver("extensions.bartap.hostWhitelist", this, false);
     this.onTimeoutChange();
     this.onLoadChange();
     this.updateHostWhitelist();
   },
 
   destroy: function() {
-    this.prefs.removeObserver("extensions.bartap.hostWhitelist", this);
+    BarTabUtils.mPrefs.removeObserver("extensions.bartap.hostWhitelist", this);
   },
 
   QueryInterface: function(aIID) {
