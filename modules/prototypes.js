@@ -203,8 +203,11 @@ BarTabHandler.prototype = {
             host = tab.linkedBrowser.currentURI.host;
         } catch (ex) {
             // Most likely uri.host doesn't exist which probably means
-            // whitelisting doesn't make sense on this tab.  Don't
-            // show the menu item
+            // whitelisting doesn't make sense on this tab.  Set empty
+            // host so we don't show the menu item
+            host = '';
+        }
+        if (!host) {
             neverunload.setAttribute("hidden", "true");
             unloadtab.removeAttribute("disabled");
             return;
