@@ -113,6 +113,7 @@ BarTabHandler.prototype = {
             return;
         }
         tab.setAttribute("ontap", "true");
+        (new BarTabWebProgressListener()).hook(tab);
         (new BarTabWebNavigation()).hook(tab);
     },
 
@@ -418,12 +419,6 @@ BarTabWebNavigation.prototype = {
      * Restore the browser's original webNavigation.
      */
     unhook: function () {
-        // No longer lie about the URI.  Otherwise the docshell might
-        // not want to load the page (especially seems to happen with
-        // fragment URIs).
-        var blankURI = BarTabUtils.makeURI("about:blank");
-        this._tab.linkedBrowser.docShell.setCurrentURI(blankURI);
-
         delete this._gotoindex;
         delete this._loaduri_args;
         delete this._referringuri;
@@ -443,7 +438,22 @@ BarTabWebNavigation.prototype = {
      * unhook ourselves.
      */
     resume: function () {
+        this._unhookProgressListener();
         this.unhook();
+    },
+
+    _unfakeDocshellURI: function () {
+        // No longer lie about the URI.  Otherwise the docshell might
+        // not want to load the page (especially seems to happen with
+        // fragment URIs).
+        var blankURI = BarTabUtils.makeURI("about:blank");
+        this._tab.linkedBrowser.docShell.setCurrentURI(blankURI);
+    },
+
+    _unhookProgressListener: function () {
+        if (this._tab._barTabProgressListener) {
+            this._tab._barTabProgressListener.unhook();
+        }
     },
 
 
@@ -464,6 +474,8 @@ BarTabWebNavigation.prototype = {
             return this._original.gotoIndex(aIndex);
         }
 
+        this._unhookProgressListener();
+
         this._tab.removeAttribute("busy");
         this._tab.label = entry.title;
         let window = this._tab.ownerDocument.defaultView;
@@ -481,6 +493,7 @@ BarTabWebNavigation.prototype = {
     _resumeGotoIndex: function () {
         var index = this._gotoindex;
         var original = this._original;
+        this._unfakeDocshellURI();
         this.unhook();
         return original.gotoIndex(index);
     },
@@ -489,7 +502,7 @@ BarTabWebNavigation.prototype = {
     /*** Hook into loadURI() ***/
 
     loadURI: function (aURI) {
-        // We allow about:blank to load
+        // Allow about:blank to load without any side effects.
         if (aURI
             && (aURI != "about:blank")
             && (this._tab.getAttribute("ontap") == "true")) {
@@ -506,6 +519,8 @@ BarTabWebNavigation.prototype = {
             this.unhook();
             return original.loadURI.apply(original, arguments);
         }
+
+        this._unhookProgressListener();
 
         this._tab.removeAttribute("busy");
         let window = this._tab.ownerDocument.defaultView;
@@ -525,6 +540,7 @@ BarTabWebNavigation.prototype = {
     _resumeLoadURI: function () {
         var args = this._loaduri_args;
         var original = this._original;
+        this._unfakeDocshellURI();
         this.unhook();
         return original.loadURI.apply(original, args);
     },
@@ -582,6 +598,89 @@ BarTabWebNavigation.prototype = {
     get sessionHistory() {
         return this._original.sessionHistory;
     }
+};
+
+
+/*
+ * Progress listener that stops the loading of tabs that are opened in
+ * the background and whose contents is loaded by C++ code.  This
+ * occurs for instance when the 'browser.tabs.loadDivertedInBackground'
+ * preference is enabled.
+ */
+function BarTabWebProgressListener () {}
+BarTabWebProgressListener.prototype = {
+
+    hook: function (aTab) {
+        this._tab = aTab;
+        aTab._barTabProgressListener = this;
+        aTab.linkedBrowser.webProgress.addProgressListener(
+            this, Ci.nsIWebProgress.NOTIFY_ALL);
+    },
+
+    unhook: function () {
+        this._tab.linkedBrowser.webProgress.removeProgressListener(this);
+        delete this._tab._barTabProgressListener;
+        delete this._tab;
+    },
+
+    /*** nsIWebProgressListener ***/
+
+    onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {
+        if (!aRequest) {
+            return;
+        }
+        if (!(aStateFlags & Ci.nsIWebProgressListener.STATE_START)
+            || !(aStateFlags & Ci.nsIWebProgressListener.STATE_IS_NETWORK)
+            || (aStateFlags & Ci.nsIWebProgressListener.STATE_RESTORING)) {
+            return;
+        }
+        if (this._tab.getAttribute("ontap") != "true") {
+            return;
+        }
+
+        // Allow about:blank to load without any side effects.
+        let uri = aRequest.QueryInterface(Ci.nsIChannel).URI;
+        if (uri.spec == "about:blank") {
+            return;
+        }
+
+        let browser = this._tab.linkedBrowser;
+        if (BarTabUtils.whiteListed(uri)) {
+            this._tab.removeAttribute("ontap");
+            browser.webNavigation.unhook();
+            this.unhook();
+            return;
+        }
+
+        let referrer;
+        try {
+            referrer = aRequest.QueryInterface(Ci.nsIHttpChannel).referrer;
+        } catch (ex) {
+            // Not a HTTP URI, so there's no referrer.  Ignore.
+        }
+
+        browser.stop();
+
+        // Defer the loading.  Do this async so that other
+        // nsIWebProgressListeners have a chance to update the UI
+        // before _pauseLoadURI overwrites it all again.
+        let flags = Ci.nsIWebNavigation.LOAD_FLAGS_NONE;
+        let window = this._tab.ownerDocument.defaultView;
+        window.setTimeout(function () {
+            browser.webNavigation._pauseLoadURI(
+                uri.spec, flags, referrer, null, null);
+        }, 0);
+        this.unhook();
+    },
+
+    onProgressChange: function () {},
+    onLocationChange: function () {},
+    onStatusChange:   function () {},
+    onSecurityChange: function () {},
+
+    QueryInterface: XPCOMUtils.generateQI([Ci.nsIWebProgressListener,
+                                           Ci.nsISupportsWeakReference,
+                                           Ci.nsISupports])
 };
 
 
