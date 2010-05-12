@@ -4,7 +4,8 @@
 <prefwindow id="bartab-preferences"
             title="&prefwindow.title;"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-            onload="BarTabPreferences.init();">
+            onload="BarTabPreferences.init();"
+            onunload="BarTabPreferences.destroy();">
   <script type="application/javascript" src="preferences.js" />
 
   <prefpane id="bartab-prefpane" label="&prefpane.title;">
