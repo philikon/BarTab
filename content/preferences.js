@@ -1,8 +1,4 @@
-function makeURI(aURL, aOriginCharset, aBaseURI) {
-  var ioService = Components.classes["@mozilla.org/network/io-service;1"]
-                  .getService(Components.interfaces.nsIIOService);
-  return ioService.newURI(aURL, aOriginCharset, aBaseURI);
-}
+Components.utils.import("resource://bartab/prototypes.js");
 
 var BarTabPreferences = {
 
@@ -54,7 +50,7 @@ var BarTabPreferences = {
       list.removeChild(list.firstChild);
     }
 
-    var whitelist = this.getHostWhitelist();
+    var whitelist = BarTabUtils.getHostWhitelist();
     whitelist.forEach(function(host) {
         let row = document.createElement("listitem");
         row.setAttribute("label", host);
@@ -74,7 +70,7 @@ var BarTabPreferences = {
 
   removeHost: function() {
     var list = document.getElementById("hostWhitelist");
-    var whitelist = this.getHostWhitelist();
+    var whitelist = BarTabUtils.getHostWhitelist();
     var self = this;
     list.selectedItems.forEach(function (item) {
         var host = item.getAttribute("label");
@@ -84,12 +80,12 @@ var BarTabPreferences = {
         }
         whitelist.splice(index, 1);
     });
-    this.setHostWhitelist(whitelist);
+    BarTabUtils.setHostWhitelist(whitelist);
   },
 
   addHost: function() {
     var textbox = document.getElementById("hostWhitelistNewHost");
-    var whitelist = this.getHostWhitelist();
+    var whitelist = BarTabUtils.getHostWhitelist();
     var host = textbox.value.trim();
 
     if (!host) {
@@ -100,7 +96,7 @@ var BarTabPreferences = {
     if ((host.substr(0, 7) == "http://")
         || (host.substr(0, 8) == "https://")) {
       try {
-        host = makeURI(host).host;
+        host = BarTabUtils.makeURI(host).host;
       } catch(ex) {
         // Ignore
       }
@@ -119,7 +115,7 @@ var BarTabPreferences = {
     }
 
     whitelist.push(host);
-    this.setHostWhitelist(whitelist);
+    BarTabUtils.setHostWhitelist(whitelist);
     textbox.value = "";
   },
 
@@ -136,21 +132,6 @@ var BarTabPreferences = {
       return;
     }
     this.updateHostWhitelist();
-  },
-
-
-  // For now these methods are duplicated from BarTabUtils :\
-
-  getHostWhitelist: function() {
-    var whitelist = this.prefs.getCharPref("extensions.bartap.hostWhitelist");
-    if (!whitelist) {
-      return [];
-    }
-    return whitelist.split(";");
-  },
-
-  setHostWhitelist: function(whitelist) {
-    this.prefs.setCharPref("extensions.bartap.hostWhitelist",
-                           whitelist.join(";"));
   }
+
 };
