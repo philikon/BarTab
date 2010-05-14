@@ -669,9 +669,8 @@ BarTabWebProgressListener.prototype = {
         if (httpChannel) {
             referrer = httpChannel.referrer;
             let uploadChannel = httpChannel.QueryInterface(Ci.nsIUploadChannel);
-            if (uploadChannel) {
-                postData = uploadChannel.uploadStream;
-            }
+            // uploadStream will be null or an nsIInputStream.
+            postData = uploadChannel.uploadStream;
         }
 
         // Defer the loading.  Do this async so that other
