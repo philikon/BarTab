@@ -654,13 +654,25 @@ BarTabWebProgressListener.prototype = {
             return;
         }
 
-        let referrer;
+        // If it's an HTTP request, we want to set the right referrer.
+        // And if it's a POST request on top of that, we want to make
+        // sure we reuse the post data.
+        let httpChannel;
         try {
-            referrer = aRequest.QueryInterface(Ci.nsIHttpChannel).referrer;
+            httpChannel = aRequest.QueryInterface(Ci.nsIHttpChannel);
         } catch (ex) {
-            // Not a HTTP URI, so there's no referrer.  Ignore.
+            // Ignore.
         }
 
+        let referrer;
+        let postData;
+        if (httpChannel) {
+            referrer = httpChannel.referrer;
+            let uploadChannel = httpChannel.QueryInterface(Ci.nsIUploadChannel);
+            if (uploadChannel) {
+                postData = uploadChannel.uploadStream;
+            }
+        }
 
         // Defer the loading.  Do this async so that other
         // nsIWebProgressListeners have a chance to update the UI
@@ -671,7 +683,7 @@ BarTabWebProgressListener.prototype = {
         let window = this._tab.ownerDocument.defaultView;
         window.setTimeout(function () {
             browser.webNavigation._pauseLoadURI(
-                uri.spec, flags, referrer, null, null);
+                uri.spec, flags, referrer, postData, null);
         }, 0);
 
         this.unhook();
