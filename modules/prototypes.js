@@ -606,7 +606,7 @@ BarTabWebNavigation.prototype = {
  * Progress listener that stops the loading of tabs that are opened in
  * the background and whose contents is loaded by C++ code.  This
  * occurs for instance when the 'browser.tabs.loadDivertedInBackground'
- * preference is enabled.
+ * preference is enabled (because links are always opened by docshell code).
  */
 function BarTabWebProgressListener () {}
 BarTabWebProgressListener.prototype = {
@@ -645,6 +645,7 @@ BarTabWebProgressListener.prototype = {
             return;
         }
 
+        // Allow whitelisted URIs to load.
         let browser = this._tab.linkedBrowser;
         if (BarTabUtils.whiteListed(uri)) {
             this._tab.removeAttribute("ontap");
@@ -660,17 +661,19 @@ BarTabWebProgressListener.prototype = {
             // Not a HTTP URI, so there's no referrer.  Ignore.
         }
 
-        browser.stop();
 
         // Defer the loading.  Do this async so that other
         // nsIWebProgressListeners have a chance to update the UI
         // before _pauseLoadURI overwrites it all again.
+        browser.stop();
+
         let flags = Ci.nsIWebNavigation.LOAD_FLAGS_NONE;
         let window = this._tab.ownerDocument.defaultView;
         window.setTimeout(function () {
             browser.webNavigation._pauseLoadURI(
                 uri.spec, flags, referrer, null, null);
         }, 0);
+
         this.unhook();
     },
 
