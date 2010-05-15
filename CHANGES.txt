@@ -18,6 +18,11 @@
 * Tabs that were opened in the background but never loaded are now
   properly restored after a restart.
 
+* If configured to prevent background tabs from loading, BarTab now
+  also intercepts background tabs that are opened by clicking a link
+  when the 'browser.tabs.loadDivertedInBackground' prefence is
+  enabled.
+
 * Queries to the nsINavHistoryService and nsIFaviconService are now
   performed asynchronously when restoring tabs.  While this may cause
   small delays in the display of tab titles and icons, it makes the UI
