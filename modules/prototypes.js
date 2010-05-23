@@ -639,9 +639,9 @@ BarTabWebProgressListener.prototype = {
             return;
         }
 
-        // Allow about:blank to load without any side effects.
+        // Allow about:blank and wyciwyg URIs to load without any side effects.
         let uri = aRequest.QueryInterface(Ci.nsIChannel).URI;
-        if (uri.spec == "about:blank") {
+        if ((uri.spec == "about:blank") || (uri.scheme == "wyciwyg")) {
             return;
         }
 
