@@ -420,6 +420,10 @@ BarTabWebNavigation.prototype = {
      * Restore the browser's original webNavigation.
      */
     unhook: function () {
+        if (this._tab._barTabProgressListener) {
+            this._tab._barTabProgressListener.unhook();
+        }
+
         delete this._gotoindex;
         delete this._loaduri_args;
         delete this._referringuri;
@@ -439,7 +443,6 @@ BarTabWebNavigation.prototype = {
      * unhook ourselves.
      */
     _resume: function () {
-        this._unhookProgressListener();
         this.unhook();
     },
 
@@ -449,12 +452,6 @@ BarTabWebNavigation.prototype = {
         // fragment URIs).
         var blankURI = BarTabUtils.makeURI("about:blank");
         this._tab.linkedBrowser.docShell.setCurrentURI(blankURI);
-    },
-
-    _unhookProgressListener: function () {
-        if (this._tab._barTabProgressListener) {
-            this._tab._barTabProgressListener.unhook();
-        }
     },
 
 
@@ -474,8 +471,6 @@ BarTabWebNavigation.prototype = {
             this._tab.removeAttribute("ontap");
             return this._original.gotoIndex(aIndex);
         }
-
-        this._unhookProgressListener();
 
         this._tab.removeAttribute("busy");
         this._tab.label = entry.title;
@@ -520,8 +515,6 @@ BarTabWebNavigation.prototype = {
             this.unhook();
             return original.loadURI.apply(original, arguments);
         }
-
-        this._unhookProgressListener();
 
         this._tab.removeAttribute("busy");
         let window = this._tab.ownerDocument.defaultView;
@@ -649,8 +642,8 @@ BarTabWebProgressListener.prototype = {
         let browser = this._tab.linkedBrowser;
         if (BarTabUtils.whiteListed(uri)) {
             this._tab.removeAttribute("ontap");
+            // webNavigation.unhook() will call our unhook.
             browser.webNavigation.unhook();
-            this.unhook();
             return;
         }
 
@@ -684,8 +677,6 @@ BarTabWebProgressListener.prototype = {
             browser.webNavigation._pauseLoadURI(
                 uri.spec, flags, referrer, postData, null);
         }, 0);
-
-        this.unhook();
     },
 
     onProgressChange: function () {},
