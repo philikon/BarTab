@@ -351,7 +351,9 @@ BarTabHandler.prototype = {
         }
 
         // The most obvious choice would be the owner tab, if it's active.
-        if (aTab.owner && aTab.owner.getAttribute("ontap") != "true") {
+        if (aTab.owner
+            && BarTabUtils.mPrefs.getBoolPref("browser.tabs.selectOwnerOnClose")
+            && aTab.owner.getAttribute("ontap") != "true") {
             return aTab.owner;
         }
 
@@ -374,7 +376,8 @@ BarTabHandler.prototype = {
 
         // Fallback: there isn't an active tab available, so we're going
         // to have to nominate a non-active one.
-        if (aTab.owner) {
+        if (aTab.owner
+            && BarTabUtils.mPrefs.getBoolPref("browser.tabs.selectOwnerOnClose")) {
             return aTab.owner;
         }
         if (aTab.nextSibling) {
