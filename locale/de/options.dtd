@@ -26,7 +26,7 @@
 <!ENTITY loadOnSelect.accesskey "S">
 <!ENTITY loadAfterAskingMe.label "frage, ob es geladen werden soll">
 <!ENTITY loadImmediately.label "sofort laden">
-<!ENTITY loadAfterDelay.label "laden nach einer Verzögerung von">
+<!ENTITY loadAfterDelay.label "laden nach einer Verzögerung von...">
 <!ENTITY delayMilliseconds.label "ms">
 <!ENTITY closingTabs.label "Wenn ein Tab geschlossen wird:">
 <!ENTITY closingTabs.accesskey "C">

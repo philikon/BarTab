@@ -26,7 +26,7 @@
 <!ENTITY loadOnSelect.accesskey "S">
 <!ENTITY loadAfterAskingMe.label "prenguntarme si quiero cargarla">
 <!ENTITY loadImmediately.label "cargarla inmediatamente">
-<!ENTITY loadAfterDelay.label "cargarla después de">
+<!ENTITY loadAfterDelay.label "cargarla después de...">
 <!ENTITY delayMilliseconds.label "ms">
 <!ENTITY closingTabs.label "Cuando cierre una pestaña:">
 <!ENTITY closingTabs.accesskey "C">

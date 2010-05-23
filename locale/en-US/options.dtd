@@ -26,7 +26,7 @@
 <!ENTITY loadOnSelect.accesskey "S">
 <!ENTITY loadAfterAskingMe.label "ask me whether to load it">
 <!ENTITY loadImmediately.label "load it immediately">
-<!ENTITY loadAfterDelay.label "load it after a delay of">
+<!ENTITY loadAfterDelay.label "load it after a delay of...">
 <!ENTITY delayMilliseconds.label "ms">
 <!ENTITY closingTabs.label "When closing a tab:">
 <!ENTITY closingTabs.accesskey "C">
