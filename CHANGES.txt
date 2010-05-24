@@ -1,4 +1,4 @@
-2.0 (unreleased)
+2.0 (2010-05-24)
 ----------------
 
 * Instead of a series of brittle patches, BarTab now only uses a
