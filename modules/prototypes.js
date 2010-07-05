@@ -193,7 +193,7 @@ BarTabHandler.prototype = {
     onPopupShowing: function(aEvent) {
         var document = aEvent.target.ownerDocument;
         var tab =  document.popupNode.localName == "tab" ?
-            document.popupNode : gBrowser.selectedTab;
+            document.popupNode : this.tabbrowser.selectedTab;
 
         var neverunload = document.getElementById("context_BarTabNeverUnload");
         var unloadtab = document.getElementById("context_BarTabUnloadTab");
