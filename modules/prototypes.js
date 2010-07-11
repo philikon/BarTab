@@ -107,7 +107,7 @@ BarTabHandler.prototype = {
      */
     onTabOpen: function(aEvent) {
         var tab = aEvent.originalTarget;
-        if (tab.selected || !BarTabUtils.getBoolPref("tapBackgroundTabs")) {
+        if (tab.selected || !BarTabUtils.getPref("loadBackgroundTabs")) {
             return;
         }
         tab.setAttribute("ontap", "true");
@@ -121,7 +121,7 @@ BarTabHandler.prototype = {
      * restored tabs from loading.
      */
     onTabRestoring: function(aEvent) {
-        if (!BarTabUtils.getBoolPref("tapRestoredTabs")) {
+        if (!BarTabUtils.getPref("loadRestoredTabs")) {
             return;
         }
         let tab = aEvent.originalTarget;
@@ -145,39 +145,25 @@ BarTabHandler.prototype = {
             return;
         }
 
-        let self = this;
-
-        switch (BarTabUtils.getIntPref("loadOnSelect")) {
-        case 1:
+        let delay = BarTabUtils.getPref("loadOnSelectDelay");
+        if (!delay) {
             // Load immediately
             this.loadTab(tab);
             return;
-        case 2:
-            // Load after delay
-            let delay = BarTabUtils.getIntPref("loadOnSelectDelay");
-            let window = tab.ownerDocument.defaultView;
-            window.setTimeout(function() {
-                if (tab.selected) {
-                    self.loadTab(tab);
-                }
-            }, delay);
-            return;
-        case 0:
-            // Ask whether to load
-            let box = this.tabbrowser.getNotificationBox(tab.linkedBrowser);
-            let label = this.l10n.getString("loadNotification");
-            let buttons = [{
-                label: this.l10n.getString("loadButton"),
-                accessKey: this.l10n.getString("loadButton.accesskey"),
-                callback: function() {self.loadTab(tab);}}];
-            box.appendNotification(label, 'bartab-load', "",
-                                   box.PRIORITY_INFO_MEDIUM, buttons);
-            return;
         }
+
+        // Load after delay
+        let window = tab.ownerDocument.defaultView;
+        let self = this;
+        window.setTimeout(function() {
+            if (tab.selected) {
+                self.loadTab(tab);
+            }
+        }, delay);
     },
 
     onTabClose: function(aEvent) {
-        if (!BarTabUtils.getBoolPref("findClosestUntappedTab")) {
+        if (!BarTabUtils.getPref("findClosestLoadedTab")) {
             return;
         }
         let tab = aEvent.originalTarget;
@@ -265,10 +251,10 @@ BarTabHandler.prototype = {
         var state = sessionstore.getTabState(aTab);
         var newtab = tabbrowser.addTab();
 
-        // The user might not have the 'extensions.bartap.tapRestoredTabs'
-        // preference enabled but still wants to unload this tab.  That's
-        // why we need to make sure we hook into the new tab before
-        // restoring the tab state.
+        // The user might not have 'extensions.bartab.loadRestoredTabs'
+        // set to 1 but still wants to unload this tab.  That's why we
+        // need to make sure we hook into the new tab before restoring
+        // the tab state.
         if (newtab.getAttribute("ontap") != "true") {
             newtab.setAttribute("ontap", "true");
             (new BarTabWebNavigation()).hook(newtab);
@@ -316,7 +302,7 @@ BarTabHandler.prototype = {
         });
     },
 
-    toggleHostWhitelist: function(aTab) {
+    toggleWhitelist: function(aTab) {
         var uri = aTab.linkedBrowser.currentURI;
         try {
             var host = uri.host;
@@ -325,7 +311,7 @@ BarTabHandler.prototype = {
             return;
         }
 
-        let whitelist = BarTabUtils.getHostWhitelist();
+        let whitelist = BarTabUtils.getWhitelist();
         let index = whitelist.indexOf(host);
         if (index == -1) {
             whitelist.push(host);
@@ -333,7 +319,7 @@ BarTabHandler.prototype = {
             whitelist.splice(index, 1);
         }
 
-        BarTabUtils.setHostWhitelist(whitelist);
+        BarTabUtils.setWhitelist(whitelist);
     },
 
     /*
@@ -739,7 +725,7 @@ BarTabTimer.prototype = {
     onTabOpen: function(aEvent) {
         var tab = aEvent.originalTarget;
         if (tab.selected
-            || BarTabUtils.getBoolPref("tapBackgroundTabs")) {
+            || (BarTabUtils.getPref("loadBackgroundTabs") == 1)) {
             return;
         }
         this.startTimer(tab);
@@ -768,7 +754,7 @@ BarTabTimer.prototype = {
     },
 
     startTimer: function(aTab) {
-        if (!BarTabUtils.getBoolPref("tapAfterTimeout")) {
+        if (!BarTabUtils.getPref("unloadAfterTimeout")) {
             return;
         }
         if (aTab.getAttribute("ontap") == "true") {
@@ -778,8 +764,8 @@ BarTabTimer.prototype = {
         if (aTab._barTabTimer) {
             this.clearTimer(aTab);
         }
-        let secs = BarTabUtils.getIntPref("timeoutValue")
-                 * BarTabUtils.getIntPref("timeoutUnit");
+        let secs = BarTabUtils.getPref("timeoutValue")
+                 * BarTabUtils.getPref("timeoutUnit");
         let window = aTab.ownerDocument.defaultView;
         // Allow 'this' to leak into the inline function
         let self = this;
@@ -916,12 +902,79 @@ var BarTabUtils = {
         return result.root.getChild(0);
     },
 
-    getBoolPref: function(aPref) {
-         return BarTabUtils.mPrefs.getBoolPref("extensions.bartap." + aPref);
+    getPref: function(aPref, aDefaultValue) {
+        let branch = BarTabUtils.mPrefBranch;
+        switch (branch.getPrefType(aPref)) {
+        case Ci.nsIPrefBranch.PREF_STRING:
+            return branch.getComplexValue(aPref, Ci.nsISupportsString).data;
+        case Ci.nsIPrefBranch.PREF_INT:
+            return branch.getIntPref(aPref);
+        case Ci.nsIPrefBranch.PREF_BOOL:
+            return branch.getBoolPref(aPref);
+        case Ci.nsIPrefBranch.PREF_INVALID:
+            return aDefaultValue;
+        default:
+            // This should never happen.
+            throw "Error getting pref " + aPref + "!\n";
+        }
     },
 
-    getIntPref: function(aPref) {
-         return BarTabUtils.mPrefs.getIntPref("extensions.bartap." + aPref);
+    migratePrefs: function() {
+        if (this.getPref("migrated")) {
+            return;
+        }
+
+        // Grab the list of old pref names
+        let newBranch = BarTabUtils.mPrefBranch;
+        let oldBranch = BarTabUtils.mPrefs.getBranch("extensions.bartap.");
+        let oldPrefNames = oldBranch.getChildList("", {});
+        let value;
+
+        for each (let pref in oldPrefNames) {
+            switch (pref) {
+            case "tapRestoredTabs":
+                value = oldBranch.getBoolPref(pref);
+                newBranch.setIntPref("loadRestoredTabs", 0+value);
+                break;
+
+            case "tapBackgroundTabs":
+                value = oldBranch.getBoolPref(pref);
+                newBranch.setIntPref("loadBackgroundTabs", 0+value);
+                break;
+
+            case "tapAfterTimeout":
+                value = oldBranch.getBoolPref(pref);
+                newBranch.setBoolPref("unloadAfterTimeout", value);
+                break;
+
+            case "loadOnSelect":
+                value = oldBranch.getBoolPref(pref);
+                if (value) {
+                    value = oldBranch.getBoolPref("loadOnSelectDelay");
+                }
+                newBranch.setIntPref("loadOnSelectDelay", 0+value);
+                break;
+
+            case "loadOnSelectDelay":
+                break;
+
+            case "findClosestUntappedTab":
+                value = oldBranch.getBoolPref(pref);
+                newBranch.setBoolPref("findClosestLoadedTab", value);
+                break;
+
+            case "hostWhitelist":
+                value = oldBranch.getCharPref(pref);
+                newBranch.setCharPref("whitelist", value);
+                break;
+
+            default:
+                value = oldBranch.getIntPref(pref);
+                newBranch.setIntPref(pref, value);
+            }
+        }
+        oldBranch.deleteBranch("");
+        newBranch.setBoolPref("migrated", true);
     },
 
     /*
@@ -929,7 +982,7 @@ var BarTabUtils = {
      */
     whiteListed: function(aURI) {
         try {
-            return (BarTabUtils.getHostWhitelist().indexOf(aURI.host) != -1);
+            return (BarTabUtils.getWhitelist().indexOf(aURI.host) != -1);
         } catch(ex) {
             // Most likely gotouri.host failed, so it isn't on the white list.
             return false;
@@ -938,23 +991,22 @@ var BarTabUtils = {
 
     /*
      * It might seem more elegant to use a getter & setter here so you
-     * could just use this.hostWhiteList or similar.  However, that
-     * would suggest this.hostWhiteList would always return the same
-     * array and that mutations to it would be persisted.  Both are
-     * not the case.
+     * could just use this.whiteList or similar.  However, that would
+     * suggest this.whiteList would always return the same array and
+     * that mutations to it would be persisted.  Both are not the case.
      */
 
-    getHostWhitelist: function() {
+    getWhitelist: function() {
         var whitelist = BarTabUtils.mPrefs.getCharPref(
-            "extensions.bartap.hostWhitelist");
+            "extensions.bartab.whitelist");
         if (!whitelist) {
             return [];
         }
         return whitelist.split(";");
     },
 
-    setHostWhitelist: function(whitelist) {
-        BarTabUtils.mPrefs.setCharPref("extensions.bartap.hostWhitelist",
+    setWhitelist: function(whitelist) {
+        BarTabUtils.mPrefs.setCharPref("extensions.bartab.whitelist",
                                        whitelist.join(";"));
     }
 
@@ -967,6 +1019,10 @@ var BarTabUtils = {
 XPCOMUtils.defineLazyGetter(BarTabUtils, "mPrefs", function () {
   return Cc["@mozilla.org/preferences-service;1"]
          .getService(Ci.nsIPrefService)
+         .QueryInterface(Ci.nsIPrefBranch2);
+});
+XPCOMUtils.defineLazyGetter(BarTabUtils, "mPrefBranch", function () {
+  return BarTabUtils.mPrefs.getBranch("extensions.bartab.")
          .QueryInterface(Ci.nsIPrefBranch2);
 });
 XPCOMUtils.defineLazyServiceGetter(BarTabUtils, "mIO",

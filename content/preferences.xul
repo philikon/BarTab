@@ -11,33 +11,27 @@
   <prefpane id="bartab-prefpane" label="&prefpane.title;">
 
     <preferences>
-      <preference id="extensions.bartap.tapRestoredTabs"
-                  name="extensions.bartap.tapRestoredTabs"
-                  type="bool" />
-      <preference id="extensions.bartap.tapBackgroundTabs"
-                  name="extensions.bartap.tapBackgroundTabs"
-                  type="bool" />
-      <preference id="extensions.bartap.tapAfterTimeout"
-                  name="extensions.bartap.tapAfterTimeout"
-                  type="bool" />
-      <preference id="extensions.bartap.timeoutValue"
-                  name="extensions.bartap.timeoutValue"
+      <preference id="extensions.bartab.loadRestoredTabs"
+                  name="extensions.bartab.loadRestoredTabs"
                   type="int" />
-      <preference id="extensions.bartap.timeoutUnit"
-                  name="extensions.bartap.timeoutUnit"
+      <preference id="extensions.bartab.loadBackgroundTabs"
+                  name="extensions.bartab.loadBackgroundTabs"
                   type="int" />
-      <preference id="extensions.bartap.findClosestUntappedTab"
-                  name="extensions.bartap.findClosestUntappedTab"
+      <preference id="extensions.bartab.unloadAfterTimeout"
+                  name="extensions.bartab.unloadAfterTimeout"
                   type="bool" />
-      <preference id="extensions.bartap.loadOnSelect"
-                  name="extensions.bartap.loadOnSelect"
+      <preference id="extensions.bartab.timeoutValue"
+                  name="extensions.bartab.timeoutValue"
                   type="int" />
-      <preference id="extensions.bartap.loadOnSelectDelay"
-                  name="extensions.bartap.loadOnSelectDelay"
+      <preference id="extensions.bartab.timeoutUnit"
+                  name="extensions.bartab.timeoutUnit"
                   type="int" />
+      <preference id="extensions.bartab.findClosestLoadedTab"
+                  name="extensions.bartab.findClosestLoadedTab"
+                  type="bool" />
     </preferences>
 
-    <groupbox id="barTapGroup">
+    <groupbox id="BarTabGroup">
       <caption label="&group.label;"/>
 
       <grid>
@@ -53,10 +47,10 @@
              accesskey="&restoredTabs.accesskey;"
              control="menuRestoredTabs" />
       <menulist id="menuRestoredTabs"
-                preference="extensions.bartap.tapRestoredTabs">
+                preference="extensions.bartab.loadRestoredTabs">
         <menupopup>
-          <menuitem label="&loadTabs.label;" value="false"/>
-          <menuitem label="&dontLoadTabs.label;" value="true"/>
+          <menuitem label="&loadTabs.label;" value="0"/>
+          <menuitem label="&dontLoadTabs.label;" value="1"/>
         </menupopup>
       </menulist>
     </row>
@@ -68,10 +62,10 @@
              accesskey="&backgroundTabs.accesskey;"
              control="menuBackgroundTabs" />
       <menulist id="menuBackgroundTabs"
-                preference="extensions.bartap.tapBackgroundTabs">
+                preference="extensions.bartab.loadBackgroundTabs">
         <menupopup>
-          <menuitem label="&loadTabs.label;" value="false"/>
-          <menuitem label="&dontLoadTabs.label;" value="true"/>
+          <menuitem label="&loadTabs.label;" value="0"/>
+          <menuitem label="&dontLoadTabs.label;" value="1"/>
         </menupopup>
       </menulist>
     </row>
@@ -83,7 +77,7 @@
              accesskey="&unloadAfterTimeout.accesskey;"
              control="tapAfterTimeout" />
       <menulist id="tapAfterTimeout"
-                preference="extensions.bartap.tapAfterTimeout"
+                preference="extensions.bartab.unloadAfterTimeout"
                 oncommand="BarTabPreferences.onTimeoutChange();">
         <menupopup>
           <menuitem label="&doNothing.label;" value="false"/>
@@ -94,10 +88,10 @@
         <textbox id="timeoutValue"
                  type="number"
                  size="2"
-                 preference="extensions.bartap.timeoutValue"
+                 preference="extensions.bartab.timeoutValue"
                  aria-labelledby="timeoutUnit"/>
         <menulist id="timeoutUnit"
-                preference="extensions.bartap.timeoutUnit">
+                preference="extensions.bartab.timeoutUnit">
           <menupopup>
             <menuitem label="&timeoutSecs.label;" value="1"/>
             <menuitem label="&timeoutMins.label;" value="60"/>
@@ -114,62 +108,26 @@
       <vbox>
         <label value="&hostWhitelist.label;"
                accesskey="&hostWhitelist.accesskey;"
-               control="hostWhitelist" />
+               control="whitelist" />
         <description style="font: small-caption;
                             font-weight: normal;
                             width: 0; /* trigger word wrapping */
                             margin: 0.5em 1em 0em 1em;">&hostWhitelist.description;</description>
       </vbox>
-      <listbox id="hostWhitelist"
+      <listbox id="whitelist"
                flex="1"
                style="height: 5em;"
                seltype="multiple"
-               onselect="BarTabPreferences.hostSelected(event);">
+               onselect="BarTabPreferences.whitelistEntrySelected(event);">
       </listbox>
       <vbox>
         <spacer flex="1" />
-        <button id="hostWhitelistRemove"
+        <button id="whitelistRemove"
                 disabled="true"
                 label="&hostWhitelistRemove.label;"
                 accesskey="&hostWhitelistRemove.accesskey;"
-                oncommand="BarTabPreferences.removeHost();" />
+                oncommand="BarTabPreferences.removeWhitelistEntry();" />
       </vbox>
-    </row>
-    <row>
-      <spacer flex="1" />
-      <textbox id="hostWhitelistNewHost"
-               onkeypress="BarTabPreferences.onNewHostKeyPress(event);" />
-      <button id="hostWhitelistAdd"
-              label="&hostWhitelistAdd.label;"
-              accesskey="&hostWhitelistAdd.accesskey;"
-              oncommand="BarTabPreferences.addHost();" />      
-    </row>
-
-    <separator class="thin"/>
-
-    <row align="center">
-      <label value="&loadOnSelect.label;"
-             accesskey="&loadOnSelect.accesskey;"
-             control="loadOnSelect" />
-      <menulist id="loadOnSelect"
-                preference="extensions.bartap.loadOnSelect"
-                oncommand="BarTabPreferences.onLoadChange();">
-        <menupopup>
-          <menuitem label="&loadAfterAskingMe.label;" value="0"/>
-          <menuitem label="&loadImmediately.label;" value="1"/>
-          <menuitem label="&loadAfterDelay.label;" value="2"/>
-        </menupopup>
-      </menulist>
-      <hbox id="delayWidgets" align="center">
-        <textbox id="loadOnSelectDelay"
-                 type="number"
-                 size="4"
-                 preference="extensions.bartap.loadOnSelectDelay"
-                 aria-labelledby="delayMilliseconds"/>
-        <label id="delayMilliseconds"
-               value="&delayMilliseconds.label;"
-               control="loadOnSelectDelay" />
-      </hbox>
     </row>
 
     <separator class="thin"/>
@@ -179,7 +137,7 @@
              accesskey="&closingTabs.accesskey;"
              control="menuClosingTabs" />
       <menulist id="menuClosingTabs"
-                preference="extensions.bartap.findClosestUntappedTab">
+                preference="extensions.bartab.findClosestLoadedTab">
         <menupopup>
           <menuitem label="&doNothing.label;" value="false"/>
           <menuitem label="&findClosestLoadedTab.label;" value="true"/>
