@@ -59,7 +59,7 @@ BarTabHandler.prototype = {
         // adjust the label of the whitelist menu item
         let popup = aTabBrowser.tabContainer.contextMenu;
         if (!popup) {
-            // In Firefox <3.7, the tab context menu lives inside the
+            // In Firefox <4, the tab context menu lives inside the
             // tabbrowser.
             popup = document.getAnonymousElementByAttribute(
                 aTabBrowser, "anonid", "tabContextMenu");
@@ -1014,7 +1014,7 @@ var BarTabUtils = {
 
 /*
  * Lazy getters for XPCOM services.  This is in analogy to
- * Services.jsm which is available in Firefox 3.7.
+ * Services.jsm which is available in Firefox 4.
  */
 XPCOMUtils.defineLazyGetter(BarTabUtils, "mPrefs", function () {
   return Cc["@mozilla.org/preferences-service;1"]
