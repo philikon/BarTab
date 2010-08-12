@@ -277,7 +277,13 @@ BarTabHandler.prototype = {
         // Close the original tab.  We're taking the long way round to
         // ensure the nsISessionStore service won't save this in the
         // recently closed tabs.
-        tabbrowser._endRemoveTab(tabbrowser._beginRemoveTab(aTab, true, null, false));
+        let check = tabbrowser._beginRemoveTab(aTab, true, null, false);
+        if (typeof check == "boolean" && check) {
+            // Firefox 4.0
+            tabbrowser._endRemoveTab(aTab);
+            return;
+        }
+        tabbrowser._endRemoveTab(check);
     },
 
     unloadOtherTabs: function(aTab) {
