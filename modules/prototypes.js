@@ -249,7 +249,7 @@ BarTabHandler.prototype = {
 
         var sessionstore = BarTabUtils.mSessionStore;
         var state = sessionstore.getTabState(aTab);
-        var newtab = tabbrowser.addTab();
+        var newtab = tabbrowser.addTab(null, {skipAnimation: true});
 
         // The user might not have 'extensions.bartab.loadRestoredTabs'
         // set to 1 but still wants to unload this tab.  That's why we
