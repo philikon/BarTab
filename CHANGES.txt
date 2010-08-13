@@ -1,7 +1,7 @@
 2.1 (unreleased)
 ----------------
 
-* ...
+* Support for Firefox 4.0b3.
 
 
 2.0 (2010-05-24)
