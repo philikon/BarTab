@@ -17,11 +17,20 @@
     <em:translator>Felipe Barousse Boué [es]</em:translator>
     <em:translator>Danny Navarro [es-ES]</em:translator>
     <em:optionsURL>chrome://bartab/content/preferences.xul</em:optionsURL>
+    <!-- Firefox -->
     <em:targetApplication>
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id> <!-- Firefox -->
         <em:minVersion>3.5</em:minVersion>
         <em:maxVersion>4.0b3</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+    <!-- SeaMonkey -->
+    <em:targetApplication>
+      <Description>
+        <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
+        <em:minVersion>2.0.8</em:minVersion>
+        <em:maxVersion>2.1b1</em:maxVersion>
       </Description>
     </em:targetApplication>
   </Description>
