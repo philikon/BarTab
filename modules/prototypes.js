@@ -267,6 +267,11 @@ BarTabHandler.prototype = {
 
         // Restore tree when using Tree Style Tab
         if (tabbrowser.treeStyleTab) {
+            let parent = tabbrowser.treeStyleTab.getParentTab(aTab);
+            if (parent) {
+                tabbrowser.treeStyleTab.attachTabTo(newtab, parent,
+                    {dontAnimate: true, insertBefore: aTab.nextSibling});
+            }
             let children = tabbrowser.treeStyleTab.getChildTabs(aTab);
             children.forEach(function(aChild) {
                 tabbrowser.treeStyleTab.attachTabTo(
