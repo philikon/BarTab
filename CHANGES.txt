@@ -1,7 +1,11 @@
 2.1 (unreleased)
 ----------------
 
-* Support for Firefox 4.0b3.
+* Support for Firefox 4.0 and SeaMonkey.
+
+* Fixed a compatibility issue with Tree Style Tab: When the last child
+  tab is unloaded, the tab was wrongly detached from the tree.  Thanks
+  to SHIMODA Hiroshi for the patch.
 
 
 2.0 (2010-05-24)
