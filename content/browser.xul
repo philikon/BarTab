@@ -27,7 +27,7 @@
                 label=""
                 type="checkbox"
                 autocheck="false"
-                oncommand="gBrowser.BarTabHandler.toggleHostWhitelist(gBrowser.mContextTab);"
+                oncommand="gBrowser.BarTabHandler.toggleWhitelist(gBrowser.mContextTab);"
                 insertbefore="context_openTabInWindow"/>
       <menuseparator id="context_BarTabSeparator"
                      insertbefore="context_openTabInWindow"/>
