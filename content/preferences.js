@@ -61,12 +61,12 @@ var BarTabPreferences = {
     var whitelist = BarTabUtils.getWhitelist();
     var self = this;
     list.selectedItems.forEach(function (item) {
-        var entry = item.getAttribute("label");
-        var index = whitelist.indexOf(entry);
-        if (index == -1) {
-            return;
-        }
-        whitelist.splice(index, 1);
+      var entry = item.getAttribute("label");
+      var index = whitelist.indexOf(entry);
+      if (index == -1) {
+        return;
+      }
+      whitelist.splice(index, 1);
     });
     BarTabUtils.setWhitelist(whitelist);
   },
