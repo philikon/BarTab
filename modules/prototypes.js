@@ -101,10 +101,10 @@ BarTabHandler.prototype = {
    * restored tabs from loading.
    */
   onTabRestoring: function(aEvent) {
+    let tab = aEvent.originalTarget;
     if (tab.selected || tab.getAttribute("ontab") == "true") {
       return;
     }
-    let tab = aEvent.originalTarget;
     tab.setAttribute("ontab", "true");
     (new BarTabRestoreProgressListener()).hook(tab);
   },
