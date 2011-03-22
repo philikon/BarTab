@@ -1,32 +1,12 @@
-var EXPORTED_SYMBOLS = ["BarTabHandler",
-                        "BarTabUtils"];
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+const EXPORTED_SYMBOLS = ["BarTabHandler",
+                          "BarTabUtils"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
+const Cu = Components.utils;
 
-
-/*
- * Firefox 3.5 doesn't have these handy functions for defining lazy getters.
- */
-if (typeof XPCOMUtils.defineLazyGetter !== "function") {
-  XPCOMUtils.defineLazyGetter = function(aObject, aName, aLambda) {
-    aObject.__defineGetter__(aName, function() {
-      delete aObject[aName];
-      return aObject[aName] = aLambda.apply(aObject);
-    });
-  };
-}
-
-if (typeof XPCOMUtils.defineLazyServiceGetter !== "function") {
-  XPCOMUtils.defineLazyServiceGetter = function(aObject, aName,
-                                                aContract, aInterfaceName) {
-    XPCOMUtils.defineLazyGetter(aObject, aName, function XPCU_serviceLambda() {
-      return Cc[aContract].getService(Ci[aInterfaceName]);
-    });
-  };
-}
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 
 /*
@@ -178,7 +158,7 @@ BarTabHandler.prototype = {
 
   onPopupShowing: function(aEvent) {
     var document = aEvent.target.ownerDocument;
-    var tab =  document.popupNode.localName == "tab" ?
+    var tab = document.popupNode.localName == "tab" ?
       document.popupNode : this.tabbrowser.selectedTab;
 
     var neverunload = document.getElementById("context_BarTabNeverUnload");
@@ -634,8 +614,8 @@ BarTabWebProgressListener.prototype = {
       return;
     }
     if (!(aStateFlags & Ci.nsIWebProgressListener.STATE_START)
-      || !(aStateFlags & Ci.nsIWebProgressListener.STATE_IS_NETWORK)
-      || (aStateFlags & Ci.nsIWebProgressListener.STATE_RESTORING)) {
+        || !(aStateFlags & Ci.nsIWebProgressListener.STATE_IS_NETWORK)
+        || (aStateFlags & Ci.nsIWebProgressListener.STATE_RESTORING)) {
       return;
     }
     if (this._tab.getAttribute("ontap") != "true") {
