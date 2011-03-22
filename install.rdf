@@ -4,7 +4,7 @@
     <em:id>bartap@philikon.de</em:id>
     <em:type>2</em:type>
     <em:name>BarTab</em:name>
-    <em:version>2.1b3</em:version>
+    <em:version>3.0</em:version>
     <em:homepageURL>https://addons.mozilla.org/firefox/addon/67651</em:homepageURL>
     <em:creator>Philipp von Weitershausen</em:creator>
     <em:contributor>SHIMODA Hiroshi</em:contributor>
@@ -21,8 +21,8 @@
     <em:targetApplication>
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id> <!-- Firefox -->
-        <em:minVersion>3.5</em:minVersion>
-        <em:maxVersion>4.0b3</em:maxVersion>
+        <em:minVersion>4.0b1</em:minVersion>
+        <em:maxVersion>4.0.*</em:maxVersion>
       </Description>
     </em:targetApplication>
     <!-- SeaMonkey -->
