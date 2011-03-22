@@ -90,7 +90,7 @@ BarTabHandler.prototype = {
     if (tab.selected || !BarTabUtils.getPref("loadBackgroundTabs")) {
       return;
     }
-    tab.setAttribute("ontap", "true");
+    tab.setAttribute("ontab", "true");
     (new BarTabWebProgressListener()).hook(tab);
     (new BarTabWebNavigation()).hook(tab);
   },
@@ -101,20 +101,17 @@ BarTabHandler.prototype = {
    * restored tabs from loading.
    */
   onTabRestoring: function(aEvent) {
-    if (!BarTabUtils.getPref("loadRestoredTabs")) {
+    if (tab.selected || tab.getAttribute("ontab") == "true") {
       return;
     }
     let tab = aEvent.originalTarget;
-    if (tab.selected || tab.getAttribute("ontap") == "true") {
-      return;
-    }
-    tab.setAttribute("ontap", "true");
-    (new BarTabWebNavigation()).hook(tab);
+    tab.setAttribute("ontab", "true");
+    (new BarTabRestoreProgressListener()).hook(tab);
   },
 
   onTabSelect: function(aEvent) {
     var tab = aEvent.originalTarget;
-    if (tab.getAttribute("ontap") != "true") {
+    if (tab.getAttribute("ontab") != "true") {
       return;
     }
 
@@ -189,7 +186,7 @@ BarTabHandler.prototype = {
     }
 
     neverunload.removeAttribute("checked");
-    if (tab.getAttribute("ontap") == "true") {
+    if (tab.getAttribute("ontab") == "true") {
       unloadtab.setAttribute("disabled", "true");
     } else {
       unloadtab.removeAttribute("disabled");
@@ -200,16 +197,16 @@ BarTabHandler.prototype = {
   /*** Public API ***/
 
   loadTab: function(aTab) {
-    if (aTab.getAttribute("ontap") != "true") {
+    if (aTab.getAttribute("ontab") != "true") {
       return;
     }
-    aTab.removeAttribute("ontap");
+    aTab.removeAttribute("ontab");
     aTab.linkedBrowser.webNavigation._resume();
   },
 
   unloadTab: function(aTab) {
     // Ignore tabs that are already unloaded or are on the host whitelist.
-    if (aTab.getAttribute("ontap") == "true") {
+    if (aTab.getAttribute("ontab") == "true") {
       return;
     }
     if (BarTabUtils.whiteListed(aTab.linkedBrowser.currentURI)) {
@@ -235,8 +232,8 @@ BarTabHandler.prototype = {
     // set to 1 but still wants to unload this tab.  That's why we
     // need to make sure we hook into the new tab before restoring
     // the tab state.
-    if (newtab.getAttribute("ontap") != "true") {
-      newtab.setAttribute("ontap", "true");
+    if (newtab.getAttribute("ontab") != "true") {
+      newtab.setAttribute("ontab", "true");
       (new BarTabWebNavigation()).hook(newtab);
     }
     sessionstore.setTabState(newtab, state);
@@ -330,7 +327,7 @@ BarTabHandler.prototype = {
     // The most obvious choice would be the owner tab, if it's active.
     if (aTab.owner
       && BarTabUtils.mPrefs.getBoolPref("browser.tabs.selectOwnerOnClose")
-      && aTab.owner.getAttribute("ontap") != "true") {
+      && aTab.owner.getAttribute("ontab") != "true") {
       return aTab.owner;
     }
 
@@ -339,12 +336,12 @@ BarTabHandler.prototype = {
     while ((aTab._tPos - i >= 0) ||
          (aTab._tPos + i < tabbrowser.mTabs.length)) {
       if (aTab._tPos + i < tabbrowser.mTabs.length) {
-        if (tabbrowser.mTabs[aTab._tPos+i].getAttribute("ontap") != "true") {
+        if (tabbrowser.mTabs[aTab._tPos+i].getAttribute("ontab") != "true") {
           return tabbrowser.mTabs[aTab._tPos+i];
         }
       }
       if (aTab._tPos - i >= 0) {
-        if (tabbrowser.mTabs[aTab._tPos-i].getAttribute("ontap") != "true") {
+        if (tabbrowser.mTabs[aTab._tPos-i].getAttribute("ontab") != "true") {
           return tabbrowser.mTabs[aTab._tPos-i];
         }
       }
@@ -371,7 +368,7 @@ BarTabHandler.prototype = {
  * It can install itself as the webNavigation property of a tab's
  * browser object, replacing and wrapping around the original
  * implementation.  Once it has done so, it will defer all URI loading
- * until the tab is no longer marked as 'ontap'.
+ * until the tab is no longer marked as 'ontab'.
  *
  * This provides a new method on top of nsIWebNavigation called
  * 'resume()' which allows you to resume the operation that was
@@ -384,7 +381,7 @@ BarTabWebNavigation.prototype = {
    * Install ourself as browser's webNavigation.  This needs to be
    * passed the tab object (rather than just its associated browser
    * object) because we need to be able to read and change tab's
-   * 'ontap' attribute.
+   * 'ontab' attribute.
    */
   hook: function (aTab) {
     this._tab = aTab;
@@ -438,7 +435,7 @@ BarTabWebNavigation.prototype = {
   /*** Hook into gotoIndex() ***/
 
   gotoIndex: function (aIndex) {
-    if (this._tab.getAttribute("ontap") == "true") {
+    if (this._tab.getAttribute("ontab") == "true") {
       return this._pauseGotoIndex(aIndex);
     }
     return this._original.gotoIndex(aIndex);
@@ -448,7 +445,7 @@ BarTabWebNavigation.prototype = {
     var history = this._original.sessionHistory;
     var entry = history.getEntryAtIndex(aIndex, false);
     if (BarTabUtils.whiteListed(entry.URI)) {
-      this._tab.removeAttribute("ontap");
+      this._tab.removeAttribute("ontab");
       return this._original.gotoIndex(aIndex);
     }
 
@@ -481,7 +478,7 @@ BarTabWebNavigation.prototype = {
     // Allow about:blank to load without any side effects.
     if (aURI
       && (aURI != "about:blank")
-      && (this._tab.getAttribute("ontap") == "true")) {
+      && (this._tab.getAttribute("ontab") == "true")) {
       return this._pauseLoadURI.apply(this, arguments);
     }
     return this._original.loadURI.apply(this._original, arguments);
@@ -491,7 +488,7 @@ BarTabWebNavigation.prototype = {
     var uri = BarTabUtils.makeURI(aURI);
     if (BarTabUtils.whiteListed(uri)) {
       let original = this._original;
-      this._tab.removeAttribute("ontap");
+      this._tab.removeAttribute("ontab");
       this.unhook();
       return original.loadURI.apply(original, arguments);
     }
@@ -540,8 +537,8 @@ BarTabWebNavigation.prototype = {
   },
 
   reload: function(aReloadFlags) {
-    if (this._tab.getAttribute("ontap") == "true") {
-      this._tab.removeAttribute("ontap");
+    if (this._tab.getAttribute("ontab") == "true") {
+      this._tab.removeAttribute("ontab");
       //TODO should we patch aReloadFlags into this._loaduri_args?
       return this._resume();
     }
@@ -586,6 +583,43 @@ BarTabWebNavigation.prototype = {
 
 
 /*
+ * Progress listener for tabs that are being restored but haven't
+ * loaded yet.
+ */
+function BarTabRestoreProgressListener () {}
+BarTabRestoreProgressListener.prototype = {
+
+  hook: function (aTab) {
+    this._tab = aTab;
+    aTab._barTabRestoreProgressListener = this;
+    aTab.linkedBrowser.webProgress.addProgressListener(
+      this, Ci.nsIWebProgress.NOTIFY_STATE_NETWORK);
+  },
+
+  unhook: function () {
+    this._tab.linkedBrowser.webProgress.removeProgressListener(this);
+    delete this._tab._barTabRestoreProgressListener;
+    delete this._tab;
+  },
+
+  /*** nsIWebProgressListener ***/
+
+  onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {
+    this._tab.removeAttribute("ontab");
+    this.unhook();
+  },
+  onProgressChange: function () {},
+  onLocationChange: function () {},
+  onStatusChange:   function () {},
+  onSecurityChange: function () {},
+
+  QueryInterface: XPCOMUtils.generateQI([Ci.nsIWebProgressListener,
+                                         Ci.nsISupportsWeakReference,
+                                         Ci.nsISupports])
+};
+
+
+/*
  * Progress listener that stops the loading of tabs that are opened in
  * the background and whose contents is loaded by C++ code.  This
  * occurs for instance when the 'browser.tabs.loadDivertedInBackground'
@@ -618,7 +652,7 @@ BarTabWebProgressListener.prototype = {
         || (aStateFlags & Ci.nsIWebProgressListener.STATE_RESTORING)) {
       return;
     }
-    if (this._tab.getAttribute("ontap") != "true") {
+    if (this._tab.getAttribute("ontab") != "true") {
       return;
     }
 
@@ -631,7 +665,7 @@ BarTabWebProgressListener.prototype = {
     // Allow whitelisted URIs to load.
     let browser = this._tab.linkedBrowser;
     if (BarTabUtils.whiteListed(uri)) {
-      this._tab.removeAttribute("ontap");
+      this._tab.removeAttribute("ontab");
       // webNavigation.unhook() will call our unhook.
       browser.webNavigation.unhook();
       return;
@@ -675,8 +709,8 @@ BarTabWebProgressListener.prototype = {
   onSecurityChange: function () {},
 
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIWebProgressListener,
-                       Ci.nsISupportsWeakReference,
-                       Ci.nsISupports])
+                                         Ci.nsISupportsWeakReference,
+                                         Ci.nsISupports])
 };
 
 
@@ -748,7 +782,7 @@ BarTabTimer.prototype = {
     if (!BarTabUtils.getPref("unloadAfterTimeout")) {
       return;
     }
-    if (aTab.getAttribute("ontap") == "true") {
+    if (aTab.getAttribute("ontab") == "true") {
       return;
     }
 
@@ -923,11 +957,6 @@ var BarTabUtils = {
 
     for each (let pref in oldPrefNames) {
       switch (pref) {
-        case "tapRestoredTabs":
-          value = oldBranch.getBoolPref(pref);
-          newBranch.setIntPref("loadRestoredTabs", 0+value);
-          break;
-
         case "tapBackgroundTabs":
           value = oldBranch.getBoolPref(pref);
           newBranch.setIntPref("loadBackgroundTabs", 0+value);
