@@ -234,6 +234,7 @@ BarTabHandler.prototype = {
     // the tab state.
     if (newtab.getAttribute("ontab") != "true") {
       newtab.setAttribute("ontab", "true");
+      (new BarTabWebProgressListener()).hook(newtab);
       (new BarTabWebNavigation()).hook(newtab);
     }
     sessionstore.setTabState(newtab, state);
