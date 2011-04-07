@@ -106,7 +106,8 @@ BarTabHandler.prototype = {
       return;
     }
     tab.setAttribute("ontab", "true");
-    (new BarTabRestoreProgressListener()).hook(tab);
+    (new BarTabWebProgressListener()).hook(tab);
+    (new BarTabWebNavigation()).hook(tab);
   },
 
   onTabSelect: function(aEvent) {
