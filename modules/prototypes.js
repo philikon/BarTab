@@ -38,21 +38,6 @@ BarTabHandler.prototype = {
     // We need an event listener for the context menu so that we can
     // adjust the label of the whitelist menu item
     let popup = aTabBrowser.tabContainer.contextMenu;
-    if (!popup) {
-      // In Firefox <4, the tab context menu lives inside the
-      // tabbrowser.
-      popup = document.getAnonymousElementByAttribute(
-        aTabBrowser, "anonid", "tabContextMenu");
-      let before = document.getAnonymousElementByAttribute(
-        aTabBrowser, "id", "context_openTabInWindow");
-      ["context_BarTabUnloadTab",
-       "context_BarTabUnloadOtherTabs",
-       "context_BarTabNeverUnload",
-       "context_BarTabSeparator"].forEach(function (menuitemid) {
-        let menuitem = document.getElementById(menuitemid);
-        popup.insertBefore(menuitem, before);
-      });
-    }
     popup.addEventListener('popupshowing', this, false);
   },
 
