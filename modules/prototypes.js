@@ -660,7 +660,8 @@ BarTabWebProgressListener.prototype = {
 
     // Allow about:blank and wyciwyg URIs to load without any side effects.
     let uri = aRequest.QueryInterface(Ci.nsIChannel).URI;
-    if ((uri.spec == "about:blank") || (uri.scheme == "wyciwyg")) {
+       uri.QueryInterface(Components.interfaces.nsIURI);
+    if ((uri.spec == "about:blank") || (uri.scheme == "wyciwyg") || (uri.scheme == "jar")) {
       return;
     }
 
