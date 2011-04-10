@@ -1028,8 +1028,21 @@ var BarTabUtils = {
   setWhitelist: function(whitelist) {
     BarTabUtils.mPrefs.setCharPref("extensions.bartab.whitelist",
                                    whitelist.join(";"));
+  },
+  
+  setTabsOpacity: function() {
+	var sss = Cc["@mozilla.org/content/style-sheet-service;1"]
+				.getService(Ci.nsIStyleSheetService);
+				
+	var uri = BarTabUtils.makeURI("data:text/css,"+
+							encodeURIComponent(
+								'.tabbrowser-tab[ontab=true]{opacity:.5;}'));
+	if(sss.sheetRegistered(uri, sss.USER_SHEET))
+	  sss.unregisterSheet(uri, sss.USER_SHEET);
+	
+	if(BarTabUtils.mPrefs.getBoolPref("extensions.bartab.transparentTabs"))
+	  sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
   }
-
 };
 
 /*

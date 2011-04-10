@@ -4,6 +4,7 @@ var BarTabPreferences = {
 
   init: function() {
     BarTabUtils.mPrefs.addObserver("extensions.bartab.whitelist", this, false);
+    BarTabUtils.mPrefs.addObserver("extensions.bartab.transparentTabs", this, false);
     this.onTimeoutChange();
     this.updateWhitelist();
   },
@@ -75,7 +76,11 @@ var BarTabPreferences = {
     if (aTopic != "nsPref:changed") {
       return;
     }
-    this.updateWhitelist();
+	
+	if(aData == "extensions.bartab.whitelist")
+	  this.updateWhitelist();
+	else if(aData == "extensions.bartab.transparentTabs")
+	  BarTabUtils.setTabsOpacity();
   }
 
 };

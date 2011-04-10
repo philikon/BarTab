@@ -29,6 +29,9 @@
       <preference id="extensions.bartab.findClosestLoadedTab"
                   name="extensions.bartab.findClosestLoadedTab"
                   type="bool" />
+	  <preference id="extensions.bartab.transparentTabs"
+                  name="extensions.bartab.transparentTabs"
+                  type="bool" />
     </preferences>
 
     <groupbox id="BarTabGroup">
@@ -118,7 +121,7 @@
                flex="1"
                style="height: 5em;"
                seltype="multiple"
-               onselect="BarTabPreferences.whitelistEntrySelected(event);">
+               onselect="BarTabPreferences.whiteListEntrySelected(event);">
       </listbox>
       <vbox>
         <spacer flex="1" />
@@ -143,6 +146,16 @@
           <menuitem label="&findClosestLoadedTab.label;" value="true"/>
         </menupopup>
       </menulist>
+    </row>
+	
+    <separator class="thin"/>
+
+    <row align="center">
+      <label value="&transparentTabs.label;"
+             accesskey="&transparentTabs.accesskey;"
+             control="transparentTabs" />
+      <checkbox id="transparentTabs"
+                preference="extensions.bartab.transparentTabs" value="true"/>
     </row>
 
         </rows>

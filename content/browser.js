@@ -6,6 +6,7 @@ Components.utils.import("resource://bartab/prototypes.js");
 window.addEventListener("load", function() {
   window.removeEventListener("load", arguments.callee, false);
   BarTabUtils.migratePrefs();
+  BarTabUtils.setTabsOpacity();
   var tabbrowser = document.getElementById("content");
   (new BarTabHandler).init(tabbrowser);
 }, false);
