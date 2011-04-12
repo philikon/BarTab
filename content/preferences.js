@@ -76,11 +76,19 @@ var BarTabPreferences = {
     if (aTopic != "nsPref:changed") {
       return;
     }
-	
-	if(aData == "extensions.bartab.whitelist")
-	  this.updateWhitelist();
-	else if(aData == "extensions.bartab.transparentTabs")
-	  BarTabUtils.setTabsOpacity();
+	switch(aData)
+	{
+	  case "extensions.bartab.whitelist":
+		{
+		  this.updateWhitelist();
+		  break;
+		}
+	  case "extensions.bartab.transparentTabs":
+		{
+		  BarTabUtils.setTabsOpacity();
+		  break;
+		}
+	}
   }
 
 };

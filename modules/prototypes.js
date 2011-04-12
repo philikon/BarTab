@@ -1031,17 +1031,17 @@ var BarTabUtils = {
   },
   
   setTabsOpacity: function() {
-	var sss = Cc["@mozilla.org/content/style-sheet-service;1"]
-				.getService(Ci.nsIStyleSheetService);
+	var styles = BarTabUtils.mStyles;
 				
-	var uri = BarTabUtils.makeURI("data:text/css,"+
-							encodeURIComponent(
-								'.tabbrowser-tab[ontab=true]{opacity:.5;}'));
-	if(sss.sheetRegistered(uri, sss.USER_SHEET))
-	  sss.unregisterSheet(uri, sss.USER_SHEET);
+	var uri = BarTabUtils.makeURI("chrome://bartab/content/browser.transparent.tabs.css");
 	
-	if(BarTabUtils.mPrefs.getBoolPref("extensions.bartab.transparentTabs"))
-	  sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
+	if (styles.sheetRegistered(uri, styles.USER_SHEET)) {
+	  styles.unregisterSheet(uri, styles.USER_SHEET);
+	}
+	
+	if (BarTabUtils.mPrefs.getBoolPref("extensions.bartab.transparentTabs")) {
+	  styles.loadAndRegisterSheet(uri, styles.USER_SHEET);
+	}
   }
 };
 
@@ -1070,3 +1070,6 @@ XPCOMUtils.defineLazyServiceGetter(BarTabUtils, "mHistory",
 XPCOMUtils.defineLazyServiceGetter(BarTabUtils, "mFavicon",
                                    "@mozilla.org/browser/favicon-service;1",
                                    "nsIFaviconService");
+XPCOMUtils.defineLazyServiceGetter(BarTabUtils, "mStyles",
+                                   "@mozilla.org/content/style-sheet-service;1",
+                                   "nsIStyleSheetService");
