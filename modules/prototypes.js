@@ -1028,8 +1028,21 @@ var BarTabUtils = {
   setWhitelist: function(whitelist) {
     BarTabUtils.mPrefs.setCharPref("extensions.bartab.whitelist",
                                    whitelist.join(";"));
+  },
+  
+  setTabsOpacity: function() {
+	var styles = BarTabUtils.mStyles;
+				
+	var uri = BarTabUtils.makeURI("chrome://bartab/content/browser.transparent.tabs.css");
+	
+	if (styles.sheetRegistered(uri, styles.USER_SHEET)) {
+	  styles.unregisterSheet(uri, styles.USER_SHEET);
+	}
+	
+	if (BarTabUtils.mPrefs.getBoolPref("extensions.bartab.transparentTabs")) {
+	  styles.loadAndRegisterSheet(uri, styles.USER_SHEET);
+	}
   }
-
 };
 
 /*
@@ -1057,3 +1070,6 @@ XPCOMUtils.defineLazyServiceGetter(BarTabUtils, "mHistory",
 XPCOMUtils.defineLazyServiceGetter(BarTabUtils, "mFavicon",
                                    "@mozilla.org/browser/favicon-service;1",
                                    "nsIFaviconService");
+XPCOMUtils.defineLazyServiceGetter(BarTabUtils, "mStyles",
+                                   "@mozilla.org/content/style-sheet-service;1",
+                                   "nsIStyleSheetService");

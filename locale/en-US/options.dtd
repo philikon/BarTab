@@ -31,3 +31,5 @@
 <!ENTITY closingTabs.label "When closing a tab:">
 <!ENTITY closingTabs.accesskey "C">
 <!ENTITY findClosestLoadedTab.label "select the nearest loaded tab">
+<!ENTITY transparentTabs.label "Set unloaded tabs transparent">
+<!ENTITY transparentTabs.accesskey "N">

@@ -1,0 +1,8 @@
+/*
+  NOTE: this file is unloaded from the browser
+		if the user disable opacity on tabs via the preferences dialog
+*/
+
+.tabbrowser-tab[ontab=true] {
+  opacity: .5;
+}
