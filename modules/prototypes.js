@@ -38,21 +38,6 @@ BarTabHandler.prototype = {
     // We need an event listener for the context menu so that we can
     // adjust the label of the whitelist menu item
     let popup = aTabBrowser.tabContainer.contextMenu;
-    if (!popup) {
-      // In Firefox <4, the tab context menu lives inside the
-      // tabbrowser.
-      popup = document.getAnonymousElementByAttribute(
-        aTabBrowser, "anonid", "tabContextMenu");
-      let before = document.getAnonymousElementByAttribute(
-        aTabBrowser, "id", "context_openTabInWindow");
-      ["context_BarTabUnloadTab",
-       "context_BarTabUnloadOtherTabs",
-       "context_BarTabNeverUnload",
-       "context_BarTabSeparator"].forEach(function (menuitemid) {
-        let menuitem = document.getElementById(menuitemid);
-        popup.insertBefore(menuitem, before);
-      });
-    }
     popup.addEventListener('popupshowing', this, false);
   },
 
@@ -106,7 +91,8 @@ BarTabHandler.prototype = {
       return;
     }
     tab.setAttribute("ontab", "true");
-    (new BarTabRestoreProgressListener()).hook(tab);
+    (new BarTabWebProgressListener()).hook(tab);
+    (new BarTabWebNavigation()).hook(tab);
   },
 
   onTabSelect: function(aEvent) {
@@ -234,6 +220,7 @@ BarTabHandler.prototype = {
     // the tab state.
     if (newtab.getAttribute("ontab") != "true") {
       newtab.setAttribute("ontab", "true");
+      (new BarTabWebProgressListener()).hook(newtab);
       (new BarTabWebNavigation()).hook(newtab);
     }
     sessionstore.setTabState(newtab, state);
@@ -658,7 +645,8 @@ BarTabWebProgressListener.prototype = {
 
     // Allow about:blank and wyciwyg URIs to load without any side effects.
     let uri = aRequest.QueryInterface(Ci.nsIChannel).URI;
-    if ((uri.spec == "about:blank") || (uri.scheme == "wyciwyg")) {
+       uri.QueryInterface(Components.interfaces.nsIURI);
+    if ((uri.spec == "about:blank") || (uri.scheme == "wyciwyg") || (uri.scheme == "jar")) {
       return;
     }
 
